@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysPark;
@@ -12,10 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,9 +24,14 @@ public class SysParkController extends BaseController {
 
     @Autowired
     private ISysParkService iSysParkService;
+
+    /**
+     * 查询创业园信息
+     * @return
+     */
     @GetMapping("/list")
     @ApiOperation("查询创业园信息")
-    public TableDataInfo list(SysPark sysPark) {
+    public TableDataInfo list() {
 
         // 创建分页对象
         Page<SysPark> page = new Page<>(1, 10);
@@ -46,6 +49,26 @@ public class SysParkController extends BaseController {
 
         return tableDataInfo;
     }
+
+
+    /**
+     * 新增创业园信息
+     */
+    @PostMapping ("/post")
+    @ApiOperation("新增创业园信息")
+    public AjaxResult add(@RequestBody SysPark sysPark) {
+        return iSysParkService.save(sysPark) ? success() : error();
+    }
+
+    /**
+     * 删除创业园
+     */
+    @DeleteMapping("/delete/{id}")
+    @ApiOperation("删除创业园")
+    public AjaxResult remove(@PathVariable Integer id) {
+        return iSysParkService.removeById(id) ? success() : error();
+    }
+
 
 
 }
