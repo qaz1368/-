@@ -18,7 +18,7 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @ApiOperation("新增角色f")
+    @ApiOperation("新增角色")
     @PostMapping("/add")
     public boolean add(@RequestBody Role role) {
         return roleService.saveRole(role);
