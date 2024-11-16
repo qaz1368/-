@@ -1,31 +1,34 @@
 package com.ruoyi.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
-/**
- * 申请类型表（application_type）对应的实体类
- * 用于记录各种申请类型的信息，如请假申请、报销申请等。
- */
+@ApiModel("申请类型实体类")
 @Data
-@TableName("application_type")  // 映射到数据库中的"application_type"表
+@TableName("application_type")  // 映射数据库表 'application_type'
 public class ApplicationType {
 
-    @TableId(value = "application_type_id", type = IdType.AUTO)  // application_type_id为主键，自增
-    private Integer applicationTypeId;  // 申请类型ID
+    @ApiModelProperty("申请类型ID")
+    @TableId("application_type_id")  // 映射到 'application_type_id' 字段
+    private Integer applicationTypeId;
 
-    @TableField("application_name")
-    private String applicationName;  // 申请类型名称
+    @ApiModelProperty("申请类型名称")
+    @TableField("application_name")  // 映射到 'application_name' 字段
+    private String applicationName;
 
-    @TableField("description")
-    private String description;  // 申请类型描述
+    @ApiModelProperty("申请类型描述")
+    @TableField("description")  // 映射到 'description' 字段
+    private String description;
 
-    @TableField(value = "created_at", fill = FieldFill.INSERT)
-    private LocalDateTime createdAt;  // 创建时间
+    @ApiModelProperty("创建时间")
+    @TableField("created_at")  // 映射到 'created_at' 字段
+    private String createdAt;
 
-    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updatedAt;  // 更新时间
-
+    @ApiModelProperty("更新时间")
+    @TableField("updated_at")  // 映射到 'updated_at' 字段
+    private String updatedAt;
 }

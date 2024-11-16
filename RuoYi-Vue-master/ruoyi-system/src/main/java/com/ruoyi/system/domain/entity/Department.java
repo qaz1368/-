@@ -1,57 +1,72 @@
 package com.ruoyi.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
-/**
- * 部门表（department）对应的实体类
- * 记录系统中各个部门的信息，包括部门名称、负责人、联系方式等。
- */
 @Data
-@TableName("department")  // 映射到数据库中的"department"表
+@ApiModel("部门信息实体类")
+@TableName("department")  // 映射数据库表 'department'
 public class Department {
 
-    @TableId(value = "department_id", type = IdType.AUTO)  // 主键，自动增长
-    private Long departmentId;  // 部门ID，自增
+    @ApiModelProperty("部门ID")
+    @TableId("department_id")  // 映射到 'department_id' 字段，作为主键
+    private Long departmentId;
 
-    @TableField("parent_id")
-    private Long parentId;  // 父部门ID，默认为0，允许null
+    @ApiModelProperty("父部门ID")
+    @TableField("parent_id")  // 映射到 'parent_id' 字段
+    private Long parentId;
 
-    @TableField("ancestors")
-    private String ancestors;  // 祖级列表，默认为空字符串，允许null
+    @ApiModelProperty("祖级列表")
+    @TableField("ancestors")  // 映射到 'ancestors' 字段
+    private String ancestors;
 
-    @TableField("dept_name")
-    private String deptName;  // 部门名称，不能为空
+    @ApiModelProperty("部门名称")
+    @TableField("dept_name")  // 映射到 'dept_name' 字段
+    private String deptName;
 
-    @TableField("order_num")
-    private Integer orderNum;  // 显示顺序，默认为0，允许null
+    @ApiModelProperty("显示顺序")
+    @TableField("order_num")  // 映射到 'order_num' 字段
+    private Integer orderNum;
 
-    @TableField("leader")
-    private String leader;  // 部门负责人，允许null
+    @ApiModelProperty("负责人")
+    @TableField("leader")  // 映射到 'leader' 字段
+    private String leader;
 
-    @TableField("phone")
-    private String phone;  // 联系电话，允许null
+    @ApiModelProperty("联系电话")
+    @TableField("phone")  // 映射到 'phone' 字段
+    private String phone;
 
-    @TableField("email")
-    private String email;  // 部门邮箱，允许null
+    @ApiModelProperty("邮箱")
+    @TableField("email")  // 映射到 'email' 字段
+    private String email;
 
-    @TableField("status")
-    private String status;  // 部门状态（'0' 正常，'1' 停用），默认为'0'
+    @ApiModelProperty("部门状态（0正常，1停用）")
+    @TableField("status")  // 映射到 'status' 字段
+    private String status;
 
-    @TableField("del_flag")
-    private String delFlag;  // 删除标志（'0' 代表存在，'2' 代表删除），默认为'0'
+    @ApiModelProperty("删除标志（0代表存在，2代表删除）")
+    @TableField("del_flag")  // 映射到 'del_flag' 字段
+    private String delFlag;
 
-    @TableField("create_by")
-    private String createBy;  // 创建者，默认为空字符串，允许null
+    @ApiModelProperty("创建者")
+    @TableField("create_by")  // 映射到 'create_by' 字段
+    private String createBy;
 
-    @TableField("create_time")
-    private Date createTime;  // 创建时间，允许null
+    @ApiModelProperty("创建时间")
+    @TableField("create_time")  // 映射到 'create_time' 字段
+    private Date createTime;
 
-    @TableField("update_by")
-    private String updateBy;  // 更新者，默认为空字符串，允许null
+    @ApiModelProperty("更新者")
+    @TableField("update_by")  // 映射到 'update_by' 字段
+    private String updateBy;
 
-    @TableField("update_time")
-    private Date updateTime;  // 更新时间，允许null
+    @ApiModelProperty("更新时间")
+    @TableField("update_time")  // 映射到 'update_time' 字段
+    private Date updateTime;
 }
