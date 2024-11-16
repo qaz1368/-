@@ -50,8 +50,4 @@ public class ApplicationController {
     public boolean deleteApplicationBatch(@RequestBody List<Integer> ids) {
         return applicationService.removeByIds(ids);
     }
-
-    /**
-     * 测试
-     */
 }
