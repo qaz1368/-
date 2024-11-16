@@ -61,7 +61,7 @@ public class SysParkController extends BaseController {
     }
 
     /**
-     *  删除创业园
+     * 删除创业园
      */
     @DeleteMapping("/delete/{id}")
     @ApiOperation("删除创业园")
