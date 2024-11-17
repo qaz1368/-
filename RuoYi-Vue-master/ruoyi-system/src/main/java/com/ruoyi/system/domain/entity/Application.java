@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import java.util.Date;
 @ApiModel(description = "申请表实体类")
 public class Application {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty("申请ID")
     private Integer applicationId;
 
