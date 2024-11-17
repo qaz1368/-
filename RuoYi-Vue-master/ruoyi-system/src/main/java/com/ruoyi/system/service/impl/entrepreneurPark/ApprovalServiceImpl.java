@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.domain.entity.Approval;
@@ -7,6 +8,8 @@ import com.ruoyi.system.mapper.entrepreneurPark.ApprovalMapper;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval> implements ApprovalService {
@@ -18,5 +21,15 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval> i
     public Page<Approval> getApprovalPage(int pageNum, int pageSize) {
         Page<Approval> page = new Page<>(pageNum, pageSize);
         return approvalMapper.selectPage(page, null);  // MyBatis-Plus 提供的分页查询
+    }
+
+    @Override
+    public List<Approval> list(QueryWrapper<Approval> queryWrapper) {
+        return approvalMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public boolean updateById(Approval approval) {
+        return approvalMapper.updateById(approval) > 0;
     }
 }

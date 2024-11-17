@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.DTO.ApplicationDTO;
 import com.ruoyi.system.domain.entity.Application;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationService;
 import io.swagger.annotations.Api;
@@ -42,9 +43,9 @@ public class ApplicationController {
 
     @ApiOperation(value = "新增申请", notes = "添加新的申请记录")
     @PostMapping("/add")
-    public boolean addApplication(@RequestBody Application application) {
-        log.info("添加新的申请记录: {}", application);
-        return applicationService.save(application);
+    public boolean addApplication(@RequestBody ApplicationDTO applicationDTO) {
+        log.info("添加新的申请记录: {}", applicationDTO);
+        return applicationService.save(applicationDTO);
     }
 
     @ApiOperation(value = "更新申请", notes = "更新已有的申请记录")
@@ -63,5 +64,21 @@ public class ApplicationController {
     @DeleteMapping("/delete-batch")
     public boolean deleteApplicationBatch(@RequestBody List<Integer> ids) {
         return applicationService.removeByIds(ids);
+    }
+
+     // 通过申请
+    @ApiOperation(value = "通过申请", notes = "根据ID列表通过申请")
+    @PostMapping("/approve/{applicationId}")
+    public String approveApplication(@PathVariable Integer applicationId) {
+        applicationService.approveApplication(applicationId);
+        return "申请已通过";
+    }
+
+    // 拒绝申请
+    @ApiOperation(value = "拒绝申请", notes = "根据ID列表拒绝申请")
+    @PostMapping("/reject/{applicationId}")
+    public String rejectApplication(@PathVariable Integer applicationId) {
+        applicationService.rejectApplication(applicationId);
+        return "申请已拒绝";
     }
 }
