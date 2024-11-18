@@ -223,7 +223,7 @@
 </template>
 
 <script setup>
-import { listMenu } from "@/api/system/menu";
+import { listMenu } from "@/api/system/enterprise";
 
 const subColumns = ref([]);
 const menuOptions = ref([]);

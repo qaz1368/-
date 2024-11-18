@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.DTO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.Data;
 public class ApplicationDTO {
 
     @ApiModelProperty("申请人姓名")
+    @TableField("applicant_name")
     private String applicantName;
 
     @ApiModelProperty("申请人电话号码")
@@ -19,10 +21,10 @@ public class ApplicationDTO {
     private String applicantEmail;
 
     @ApiModelProperty("申请类型")
-    private Integer applicationType;
+    private String applicationType;
 
     @ApiModelProperty("行业")
-    private Integer industry;
+    private String industryName;
 
     @ApiModelProperty("企业介绍")
     private String enterpriseDescription;

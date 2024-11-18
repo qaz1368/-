@@ -8,3 +8,23 @@ export function listApplication(query) {
     params: query
   })
 }
+
+
+//通过申请
+export function passApplication(applicationId, data) {
+  return request({
+    url: `/api/application/approve/${applicationId}`,
+    method: 'post',
+    data: data
+  });
+}
+
+//拒绝申请
+export function rejectApplication(applicationId,data) {
+  return request({
+    url: `/api/application/reject/${applicationId}`,
+    method: 'post',
+    data: data
+  })
+}
+

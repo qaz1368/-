@@ -92,8 +92,8 @@ public boolean save(ApplicationDTO applicationDTO) {
             Integer applicationTypeId = applicationTypeRecord.getApplicationTypeId();
 
             // 2. 通过 applicationDTO 的 industry 从 industry 表中获取 industry_id
-            String industry = String.valueOf(applicationDTO.getIndustry());
-            Industry industryRecord = industryMapper.selectByIndustry(industry);
+            String industryName = String.valueOf(applicationDTO.getIndustryName());
+            Industry industryRecord = industryMapper.selectByIndustry(industryName);
             if (industryRecord == null) {
                 throw new RuntimeException("无法找到对应的行业");
             }
@@ -118,9 +118,13 @@ public boolean save(ApplicationDTO applicationDTO) {
             application.setCreatedAt(new Date());
             application.setUpdatedAt(new Date());
             application.setEnterpriseDescription(applicationDTO.getEnterpriseDescription());
+            application.setApplicantName(applicationDTO.getApplicantName());
+            application.setApplicantPhone(applicationDTO.getApplicantPhone());
+            application.setApplicantEmail(applicationDTO.getApplicantEmail());
+            application.setApplicationDate(new Date());
             // 其他字段根据需要设置
-            int applicationInsertResult = applicationMapper.insert(application);
-            if (applicationInsertResult <= 0) {
+            boolean applicationInsertResult = save(application);
+            if (!applicationInsertResult) {
                 throw new RuntimeException("申请插入失败");
             }
             Integer applicationId = application.getApplicationId();
@@ -134,6 +138,9 @@ public boolean save(ApplicationDTO applicationDTO) {
             approval.setApprovalStatus(String.valueOf(2));
             approval.setCreatedAt(LocalDateTime.now());
             approval.setUpdatedAt(LocalDateTime.now());
+            approval.setComments("");
+            approval.setApprovalDate(LocalDateTime.now());
+
             int approvalInsertResult = approvalMapper.insert(approval);
             if (approvalInsertResult <= 0) {
                 throw new RuntimeException("审批插入失败");
@@ -167,7 +174,7 @@ public boolean save(ApplicationDTO applicationDTO) {
             // 比较两个流程步骤顺序
             if (currentStepOrder.equals(maxStepOrder)) {
                 // 更新 application 表的申请状态为 "approved"
-                applicationMapper.updateApplicationStatus(applicationId, "approved", new Date());
+                applicationMapper.updateApplicationStatus(applicationId,processId, "approved", new Date());
 
                 // 修改 approval 表的审批状态为 '1'
                 updateApprovalStatus(applicationId, 1);
@@ -187,7 +194,7 @@ public boolean save(ApplicationDTO applicationDTO) {
                 }
 
             // 更新 application 表的申请状态为 "pending"
-            applicationMapper.updateApplicationStatus(applicationId, "pending", new Date());
+            applicationMapper.updateApplicationStatus(applicationId, nextProcessStep.getProcessId(),"pending", new Date());
 
             // 修改 approval 表的审批状态为 '2'
             updateApprovalStatus(applicationId, 2);
@@ -205,7 +212,7 @@ public boolean save(ApplicationDTO applicationDTO) {
             Integer processId = application.getProcessId();
 
             // 修改 application 表的申请状态
-            applicationMapper.updateApplicationStatus(applicationId, "rejected", new Date());
+            applicationMapper.updateApplicationStatus(applicationId, processId, "rejected", new Date());
 
             // 通过 process_id 查找 approval_process 表的对应数据的流程步骤顺序
             ApprovalProcess currentProcessStep = approvalProcessService.getApprovalProcessByProcessId(processId);

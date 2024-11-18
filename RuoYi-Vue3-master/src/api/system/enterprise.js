@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-// 查询审批信息列表
-export function listApply(query) {
+// 分页查询企业列表
+export function listMenu(query) {
   return request({
-    url: '/api/approval/list1',
+    url: '/api/enterprise/list',
     method: 'get',
     params: query
   })
