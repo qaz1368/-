@@ -42,9 +42,11 @@ public class EnterpriseManagerController {
         return managerService.deleteBatch(managerIds);
     }
 
-    @ApiOperation("分页查询企业管理者")
-    @GetMapping("/page")
-    public IPage<EnterpriseManagers> page(@RequestParam int page, @RequestParam int size) {
-        return managerService.getManagersPage(page, size);
-    }
+     @ApiOperation("分页查询企业管理者")
+       @GetMapping("/page")
+       public IPage<EnterpriseManagers> page(
+               @RequestParam(value = "page", defaultValue = "1") int page,
+               @RequestParam(value = "size", defaultValue = "10") int size) {
+           return managerService.getManagersPage(page, size);
+       }
 }

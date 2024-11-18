@@ -4,19 +4,19 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="企业名称" prop="userName">
             <el-input
                 v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                placeholder="请输入企业名称"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
+          <el-form-item label="所属行业" prop="phonenumber">
             <el-input
                 v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
+                placeholder="请输入所属行业"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
@@ -25,7 +25,7 @@
           <el-form-item label="状态" prop="status">
             <el-select
                 v-model="queryParams.status"
-                placeholder="用户状态"
+                placeholder="企业状态"
                 clearable
                 style="width: 240px"
             >
@@ -104,32 +104,66 @@
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
-          <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="企业ID" align="center" key="companyId" prop="companyId" v-if="columns[0].visible" />
-          <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="注册地址" align="center" key="registeredAddress" prop="registeredAddress" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
-          <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
-          <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
-          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
-            <template #default="scope">
-              <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
+       <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
+    <el-table-column type="selection" width="50" align="center" />
+    <el-table-column label="企业ID" align="center" key="companyId" prop="companyId" v-if="columns[0].visible" />
+    <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+    <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+    <el-table-column label="注册地址" align="center" key="registeredAddress" prop="registeredAddress" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+    <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
+    <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
+    <el-table-column label="企业状态" align="center" key="companyStatus" prop="companyStatus" v-if="columns[5].visible" width="160" />
+    <el-table-column label="获得补助时间" align="center" key="subsidyReceivedDate" prop="subsidyReceivedDate" v-if="columns[5].visible" width="160" />
+    <el-table-column label="获得补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[5].visible" width="160" />
+
+    <!-- 新增字段 -->
+    <el-table-column label="带动就业人数" align="center" key="employmentImpact" prop="employmentImpact" v-if="columns[1].visible" width="120" />
+    <el-table-column label="签订劳动合同人数" align="center" key="signedContracts" prop="signedContracts" v-if="columns[1].visible" width="120" />
+    <el-table-column label="缴纳社会保险人数" align="center" key="socialSecurityContributors" prop="socialSecurityContributors" v-if="columns[1].visible" width="120" />
+    <el-table-column label="年营业额" align="center" key="annualRevenue" prop="annualRevenue" v-if="columns[1].visible" width="120" />
+    <el-table-column label="年纳税金额" align="center" key="annualTax" prop="annualTax" v-if="columns[1].visible" width="120" />
+    <el-table-column label="注册资本" align="center" key="registeredCapital" prop="registeredCapital" v-if="columns[1].visible" width="120" />
+    <el-table-column label="带动扶贫人数" align="center" key="povertyAlleviation" prop="povertyAlleviation" v-if="columns[1].visible" width="120" />
+    <el-table-column label="贷款金额" align="center" key="loanAmount" prop="loanAmount" v-if="columns[1].visible" width="120" />
+    <el-table-column label="是否享受政府补贴" align="center" key="governmentSubsidy" prop="governmentSubsidy" v-if="columns[1].visible" width="120">
+      <template #default="scope">
+        {{ formatBoolean(scope.row.governmentSubsidy) }}
+      </template>
+    </el-table-column>
+    <el-table-column label="是否缴纳社会保障" align="center" key="socialSecurity" prop="socialSecurity" v-if="columns[1].visible" width="120">
+      <template #default="scope">
+        {{ formatBoolean(scope.row.socialSecurity) }}
+      </template>
+    </el-table-column>
+    <el-table-column label="是否需要创业辅导" align="center" key="entrepreneurshipGuidance" prop="entrepreneurshipGuidance" v-if="columns[1].visible" width="120">
+      <template #default="scope">
+        {{ formatBoolean(scope.row.entrepreneurshipGuidance) }}
+      </template>
+    </el-table-column>
+    <el-table-column label="备注" align="center" key="remarks" prop="remarks" v-if="columns[1].visible" width="120" />
+    <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[1].visible" width="160" />
+    <el-table-column label="最后更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[0].visible" width="160" />
+    <el-table-column label="孵化器ID" align="center" key="incubatorId" prop="incubatorId" v-if="columns[1].visible" width="120" />
+    <el-table-column label="企业负责人ID" align="center" key="managerId" prop="managerId" v-if="columns[1].visible" width="120" />
+
+    <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+      <template #default="scope">
+        <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+        </el-tooltip>
+        <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
+        </el-tooltip>
+        <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
+          <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
+        </el-tooltip>
+        <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
+          <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+        </el-tooltip>
+      </template>
+    </el-table-column>
+  </el-table>
+
 
         <pagination
             v-show="total > 0"
@@ -143,118 +177,189 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select
-                  v-model="form.deptId"
-                  :data="deptOptions"
-                  :props="{ value: 'id', label: 'label', children: 'children' }"
-                  value-key="id"
-                  placeholder="请选择归属部门"
-                  check-strictly
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择">
-                <el-option
-                    v-for="dict in sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in postOptions"
-                    :key="item.postId"
-                    :label="item.postName"
-                    :value="item.postId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+  <el-form :model="form"  ref="userRef" label-width="120px">
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="企业ID" prop="companyId">
+          <el-input v-model="form.companyId" placeholder="请输入企业ID" maxlength="30" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="企业名称" prop="companyName">
+          <el-input v-model="form.companyName" placeholder="请输入企业名称" maxlength="30" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="所属行业" prop="industry">
+          <el-input v-model="form.industry" placeholder="请输入所属行业" maxlength="30" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="注册地址" prop="registeredAddress">
+          <el-input v-model="form.registeredAddress" placeholder="请输入注册地址" maxlength="50" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="法定代表人" prop="legalPerson">
+          <el-input v-model="form.legalPerson" placeholder="请输入法定代表人" maxlength="30" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="成立日期" prop="establishmentDate">
+          <el-date-picker v-model="form.establishmentDate" type="date" placeholder="选择成立日期" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+  <el-form-item label="企业状态" prop="companyStatus">
+    <el-select v-model="form.companyStatus" placeholder="请选择企业状态">
+      <el-option
+        v-for="dict in companyStatusOptions"
+        :key="dict.value"
+        :label="dict.label"
+        :value="dict.value"
+      ></el-option>
+    </el-select>
+  </el-form-item>
+</el-col>
+
+      <el-col :span="12">
+        <el-form-item label="获得补助时间" prop="subsidyReceivedDate">
+          <el-date-picker v-model="form.subsidyReceivedDate" type="date" placeholder="选择获得补助时间" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="获得补助金额" prop="subsidyAmount">
+          <el-input v-model="form.subsidyAmount" placeholder="请输入获得补助金额" type="number" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="带动就业人数" prop="employmentImpact">
+          <el-input v-model="form.employmentImpact" placeholder="请输入带动就业人数" type="number" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="签订劳动合同人数" prop="signedContracts">
+          <el-input v-model="form.signedContracts" placeholder="请输入签订劳动合同人数" type="number" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="缴纳社会保险人数" prop="socialSecurityContributors">
+          <el-input v-model="form.socialSecurityContributors" placeholder="请输入缴纳社会保险人数" type="number" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="年营业额" prop="annualRevenue">
+          <el-input v-model="form.annualRevenue" placeholder="请输入年营业额" type="number" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="年纳税金额" prop="annualTax">
+          <el-input v-model="form.annualTax" placeholder="请输入年纳税金额" type="number" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="注册资本" prop="registeredCapital">
+          <el-input v-model="form.registeredCapital" placeholder="请输入注册资本" type="number" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="带动扶贫人数" prop="povertyAlleviation">
+          <el-input v-model="form.povertyAlleviation" placeholder="请输入带动扶贫人数" type="number" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="贷款金额" prop="loanAmount">
+          <el-input v-model="form.loanAmount" placeholder="请输入贷款金额" type="number" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="是否享受政府补贴" prop="governmentSubsidy">
+          <el-select v-model="form.governmentSubsidy" placeholder="请选择">
+            <el-option label="是" value="true"></el-option>
+            <el-option label="否" value="false"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="是否缴纳社会保障" prop="socialSecurity">
+          <el-select v-model="form.socialSecurity" placeholder="请选择">
+            <el-option label="是" value="true"></el-option>
+            <el-option label="否" value="false"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="项目获奖情况" prop="awardsReceived">
+          <el-input v-model="form.awardsReceived" placeholder="请输入项目获奖情况" maxlength="50" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="是否需要创业辅导" prop="entrepreneurshipGuidance">
+          <el-select v-model="form.entrepreneurshipGuidance" placeholder="请选择">
+            <el-option label="是" value="true"></el-option>
+            <el-option label="否" value="false"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="form.remarks" type="textarea" placeholder="请输入备注" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="记录创建时间" prop="createdAt">
+          <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择记录创建时间" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="最后更新时间" prop="updatedAt">
+          <el-date-picker v-model="form.updatedAt" type="datetime" placeholder="选择最后更新时间" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="孵化器ID" prop="incubatorId">
+          <el-input v-model="form.incubatorId" placeholder="请输入孵化器ID" maxlength="30" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="企业负责人ID" prop="managerId">
+          <el-input v-model="form.managerId" placeholder="请输入企业负责人ID" maxlength="30" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer">
+      <el-button type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="cancel">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
+
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -295,6 +400,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
+import {addEnterprise, listEnterprise} from "@/api/system/enterprise";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -340,6 +446,15 @@ const columns = ref([
   { key: 5, label: `状态`, visible: true },
   { key: 6, label: `创建时间`, visible: true }
 ]);
+const formatBoolean = (value) => {
+  return value ? '是' : '否';
+};
+ const companyStatusOptions = ref([
+      { value: 'Initial', label: '初创' },
+      { value: 'Growing', label: '成长' },
+      { value: 'Mature', label: '成熟' },
+      { value: 'Closed', label: '关闭' }
+    ]);
 
 const data = reactive({
   form: {},
@@ -377,15 +492,47 @@ function getDeptTree() {
     deptOptions.value = response.data;
   });
 };
-/** 查询用户列表 */
+/** 查询企业列表 */
 function getList() {
   loading.value = true;
-  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listEnterprise(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+    // 状态映射对象
+    const statusMap = {
+      Initial: '初创',
+      Growing: '成长',
+      Mature: '成熟',
+      Closed: '关闭'
+    };
+
+    // 日期格式化函数
+    function formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      const seconds = String(d.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    // 遍历 res.records 并更新状态和日期格式
+    res.records.forEach(item => {
+      item.companyStatus = statusMap[item.companyStatus] || item.companyStatus;
+      item.establishmentDate = formatDate(item.establishmentDate);
+      item.subsidyReceivedDate = formatDate(item.subsidyReceivedDate);
+      item.createdAt = formatDate(item.createdAt);
+      item.updatedAt = formatDate(item.updatedAt);
+    });
+
     loading.value = false;
-    userList.value = res.rows;
+    userList.value = res.records;
     total.value = res.total;
   });
 };
+
+
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
@@ -525,7 +672,7 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加企业";
     form.value.password = initPassword.value;
   });
 };
@@ -555,7 +702,7 @@ function submitForm() {
           getList();
         });
       } else {
-        addUser(form.value).then(response => {
+        addEnterprise(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

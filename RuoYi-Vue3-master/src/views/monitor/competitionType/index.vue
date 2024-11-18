@@ -106,19 +106,9 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="管理者ID" align="center" key="managerId" prop="managerId" v-if="columns[0].visible" />
-          <el-table-column label="姓名" align="center" key="name" prop="name" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="身份证号" align="center" key="idCard" prop="idCard" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="生源地" align="center" key="birthplace" prop="birthplace" v-if="columns[4].visible" width="120" />
-    <el-table-column label="政治面貌" align="center" key="politicalStatus" prop="politicalStatus" v-if="columns[4].visible" width="120" />
-      <el-table-column label="毕业院校" align="center" key="almaMater" prop="almaMater" v-if="columns[4].visible" width="120" />
+          <el-table-column label="比赛类型ID" align="center" key="id" prop="id" v-if="columns[0].visible" />
+          <el-table-column label="比赛类型名称" align="center" key="level" prop="level" v-if="columns[1].visible" :show-overflow-tooltip="true" />
 
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-            <template #default="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
               <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
@@ -148,108 +138,12 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+       <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select
-                  v-model="form.deptId"
-                  :data="deptOptions"
-                  :props="{ value: 'id', label: 'label', children: 'children' }"
-                  value-key="id"
-                  placeholder="请选择归属部门"
-                  check-strictly
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择">
-                <el-option
-                    v-for="dict in sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in postOptions"
-                    :key="item.postId"
-                    :label="item.postName"
-                    :value="item.postId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
+            <el-form-item label="比赛类型" prop="nickName">
+              <el-input v-model="form.competitionType" placeholder="请输入比赛类型" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -301,7 +195,8 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {listEnterprise_managers} from "@/api/system/enterprise_managers";
+import {listCompetitionName} from "@/api/monitor/competitionName";
+import {addCompetitionType, listCompetitionType} from "@/api/monitor/competitionType";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -360,7 +255,6 @@ const data = reactive({
   },
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
     password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
     email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
     phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
@@ -384,10 +278,10 @@ function getDeptTree() {
     deptOptions.value = response.data;
   });
 };
-/** 查询管理员管理列表 */
+/** 查询比赛名称列表 */
 function getList() {
   loading.value = true;
-  listEnterprise_managers(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listCompetitionType(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
     userList.value = res.records;
     total.value = res.total;
@@ -562,7 +456,7 @@ function submitForm() {
           getList();
         });
       } else {
-        addUser(form.value).then(response => {
+        addCompetitionType(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

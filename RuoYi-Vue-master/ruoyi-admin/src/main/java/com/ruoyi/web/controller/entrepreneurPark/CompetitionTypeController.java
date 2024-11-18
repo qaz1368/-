@@ -44,7 +44,9 @@ public class CompetitionTypeController {
 
     @ApiOperation("分页查询比赛类型")
     @GetMapping("/page")
-    public IPage<CompetitionType> page(@RequestParam int page, @RequestParam int size) {
+    public IPage<CompetitionType> page(
+               @RequestParam(value = "page", defaultValue = "1") int page,
+               @RequestParam(value = "size", defaultValue = "10") int size) {
         return competitionTypeService.getCompetitionTypesPage(page, size);
     }
 }

@@ -44,7 +44,9 @@ public class AwardDetailController {
 
     @ApiOperation("分页查询获奖情况")
     @GetMapping("/page")
-    public IPage<AwardDetail> page(@RequestParam int page, @RequestParam int size) {
+    public IPage<AwardDetail> page(
+               @RequestParam(value = "page", defaultValue = "1") int page,
+               @RequestParam(value = "size", defaultValue = "10") int size) {
         return awardDetailService.getAwardDetailsPage(page, size);
     }
 }

@@ -44,7 +44,9 @@ public class CompetitionNameController {
 
     @ApiOperation("分页查询比赛名称")
     @GetMapping("/page")
-    public IPage<CompetitionName> page(@RequestParam int page, @RequestParam int size) {
+    public IPage<CompetitionName> page(
+               @RequestParam(value = "page", defaultValue = "1") int page,
+               @RequestParam(value = "size", defaultValue = "10") int size) {
         return competitionNameService.getCompetitionNamesPage(page, size);
     }
 }
