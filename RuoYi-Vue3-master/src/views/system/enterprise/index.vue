@@ -4,18 +4,18 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="申请人" prop="applicant_name">
+          <el-form-item label="用户名称" prop="userName">
             <el-input
-                v-model="queryParams.applicant_name"
-                placeholder="请输入申请人姓名"
+                v-model="queryParams.userName"
+                placeholder="请输入用户名称"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="applicant_phone">
+          <el-form-item label="手机号码" prop="phonenumber">
             <el-input
-                v-model="queryParams.applicant_phone"
+                v-model="queryParams.phonenumber"
                 placeholder="请输入手机号码"
                 clearable
                 style="width: 240px"
@@ -104,27 +104,29 @@
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="ApplicationList" @selection-change="handleSelectionChange" class="full-width-table">
+        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="applicationId" prop="applicationId" v-if="columns[0].visible" />
-          <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true"  width="160" />
-          <el-table-column label="申请人手机号" align="center" key="applicantPhone" prop="applicantPhone" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="申请人邮箱" align="center" key="applicantEmail" prop="applicantEmail" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="申请日期" align="center" key="applicationDate" prop="applicationDate" v-if="columns[4].visible" width="160" />
-          <el-table-column label="申请状态" align="center" key="status" prop="status" v-if="columns[5].visible" width="160" />
-          <el-table-column label="创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[6].visible" width="160">
-          </el-table-column>
-            <el-table-column label="企业描述" align="center" prop="enterpriseDescription" v-if="columns[7].visible" width="160"></el-table-column>
+      <el-table-column label="企业ID" align="center" key="companyId" prop="companyId" v-if="columns[0].visible" />
+          <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="注册地址" align="center" key="registeredAddress" prop="registeredAddress" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
+          <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
+          <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-
-              <el-tooltip content="通过" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="passApplicationOperate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+              <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
-              <el-tooltip content="拒绝" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="rejectApplicationOperate(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
+              <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
               </el-tooltip>
-
+              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -292,14 +294,13 @@
 
 <script setup name="User">
 import { getToken } from "@/utils/auth";
-import { changeUserStatus, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {listApplication,rejectApplication,passApplication} from "@/api/application/application";
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
+
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
 
 const userList = ref([]);
-const ApplicationList=ref([])
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -332,13 +333,12 @@ const upload = reactive({
 // 列显隐信息
 const columns = ref([
   { key: 0, label: `用户编号`, visible: true },
-  { key: 1, label: `申请人姓名`, visible: true },
-  { key: 2, label: `申请人手机号`, visible: true },
-  { key: 3, label: `申请人邮箱`, visible: true },
-  { key: 4, label: `申请日期`, visible: true },
-  { key: 5, label: `申请状态`, visible: true },
-  { key: 6, label: `申请日期`, visible: true },
-  { key: 7, label: `企业描述`, visible: true }
+  { key: 1, label: `用户名称`, visible: true },
+  { key: 2, label: `用户昵称`, visible: true },
+  { key: 3, label: `部门`, visible: true },
+  { key: 4, label: `手机号码`, visible: true },
+  { key: 5, label: `状态`, visible: true },
+  { key: 6, label: `创建时间`, visible: true }
 ]);
 
 const data = reactive({
@@ -377,263 +377,196 @@ function getDeptTree() {
     deptOptions.value = response.data;
   });
 };
-/** 查询申请列表 */
+/** 查询用户列表 */
 function getList() {
   loading.value = true;
-  listApplication(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
-    console.log("res", res);
-
-    // 定义一个函数来转换日期时间格式
-    function formatDateTime(dateTimeString) {
-      if (!dateTimeString) return '';
-      const dateTime = new Date(dateTimeString);
-      const year = dateTime.getFullYear();
-      const month = String(dateTime.getMonth() + 1).padStart(2, '0');
-      const day = String(dateTime.getDate()).padStart(2, '0');
-      const hours = String(dateTime.getHours()).padStart(2, '0');
-      const minutes = String(dateTime.getMinutes()).padStart(2, '0');
-      const seconds = String(dateTime.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-
-    // 遍历 res.records 并转换 applicationDate 和 createdAt
-    const updatedRecords = res.records.map(item => {
-      if (item.applicationDate) {
-        item.applicationDate = formatDateTime(item.applicationDate);
-      }
-      if (item.createdAt) {
-        item.createdAt = formatDateTime(item.createdAt);
-      }
-      // 修改 status 为 "pending" 的项
-      if (item.status === 'pending') {
-        item.status = '待定';
-      }
-      if (item.status === 'approved') {
-        item.status = '通过';
-      }
-       if (item.status === 'rejected') {
-        item.status = '拒绝';
-      }
-      return item;
-    });
-
-    ApplicationList.value = updatedRecords;
+    userList.value = res.rows;
     total.value = res.total;
   });
 };
-
-/**
- * 通过申请表
- */
-function passApplicationOperate(row) {
-
-  // 将 row.id 从字符串转换为整数
-  const applicationId = parseInt(row.applicationId, 10);
-
-  proxy.$modal.confirm('确认通过该申请吗?').then(function () {
-    // 调用通过申请的 API
-    return passApplication(applicationId);
-  }).then(() => {
-    proxy.$modal.msgSuccess("通过成功");
-    getList(); // 刷新列表
-  }).catch((error) => {
-    console.error("通过申请失败:", error);
-    proxy.$modal.msgError("通过申请失败，请重试!"); // 错误处理提示
-  });
-}
-
-
-
-/**
- * 操作-拒绝申请表
- */
-/**
- * 操作-拒绝申请表
- */
-function rejectApplicationOperate(row) {
-  // 将 row.id 从字符串转换为整数
-  const applicationId = parseInt(row.applicationId, 10);
-  console.log("row.applicationId",row.applicationId)
-  proxy.$modal.confirm('确认拒绝该申请吗?').then(function () {
-    // 调用拒绝申请的 API
-    return rejectApplication(applicationId);
-  }).then(() => {
-    proxy.$modal.msgSuccess("拒绝成功");
-    getList(); // 刷新列表
-  }).catch((error) => {
-    console.error("拒绝申请失败:", error);
-    proxy.$modal.msgError("拒绝申请失败，请重试!"); // 错误处理提示
-  });
-}
-
-
-  /** 节点单击事件 */
-  function handleNodeClick(data) {
-    queryParams.value.deptId = data.id;
-    handleQuery();
-  };
-
-  /** 搜索按钮操作 */
-  function handleQuery() {
-    queryParams.value.pageNum = 1;
-    getList();
-  };
-
-  /** 重置按钮操作 */
-  function resetQuery() {
-    dateRange.value = [];
-    proxy.resetForm("queryRef");
-    queryParams.value.deptId = undefined;
-    proxy.$refs.tree.setCurrentKey(null);
-    handleQuery();
-  };
-
-  /** 导出按钮操作 */
-  function handleExport() {
-    proxy.download("system/user/export", {
-      ...queryParams.value,
-    }, `user_${new Date().getTime()}.xlsx`);
-  };
-
-  /** 用户状态修改  */
-  function handleStatusChange(row) {
-    let text = row.status === "0" ? "启用" : "停用";
-    proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-      return changeUserStatus(row.userId, row.status);
-    }).then(() => {
-      proxy.$modal.msgSuccess(text + "成功");
-    }).catch(function () {
-      row.status = row.status === "0" ? "1" : "0";
-    });
-  };
-
-  /** 更多操作 */
-  function handleCommand(command, row) {
-    switch (command) {
-      case "handleResetPwd":
-        handleResetPwd(row);
-        break;
-      case "handleAuthRole":
-        handleAuthRole(row);
-        break;
-      default:
-        break;
-    }
-  };
-
-  /** 重置密码按钮操作 */
-  function handleResetPwd(row) {
-    proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      closeOnClickModal: false,
-      inputPattern: /^.{5,20}$/,
-      inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
-    }).then(({value}) => {
-      resetUserPwd(row.userId, value).then(response => {
-        proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
-      });
-    }).catch(() => {
-    });
-  };
-
-  /** 选择条数  */
-  function handleSelectionChange(selection) {
-    ids.value = selection.map(item => item.userId);
-    single.value = selection.length != 1;
-    multiple.value = !selection.length;
-  };
-
-  /** 导入按钮操作 */
-  function handleImport() {
-    upload.title = "用户导入";
-    upload.open = true;
-  };
-
-  /** 下载模板操作 */
-  function importTemplate() {
-    proxy.download("system/user/importTemplate", {}, `user_template_${new Date().getTime()}.xlsx`);
-  };
-  /**文件上传中处理 */
-  const handleFileUploadProgress = (event, file, fileList) => {
-    upload.isUploading = true;
-  };
-  /** 文件上传成功处理 */
-  const handleFileSuccess = (response, file, fileList) => {
-    upload.open = false;
-    upload.isUploading = false;
-    proxy.$refs["uploadRef"].handleRemove(file);
-    proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", {dangerouslyUseHTMLString: true});
-    getList();
-  };
-
-  /** 提交上传文件 */
-  function submitFileForm() {
-    proxy.$refs["uploadRef"].submit();
-  };
-
-  /** 重置操作表单 */
-  function reset() {
-    form.value = {
-      userId: undefined,
-      deptId: undefined,
-      userName: undefined,
-      nickName: undefined,
-      password: undefined,
-      phonenumber: undefined,
-      email: undefined,
-      sex: undefined,
-      status: "0",
-      remark: undefined,
-      postIds: [],
-      roleIds: []
-    };
-    proxy.resetForm("userRef");
-  };
-
-  /** 取消按钮 */
-  function cancel() {
-    open.value = false;
-    reset();
-  };
-
-  /** 新增按钮操作 */
-  function handleAdd() {
-    reset();
-    getUser().then(response => {
-      postOptions.value = response.posts;
-      roleOptions.value = response.roles;
-      open.value = true;
-      title.value = "添加用户";
-      form.value.password = initPassword.value;
-    });
-  };
-
-  /** 提交按钮 */
-  function submitForm() {
-    proxy.$refs["userRef"].validate(valid => {
-      if (valid) {
-        if (form.value.userId != undefined) {
-          updateUser(form.value).then(response => {
-            proxy.$modal.msgSuccess("修改成功");
-            open.value = false;
-            getList();
-          });
-        } else {
-          addUser(form.value).then(response => {
-            proxy.$modal.msgSuccess("新增成功");
-            open.value = false;
-            getList();
-          });
-        }
-      }
-    });
-  };
-
-  getDeptTree();
+/** 节点单击事件 */
+function handleNodeClick(data) {
+  queryParams.value.deptId = data.id;
+  handleQuery();
+};
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1;
   getList();
+};
+/** 重置按钮操作 */
+function resetQuery() {
+  dateRange.value = [];
+  proxy.resetForm("queryRef");
+  queryParams.value.deptId = undefined;
+  proxy.$refs.tree.setCurrentKey(null);
+  handleQuery();
+};
+/** 删除按钮操作 */
+function handleDelete(row) {
+  const userIds = row.userId || ids.value;
+  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
+    return delUser(userIds);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+};
+/** 导出按钮操作 */
+function handleExport() {
+  proxy.download("system/user/export", {
+    ...queryParams.value,
+  },`user_${new Date().getTime()}.xlsx`);
+};
+/** 用户状态修改  */
+function handleStatusChange(row) {
+  let text = row.status === "0" ? "启用" : "停用";
+  proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
+    return changeUserStatus(row.userId, row.status);
+  }).then(() => {
+    proxy.$modal.msgSuccess(text + "成功");
+  }).catch(function () {
+    row.status = row.status === "0" ? "1" : "0";
+  });
+};
+/** 更多操作 */
+function handleCommand(command, row) {
+  switch (command) {
+    case "handleResetPwd":
+      handleResetPwd(row);
+      break;
+    case "handleAuthRole":
+      handleAuthRole(row);
+      break;
+    default:
+      break;
+  }
+};
+/** 跳转角色分配 */
+function handleAuthRole(row) {
+  const userId = row.userId;
+  router.push("/system/user-auth/role/" + userId);
+};
+/** 重置密码按钮操作 */
+function handleResetPwd(row) {
+  proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    closeOnClickModal: false,
+    inputPattern: /^.{5,20}$/,
+    inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
+  }).then(({ value }) => {
+    resetUserPwd(row.userId, value).then(response => {
+      proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
+    });
+  }).catch(() => {});
+};
+/** 选择条数  */
+function handleSelectionChange(selection) {
+  ids.value = selection.map(item => item.userId);
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
+};
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "用户导入";
+  upload.open = true;
+};
+/** 下载模板操作 */
+function importTemplate() {
+  proxy.download("system/user/importTemplate", {
+  }, `user_template_${new Date().getTime()}.xlsx`);
+};
+/**文件上传中处理 */
+const handleFileUploadProgress = (event, file, fileList) => {
+  upload.isUploading = true;
+};
+/** 文件上传成功处理 */
+const handleFileSuccess = (response, file, fileList) => {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].handleRemove(file);
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+};
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
+};
+/** 重置操作表单 */
+function reset() {
+  form.value = {
+    userId: undefined,
+    deptId: undefined,
+    userName: undefined,
+    nickName: undefined,
+    password: undefined,
+    phonenumber: undefined,
+    email: undefined,
+    sex: undefined,
+    status: "0",
+    remark: undefined,
+    postIds: [],
+    roleIds: []
+  };
+  proxy.resetForm("userRef");
+};
+/** 取消按钮 */
+function cancel() {
+  open.value = false;
+  reset();
+};
+/** 新增按钮操作 */
+function handleAdd() {
+  reset();
+  getUser().then(response => {
+    postOptions.value = response.posts;
+    roleOptions.value = response.roles;
+    open.value = true;
+    title.value = "添加用户";
+    form.value.password = initPassword.value;
+  });
+};
+/** 修改按钮操作 */
+function handleUpdate(row) {
+  reset();
+  const userId = row.userId || ids.value;
+  getUser(userId).then(response => {
+    form.value = response.data;
+    postOptions.value = response.posts;
+    roleOptions.value = response.roles;
+    form.value.postIds = response.postIds;
+    form.value.roleIds = response.roleIds;
+    open.value = true;
+    title.value = "修改用户";
+    form.password = "";
+  });
+};
+/** 提交按钮 */
+function submitForm() {
+  proxy.$refs["userRef"].validate(valid => {
+    if (valid) {
+      if (form.value.userId != undefined) {
+        updateUser(form.value).then(response => {
+          proxy.$modal.msgSuccess("修改成功");
+          open.value = false;
+          getList();
+        });
+      } else {
+        addUser(form.value).then(response => {
+          proxy.$modal.msgSuccess("新增成功");
+          open.value = false;
+          getList();
+        });
+      }
+    }
+  });
+};
 
+getDeptTree();
+getList();
 </script>
 
 <style scoped>

@@ -17,8 +17,8 @@ public interface ApplicationMapper extends BaseMapper<Application> {
     @Select("SELECT * FROM application WHERE application_id = #{applicationId}")
     Application findApplicationById(Integer applicationId);
 
-    @Update("UPDATE application SET status = #{status}, updated_at = #{updatedAt} WHERE application_id = #{applicationId}")
-    void updateApplicationStatus(@Param("applicationId") Integer applicationId, @Param("status") String status, @Param("updatedAt") Date updatedAt);
+    @Update("UPDATE application SET process_id=#{processId}, status = #{status}, updated_at = #{updatedAt} WHERE application_id = #{applicationId}")
+    void updateApplicationStatus(@Param("applicationId") Integer applicationId, @Param("processId") Integer processId, @Param("status") String status, @Param("updatedAt") Date updatedAt);
 
     @Select("SELECT * FROM application WHERE status = 'pending'")
     List<Application> findPendingApplications();

@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.entity.Approval;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalService;
 import io.swagger.annotations.Api;
@@ -49,5 +51,14 @@ public class ApprovalController {
     @DeleteMapping("/delete-batch")
     public boolean deleteApprovalBatch(@RequestBody List<Integer> ids) {
         return approvalService.removeByIds(ids);  // 使用 MyBatis-Plus 的 removeByIds 方法
+    }
+
+    @ApiOperation(value = "获取审批记录申请分页数据", notes = "根据页码和每页数据量获取部门管理员申请分页数据")
+    @GetMapping("/list1")
+    public Page<Approval> getApplicationPage1(
+            @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
+            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        return approvalService.getPage1(pageNum, pageSize, loginUser);
     }
 }
