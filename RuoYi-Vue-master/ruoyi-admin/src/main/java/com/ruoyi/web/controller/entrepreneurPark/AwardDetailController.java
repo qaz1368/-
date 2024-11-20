@@ -1,8 +1,11 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.system.domain.DTO.AwardDetailDTO;
 import com.ruoyi.system.domain.entity.AwardDetail;
+import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.service.entrepreneurPark.AwardDetailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,8 +30,8 @@ public class AwardDetailController {
 
     @ApiOperation("更新获奖情况")
     @PutMapping("/update")
-    public boolean update(@RequestBody AwardDetail awardDetail) {
-        return awardDetailService.updateAwardDetail(awardDetail);
+    public boolean update(@RequestBody AwardDetailDTO awardDetailDTO) {
+        return awardDetailService.updateAwardDetail(awardDetailDTO);
     }
 
     @ApiOperation("删除获奖情况")
@@ -45,7 +48,7 @@ public class AwardDetailController {
 
     @ApiOperation("分页查询获奖情况")
     @GetMapping("/page")
-    public IPage<AwardDetail> page(
+    public Page<AwardDetailVO> page(
                @RequestParam(value = "page", defaultValue = "1") int page,
                @RequestParam(value = "size", defaultValue = "10") int size) {
         return awardDetailService.getAwardDetailsPage(page, size);

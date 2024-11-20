@@ -13,7 +13,7 @@ import lombok.Data;
 public class CompetitionType {
 
     @ApiModelProperty("比赛类型ID")
-    @TableId("id")  // 映射到 'id' 字段，作为主键
+    @TableId("type_id")  // 映射到 'id' 字段，作为主键
     private Integer id;
 
     @ApiModelProperty("比赛类型名称")

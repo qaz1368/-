@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @ApiModel(description = "政策标签实体类")
 public class PolicyTag {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty("标签ID")
     private Integer tagId;
 

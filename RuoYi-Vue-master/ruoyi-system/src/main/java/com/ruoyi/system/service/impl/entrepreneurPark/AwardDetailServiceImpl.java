@@ -1,14 +1,27 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.AwardDetailDTO;
 import com.ruoyi.system.domain.entity.AwardDetail;
+import com.ruoyi.system.domain.entity.CompetitionName;
+import com.ruoyi.system.domain.entity.CompetitionType;
+import com.ruoyi.system.domain.entity.Enterprise;
+import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.mapper.entrepreneurPark.AwardDetailMapper;
+import com.ruoyi.system.mapper.entrepreneurPark.CompetitionNameMapper;
+import com.ruoyi.system.mapper.entrepreneurPark.CompetitionTypeMapper;
+import com.ruoyi.system.mapper.entrepreneurPark.EnterpriseMapper;
 import com.ruoyi.system.service.entrepreneurPark.AwardDetailService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,13 +30,58 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
     @Autowired
     private AwardDetailMapper awardDetailMapper;
 
+    @Autowired
+    private EnterpriseMapper enterpriseMapper;
+
+    @Autowired
+    private CompetitionNameMapper competitionNameMapper;
+
+    @Autowired
+    private CompetitionTypeMapper competitionTypeMapper;
+
     @Override
     public boolean saveAwardDetail(AwardDetail awardDetail) {
         return save(awardDetail);  // 使用 MyBatis-Plus 提供的保存方法
     }
 
     @Override
-    public boolean updateAwardDetail(AwardDetail awardDetail) {
+    public boolean updateAwardDetail(AwardDetailDTO awardDetailDTO) {
+        AwardDetail awardDetail = new AwardDetail();
+        BeanUtils.copyProperties(awardDetailDTO, awardDetail);
+        awardDetail.setUpdatedAt(new Date());
+
+         // 创建查询条件
+        QueryWrapper<CompetitionType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("level", awardDetailDTO.getType());
+        // 查询类型
+        CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper);
+        if (competitionType != null) {
+            awardDetail.setTypeId(competitionType.getId());
+        }else{
+            throw new RuntimeException("类型不存在");
+        }
+
+        QueryWrapper<CompetitionName> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("competition_name", awardDetailDTO.getCompetition());
+        // 查询比赛名
+        CompetitionName competitionName = competitionNameMapper.selectOne(queryWrapper1);
+        if (competitionName != null) {
+            awardDetail.setEnterpriseId(competitionName.getCompetitionId());
+        }else {
+            throw new RuntimeException("比赛不存在");
+        }
+
+
+        QueryWrapper<Enterprise> queryWrapper2 = new QueryWrapper<>();
+        queryWrapper2.eq("enterprise", awardDetailDTO.getEnterprise());
+        // 查询企业名
+        Enterprise enterprise = enterpriseMapper.selectOne(queryWrapper2);
+        if (enterprise != null) {
+            awardDetail.setEnterpriseId(enterprise.getCompanyId());
+        }else{
+            throw new RuntimeException("企业不存在");
+        }
+
         return updateById(awardDetail);  // 使用 MyBatis-Plus 提供的更新方法
     }
 
@@ -38,8 +96,40 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
     }
 
     @Override
-    public IPage<AwardDetail> getAwardDetailsPage(int page, int size) {
+    public Page<AwardDetailVO> getAwardDetailsPage(int page, int size) {
         Page<AwardDetail> pageRequest = new Page<>(page, size);
-        return page(pageRequest);  // 使用 MyBatis-Plus 提供的分页查询方法
+        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, null).getRecords();
+
+        List<AwardDetailVO> awardDetailVOS = new ArrayList<>();
+        for (AwardDetail awardDetail : awardDetails) {
+            AwardDetailVO awardDetailVO = new AwardDetailVO();
+            awardDetailVO.setAwardId(awardDetail.getAwardId());
+
+            // 查询企业名
+            Enterprise enterprise = enterpriseMapper.selectById(awardDetail.getEnterpriseId());
+            if (enterprise != null) {
+                awardDetailVO.setEnterprise(enterprise.getCompanyName());
+            }
+
+            // 查询比赛名
+            CompetitionName competitionNames = competitionNameMapper.selectById(awardDetail.getCompetitionId());
+            if (competitionNames != null) {
+                awardDetailVO.setCompetition(competitionNames.getCompetitionName());
+            }
+
+            // 查询级别
+            CompetitionType competitionTypes = competitionTypeMapper.selectById(awardDetail.getTypeId());
+            if (competitionTypes != null) {
+                awardDetailVO.setType(competitionTypes.getLevel());
+            }
+            BeanUtils.copyProperties(awardDetail, awardDetailVO);
+            awardDetailVOS.add(awardDetailVO);
+        }
+
+        Page<AwardDetailVO> pageResponse = Page.of(page, size);
+        pageResponse.setRecords(awardDetailVOS);
+        return pageResponse;
+
     }
+
 }

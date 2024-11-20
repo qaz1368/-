@@ -108,12 +108,12 @@
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="奖项ID" align="center" key="awardId" prop="awardId" v-if="columns[0].visible" />
           <el-table-column label="年份" align="center" key="year" prop="year" v-if="columns[1].visible" />
-          <el-table-column label="比赛级别" align="center" key="level" prop="level" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="比赛类型" align="center" key="type" prop="type" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
           <el-table-column label="补助或奖项的描述" align="center" key="description" prop="description" v-if="columns[4].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="获奖企业ID" align="center" key="enterpriseId" prop="enterpriseId" v-if="columns[2].visible" />
-          <el-table-column label="比赛ID" align="center" key="competitionId" prop="competitionId" v-if="columns[2].visible" />
-          <el-table-column label="获奖创业园ID" align="center" key="incubatorId" prop="incubatorId" v-if="columns[2].visible" />
+          <el-table-column label="获奖企业" align="center" key="enterprise" prop="enterprise" v-if="columns[5].visible" />
+          <el-table-column label="比赛" align="center" key="competition" prop="competition" v-if="columns[6].visible" />
+          <el-table-column label="比赛等级" align="center" key="level" prop="level" v-if="columns[2].visible" />
           <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" />
           <el-table-column label="记录更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[2].visible" />
 
@@ -184,11 +184,6 @@
           <el-col :span="12">
             <el-form-item label="比赛ID" prop="competitionId">
               <el-input v-model="form.competitionId" placeholder="请输入比赛ID" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="获奖创业园ID" prop="incubatorId">
-              <el-input v-model="form.incubatorId" placeholder="请输入获奖创业园ID" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -287,13 +282,14 @@ const columns = ref([
 
 const data = reactive({
   form: {
+    awardId: '',
     year: '',
     level: '',
-    subsidyAmount: '',
+    type: '',
+    competition: '',
+    enterprise: '',
     description: '',
-    enterpriseId: '',
-    competitionId: '',
-    incubatorId: ''
+    subsidyAmount: ''
   },
   queryParams: {
     pageNum: 1,
@@ -308,7 +304,10 @@ const data = reactive({
       { required: true, message: '请选择年份', trigger: 'change' }
     ],
     level: [
-      { required: true, message: '请输入比赛级别', trigger: 'blur' }
+      { required: true, message: '请输入比赛等级', trigger: 'blur' }
+    ],
+    type: [
+      { required: true, message: '请输入比赛类型', trigger: 'blur' }
     ],
     subsidyAmount: [
       { required: true, message: '请输入补助金额', trigger: 'blur' }
@@ -316,11 +315,11 @@ const data = reactive({
     description: [
       { required: true, message: '请输入补助或奖项的描述', trigger: 'blur' }
     ],
-    enterpriseId: [
-      { required: true, message: '请输入获奖企业ID', trigger: 'blur' }
+    enterprise: [
+      { required: true, message: '请输入获奖企业', trigger: 'blur' }
     ],
-    competitionId: [
-      { required: true, message: '请输入比赛ID', trigger: 'blur' }
+    competition: [
+      { required: true, message: '请输入比赛', trigger: 'blur' }
     ],
     incubatorId: [
       { required: true, message: '请输入获奖创业园ID', trigger: 'blur' }
@@ -498,11 +497,11 @@ function reset() {
     awardId: null,
     year: null,
     level: null,
-    subsidyAmount: null,
+    type: null,
+    competition: null,
+    enterprise: null,
     description: null,
-    enterpriseId: null,
-    competitionId: null,
-    incubatorId: null
+    subsidyAmount: null
   }
   if (proxy.$refs["userRef"]) {
     proxy.$refs["userRef"].resetFields()

@@ -30,8 +30,8 @@ public class AwardDetail {
     private Integer year;
 
     @ApiModelProperty("比赛级别")
-    @TableField("level")  // 映射到 'level' 字段
-    private String level;
+    @TableField("type_id")  // 比赛级别
+    private Integer typeId;
 
     @ApiModelProperty("补助金额")
     @TableField("subsidy_amount")  // 映射到 'subsidy_amount' 字段
@@ -49,9 +49,10 @@ public class AwardDetail {
     @TableField("competition_id")  // 映射到 'competition_id' 字段
     private Integer competitionId;
 
-    @ApiModelProperty("获奖创业园ID")
-    @TableField("incubator_id")  // 映射到 'incubator_id' 字段
-    private Integer incubatorId;
+    @ApiModelProperty("比赛等级")
+    @TableField("level")  // 比赛等级
+    private String level;
+
 
     @ApiModelProperty("记录创建时间")
     @TableField("created_at")  // 映射到 'created_at' 字段
