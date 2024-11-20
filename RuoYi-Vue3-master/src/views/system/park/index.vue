@@ -2,31 +2,32 @@
   <div class="app-container">
     <el-row :gutter="20">
       <!--用户数据-->
-      <el-row :gutter="20">
-      <!-- 创业园数据 -->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="名称" prop="parkName">
+          <el-form-item label="用户名称" prop="userName">
             <el-input
-                v-model="queryParams.parkName"
-                placeholder="请输入创业园名称"
-                clearable                style="width: 240px"
+                v-model="queryParams.userName"
+                placeholder="请输入用户名称"
+                clearable
+                style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="所属行业" prop="industry">
+          <el-form-item label="手机号码" prop="phonenumber">
             <el-input
-                v-model="queryParams.industry"
-                placeholder="请输入所属行业"
-                clearable                style="width: 240px"
+                v-model="queryParams.phonenumber"
+                placeholder="请输入手机号码"
+                clearable
+                style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select
                 v-model="queryParams.status"
-                placeholder="创业园状态"
-                clearable                style="width: 240px"
+                placeholder="用户状态"
+                clearable
+                style="width: 240px"
             >
               <el-option
                   v-for="dict in sys_normal_disable"
@@ -59,7 +60,7 @@
                 plain
                 icon="Plus"
                 @click="handleAdd"
-                v-hasPermi="['system:park:add']"
+                v-hasPermi="['system:user:add']"
             >新增</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -69,7 +70,7 @@
                 icon="Edit"
                 :disabled="single"
                 @click="handleUpdate"
-                v-hasPermi="['system:park:edit']"
+                v-hasPermi="['system:user:edit']"
             >修改</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -79,7 +80,7 @@
                 icon="Delete"
                 :disabled="multiple"
                 @click="handleDelete"
-                v-hasPermi="['system:park:remove']"
+                v-hasPermi="['system:user:remove']"
             >删除</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -88,7 +89,7 @@
                 plain
                 icon="Upload"
                 @click="handleImport"
-                v-hasPermi="['system:park:import']"
+                v-hasPermi="['system:user:import']"
             >导入</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -97,7 +98,7 @@
                 plain
                 icon="Download"
                 @click="handleExport"
-                v-hasPermi="['system:park:export']"
+                v-hasPermi="['system:user:export']"
             >导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -140,7 +141,6 @@
           </el-table-column>
         </el-table>
 
-
         <pagination
             v-show="total > 0"
             :total="total"
@@ -151,18 +151,18 @@
       </el-col>
     </el-row>
 
-    <!-- 添加或修改创业园配置对话框 -->
+    <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="parkRef" label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="创业园名称" prop="parkName">
-              <el-input v-model="form.parkName" placeholder="请输入创业园名称" maxlength="30" />
+              <el-input v-model="form.parkName" placeholder="请输入创业园名称" maxlength="22" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
-              <el-input v-model="form.industry" placeholder="请输入所属行业" maxlength="30" />
+              <el-input v-model="form.industry" placeholder="请输入所属行业" maxlength="22" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -197,14 +197,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
+            <el-form-item label="入驻日期" prop="entryDate">
+              <el-date-picker v-model="form.entryDate" type="date" placeholder="请选择入驻日期" style="width: 100%;" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -224,7 +218,7 @@
       </template>
     </el-dialog>
 
-    <!-- 创业园导入对话框 -->
+    <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
       <el-upload
           ref="uploadRef"
@@ -243,7 +237,7 @@
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的创业园数据
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
             </div>
             <span>仅允许导入xls、xlsx格式文件。</span>
             <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
@@ -257,21 +251,19 @@
         </div>
       </template>
     </el-dialog>
-    </el-row>
   </div>
 </template>
 
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {delPark, listPark} from "@/api/system/park";
+import {addPark, delPark, getParkById, listPark, updatePark} from "@/api/system/park";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
-
+const parkList = ref([]);
 const userList = ref([]);
-const parkList=ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -311,6 +303,7 @@ const columns = ref([
   { key: 5, label: `状态`, visible: true },
   { key: 6, label: `创建时间`, visible: true }
 ]);
+
 
 const data = reactive({
   form: {},
@@ -378,7 +371,6 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-
   proxy.$modal.confirm('是否确认删除用户编号为"' + row.parkId + '"的数据项？').then(function () {
     return delPark(row.parkId);
   }).then(() => {
@@ -497,37 +489,32 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加创业园";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
+  getParkById(row.parkId).then(response => {
+    form.value = response;
     open.value = true;
-    title.value = "修改用户";
+    title.value = "修改创业园";
     form.password = "";
   });
 };
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["userRef"].validate(valid => {
+  proxy.$refs["parkRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+      if (form.value.parkId != undefined) {
+        updatePark(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addUser(form.value).then(response => {
+        addPark(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

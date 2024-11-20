@@ -50,4 +50,14 @@ public class StudentEntrepreneurshipParkController {
         Page<StudentEntrepreneurshipPark> pageRequest = new Page<>(page, size);
         return parkService.page(pageRequest);
     }
+
+    /**
+     * 根据parkId查询创业园信息
+     */
+    @ApiOperation("根据parkId查询创业园信息")
+    @GetMapping("/get/{parkId}")
+    public StudentEntrepreneurshipPark get(@PathVariable Integer parkId) {
+        return parkService.getById(parkId);
+    }
+
 }

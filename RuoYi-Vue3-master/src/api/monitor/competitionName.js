@@ -26,3 +26,19 @@ export function delCompetitionName(competitionId) {
   });
 }
 
+//根据award查询奖项信息
+export function getAwardByCompetition_id(competitionId) {
+  return request({
+    url: `/competition-names/getCompetitionName/${competitionId}`,
+    method: 'get'
+  })
+}
+
+//修改奖项名称信息
+export function updateCompetitionName(data) {
+  return request({
+    url: '/competition-names/update',
+    method: 'put',
+    data: data
+  })
+}

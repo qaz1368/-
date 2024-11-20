@@ -117,12 +117,6 @@
               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
               </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -195,7 +189,13 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addCompetitionName, delCompetitionName, listCompetitionName} from "@/api/monitor/competitionName";
+import {
+  addCompetitionName,
+  delCompetitionName,
+  getAwardByCompetition_id,
+  listCompetitionName, updateCompetitionName
+} from "@/api/monitor/competitionName";
+import {getAwardByAwardId} from "@/api/monitor/award";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -432,15 +432,11 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
+
+  getAwardByCompetition_id(row.competitionId).then(response => {
+    form.value = response;
     open.value = true;
-    title.value = "修改用户";
+    title.value = "修改";
     form.password = "";
   });
 };
@@ -448,8 +444,8 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+      if (form.value.competitionId != undefined) {
+        updateCompetitionName(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

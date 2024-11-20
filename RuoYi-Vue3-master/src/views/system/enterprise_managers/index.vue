@@ -111,8 +111,14 @@
           <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="身份证号" align="center" key="idCard" prop="idCard" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="生源地" align="center" key="birthplace" prop="birthplace" v-if="columns[4].visible" width="120" />
-    <el-table-column label="政治面貌" align="center" key="politicalStatus" prop="politicalStatus" v-if="columns[4].visible" width="120" />
-      <el-table-column label="毕业院校" align="center" key="almaMater" prop="almaMater" v-if="columns[4].visible" width="120" />
+          <el-table-column label="政治面貌" align="center" key="politicalStatus" prop="politicalStatus" v-if="columns[4].visible" width="120" />
+          <el-table-column label="毕业院校" align="center" key="almaMater" prop="almaMater" v-if="columns[4].visible" width="120" />
+          <el-table-column label="专业" align="center" key="major" prop="major" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="学历" align="center" key="educationLevel" prop="educationLevel" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="职位" align="center" key="position" prop="position" v-if="columns[4].visible" width="120" />
+          <el-table-column label="公司名称" align="center" key="company" prop="company" v-if="columns[4].visible" width="120" />
+          <el-table-column label="联系方式" align="center" key="contactInfo" prop="contactInfo" v-if="columns[4].visible" width="120" />
+          <el-table-column label="入职日期" align="center" key="hireDate" prop="hireDate" v-if="columns[4].visible" width="120" />
 
           <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
             <template #default="scope">
@@ -266,8 +272,10 @@ import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser,
 import {
   addEnterprise_managers,
   delEnterprise_managers, getEnterprise_managers,
-  listEnterprise_managers
+  listEnterprise_managers, updateEnterprise_managers
 } from "@/api/system/enterprise_managers";
+import {getCurrentInstance, reactive, ref} from "vue";
+import {toRefs} from "@vueuse/core";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -323,14 +331,31 @@ const sys_user_gender = ref([
 //政治面貌
 
 const sys_political_status = ref([
-  { value: '0', label: '中共党员' },
-  { value: '1', label: '共青团员' },
-  { value: '2', label: '群众' },
-  { value: '3', label: '民主党派' }
+  { value: '中共党员', label: '中共党员' },
+  { value: '共青团员', label: '共青团员' },
+  { value: '群众', label: '群众' },
+  { value: '民主党派', label: '民主党派' }
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    managerId: null,
+    name: null,
+    gender: null,
+    idCard: null,
+    birthplace: null,
+    politicalStatus: null,
+    graduationDate: null,
+    almaMater: null,
+    major: null,
+    educationLevel: null,
+    position: null,
+    company: null,
+    contactInfo: null,
+    hireDate: null,
+    createdAt: null,
+    updatedAt: null,
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -375,10 +400,42 @@ function getList() {
   loading.value = true;
   listEnterprise_managers(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
-    userList.value = res.records;
+    console.log("企业管理者", res.records);
+
+    // 定义教育水平的映射对象
+    const educationLevelMap = {
+      Undergraduate: '本科',
+      Master: '硕士',
+      Doctoral: '博士',
+      Associate: '专科',
+      Other: '其他'
+    };
+
+    // 处理 gender 和 hireDate 字段，并转换 educationLevel
+    const transformedRecords = res.records.map(item => ({
+      ...item,
+      gender: item.gender === 'Male' ? '男' : item.gender === 'Female' ? '女' : item.gender,
+      hireDate: formatDate(item.hireDate),
+      educationLevel: educationLevelMap[item.educationLevel] || item.educationLevel
+    }));
+
+    userList.value = transformedRecords;
     total.value = res.total;
   });
 };
+
+
+function formatDate(isoString) {
+  const date = new Date(isoString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
@@ -538,8 +595,8 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+      if (form.value.managerId != undefined) {
+        updateEnterprise_managers(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

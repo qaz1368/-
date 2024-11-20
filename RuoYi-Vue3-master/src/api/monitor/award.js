@@ -27,7 +27,7 @@ export function delAward(awardId) {
   });
 }
 
-// 修改用户
+// 修改奖项
 export function updateAward(data) {
   return request({
     url: '/award-details/update',

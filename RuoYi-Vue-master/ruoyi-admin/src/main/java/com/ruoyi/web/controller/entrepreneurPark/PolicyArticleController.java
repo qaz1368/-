@@ -40,7 +40,7 @@ public class PolicyArticleController {
     }
 
     @ApiOperation("新增扶持政策文章")
-    @PostMapping
+    @PostMapping("/add")
     public boolean addPolicyArticle(@RequestBody PolicyArticleDTO policyArticleDTO) {
         log.info("添加新的扶持政策文章: {}", policyArticleDTO);
         return policyArticleService.addPolicyArticle(policyArticleDTO);

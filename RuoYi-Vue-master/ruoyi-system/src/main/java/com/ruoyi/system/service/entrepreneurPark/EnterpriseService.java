@@ -3,6 +3,7 @@ package com.ruoyi.system.service.entrepreneurPark;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.system.domain.entity.Enterprise;
+import com.ruoyi.system.domain.vo.EnterpriseVO;
 
 public interface EnterpriseService extends IService<Enterprise> {
 
@@ -13,5 +14,5 @@ public interface EnterpriseService extends IService<Enterprise> {
      * @param companyName 企业名称
      * @return 分页后的企业信息
      */
-    Page<Enterprise> getEnterprisePage(Page<Enterprise> page, String companyName);
+    Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String companyName);
 }

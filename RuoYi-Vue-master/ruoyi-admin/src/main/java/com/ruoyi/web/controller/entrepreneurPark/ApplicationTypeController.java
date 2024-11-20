@@ -44,7 +44,9 @@ public class ApplicationTypeController {
 
     @ApiOperation("分页查询申请类型列表")
     @GetMapping("/page")
-    public IPage<ApplicationType> page(@RequestParam int page, @RequestParam int size) {
+    public IPage<ApplicationType> page(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
         return applicationTypeService.getApplicationTypePage(page, size);
     }
 }

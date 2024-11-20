@@ -104,36 +104,42 @@
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
-          <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="奖项ID" align="center" key="awardId" prop="awardId" v-if="columns[0].visible" />
-      <el-table-column label="年份" align="center" key="year" prop="year" v-if="columns[1].visible" />
-      <el-table-column label="比赛级别" align="center" key="level" prop="level" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
-      <el-table-column label="补助或奖项的描述" align="center" key="description" prop="description" v-if="columns[4].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="获奖企业ID" align="center" key="enterpriseId" prop="enterpriseId" v-if="columns[2].visible" />
-      <el-table-column label="比赛ID" align="center" key="competitionId" prop="competitionId" v-if="columns[2].visible" />
-      <el-table-column label="获奖创业园ID" align="center" key="incubatorId" prop="incubatorId" v-if="columns[2].visible" />
-      <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" />
-      <el-table-column label="记录更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[2].visible" />
+        <el-table v-loading="loading" :data="articleList" @selection-change="handleSelectionChange" class="full-width-table">
+            <el-table-column type="selection" width="50" align="center" />
+            <el-table-column label="文章ID" align="center" key="articleId" prop="articleId" />
+            <el-table-column label="分类" align="center" key="category" prop="category"  :show-overflow-tooltip="true" />
+            <el-table-column label="主要标签" align="center" key="primaryTag" prop="primaryTag"  :show-overflow-tooltip="true" />
+            <el-table-column label="文章标题" align="center" key="title" prop="title"  :show-overflow-tooltip="true" />
+            <el-table-column label="文章内容" align="center" key="content" prop="content"  :show-overflow-tooltip="true" />
+            <el-table-column label="发布日期" align="center" key="publishDate" prop="publishDate" width="120">
+              <template #default="scope">
+                <span>{{ scope.row.publishDate }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="文章状态" align="center" key="status" prop="status">
 
-          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
-            <template #default="scope">
-              <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
+            </el-table-column>
+            <el-table-column label="创建时间" align="center" prop="createdAt"  width="160">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.createdAt) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="更新时间" align="center" prop="updatedAt" width="160">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.updatedAt) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+              <template #default="scope">
+                <el-tooltip content="修改" placement="top">
+                  <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:article:edit']"></el-button>
+                </el-tooltip>
+                <el-tooltip content="删除" placement="top">
+                  <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:article:remove']"></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+      </el-table>
 
         <pagination
             v-show="total > 0"
@@ -146,65 +152,63 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-   <el-dialog :title="title" v-model="open" width="700px" append-to-body>
-    <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="奖项ID" prop="awardId">
-            <el-input v-model="form.awardId" placeholder="请输入奖项ID" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="年份" prop="year">
-            <el-input v-model="form.year" placeholder="请输入年份" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="比赛级别" prop="level">
-            <el-input v-model="form.level" placeholder="请输入比赛级别" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="补助金额" prop="subsidyAmount">
-            <el-input v-model="form.subsidyAmount" placeholder="请输入补助金额" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="补助或奖项的描述" prop="description">
-            <el-input v-model="form.description" placeholder="请输入补助或奖项的描述" type="textarea" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="获奖企业ID" prop="enterpriseId">
-            <el-input v-model="form.enterpriseId" placeholder="请输入获奖企业ID" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="比赛ID" prop="competitionId">
-            <el-input v-model="form.competitionId" placeholder="请输入比赛ID" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="获奖创业园ID" prop="incubatorId">
-            <el-input v-model="form.incubatorId" placeholder="请输入获奖创业园ID" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </template>
-  </el-dialog>
-
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="文章ID" prop="articleId">
+              <el-input v-model="form.articleId" placeholder="请输入文章ID" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="分类" prop="category">
+              <el-input v-model="form.category" placeholder="请输入分类" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="主要标签" prop="primaryTag">
+              <el-input v-model="form.primaryTag" placeholder="请输入主要标签" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="文章标题" prop="title">
+              <el-input v-model="form.title" placeholder="请输入文章标题" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="文章内容" prop="content">
+              <el-input v-model="form.content" type="textarea" placeholder="请输入文章内容" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="发布日期" prop="publishDate">
+              <el-date-picker v-model="form.publishDate" type="date" placeholder="选择发布日期" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="文章状态" prop="status">
+              <el-select v-model="form.status" placeholder="请选择文章状态">
+                <el-option label="草稿" value="draft" />
+                <el-option label="已发布" value="published" />
+                <el-option label="已归档" value="archived" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -245,12 +249,12 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addAward, delAward, listAward} from "@/api/monitor/award";
+import {addArticle, delArticle, getArticle, listArticle} from "@/api/article/article";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
-
+const articleList=ref([]);
 const userList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -293,7 +297,9 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -303,12 +309,15 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
-  }
+    articleId: [{ required: false, message: "文章ID不能为空", trigger: "blur" }],
+    category: [{ required: true, message: "分类不能为空", trigger: "blur" }],
+    primaryTag: [{ required: true, message: "主要标签不能为空", trigger: "blur" }],
+    title: [{ required: true, message: "文章标题不能为空", trigger: "blur" }],
+    content: [{ required: true, message: "文章内容不能为空", trigger: "blur" }],
+    publishDate: [{ required: true, message: "发布日期不能为空", trigger: "change" }],
+    status: [{ required: true, message: "文章状态不能为空", trigger: "change" }]
+}
+
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -331,31 +340,12 @@ function getDeptTree() {
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
-  listAward(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listArticle(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
-    const records = res.records.map(item => ({
-      ...item,
-      createdAt: formatDate(item.createdAt),
-      updatedAt: formatDate(item.updatedAt)
-    }));
-    userList.value = records;
+    articleList.value = res.records;
     total.value = res.total;
   });
-}
-
-// 日期格式化函数
-function formatDate(isoString) {
-  if (!isoString) return '';
-  const date = new Date(isoString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
+};
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
@@ -376,8 +366,9 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除奖项id为"' + row.awardId + '"的数据项？').then(function () {
-    return delAward(row.awardId);
+
+  proxy.$modal.confirm('是否确认删除用户编号为"' + row.articleId + '"的数据项？').then(function () {
+    return delArticle(row.articleId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -475,7 +466,7 @@ function reset() {
     phonenumber: undefined,
     email: undefined,
     sex: undefined,
-    status: "0",
+    status: "草稿",
     remark: undefined,
     postIds: [],
     roleIds: []
@@ -494,22 +485,18 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加文章";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
+
+  getArticle(row.articleId).then(response => {
+    form.value = response;
     open.value = true;
-    title.value = "修改用户";
+    title.value = "修改文章";
     form.password = "";
   });
 };
@@ -524,7 +511,7 @@ function submitForm() {
           getList();
         });
       } else {
-        addAward(form.value).then(response => {
+        addArticle(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
