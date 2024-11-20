@@ -49,4 +49,14 @@ public class EnterpriseManagerController {
                @RequestParam(value = "size", defaultValue = "10") int size) {
            return managerService.getManagersPage(page, size);
        }
+
+    /**
+     * 根据manager_id查询企业管理者信息
+     */
+    @ApiOperation("根据manager_id查询企业管理者信息")
+    @GetMapping("/getManager/{managerId}")
+    public EnterpriseManagers getManager(@PathVariable Integer managerId) {
+        return managerService.getById(managerId);
+    }
+
 }

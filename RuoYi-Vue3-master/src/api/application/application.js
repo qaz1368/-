@@ -28,3 +28,11 @@ export function rejectApplication(applicationId,data) {
   })
 }
 
+// 新增申请
+export function addApplication(data) {
+  return request({
+    url: '/api/application/add',
+    method: 'post',
+    data: data
+  })
+}

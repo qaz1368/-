@@ -107,7 +107,7 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="比赛类型ID" align="center" key="id" prop="id" v-if="columns[0].visible" />
-          <el-table-column label="比赛类型名称" align="center" key="level" prop="level" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="比赛类型" align="center" key="level" prop="level" v-if="columns[1].visible" :show-overflow-tooltip="true" />
 
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
@@ -116,12 +116,6 @@
               </el-tooltip>
               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -138,23 +132,30 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-       <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="比赛类型" prop="nickName">
-              <el-input v-model="form.competitionType" placeholder="请输入比赛类型" maxlength="30" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+      <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+  <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="比赛类型" prop="level">
+          <el-select v-model="form.level" placeholder="请选择比赛类型">
+            <el-option label="国际" value="国际"></el-option>
+            <el-option label="全国" value="全国"></el-option>
+            <el-option label="省级" value="省级"></el-option>
+            <el-option label="市级" value="市级"></el-option>
+            <el-option label="区级" value="区级"></el-option>
+            <el-option label="县级" value="县级"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer">
+      <el-button type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="cancel">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -399,18 +400,7 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    level:undefined
   };
   proxy.resetForm("userRef");
 };
@@ -426,7 +416,7 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加比赛类型";
     form.value.password = initPassword.value;
   });
 };
@@ -457,6 +447,7 @@ function submitForm() {
         });
       } else {
         addCompetitionType(form.value).then(response => {
+          console.log("form.value",)
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

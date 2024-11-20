@@ -106,16 +106,16 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="奖项ID" align="center" key="awardId" prop="awardId" v-if="columns[0].visible" />
-      <el-table-column label="年份" align="center" key="year" prop="year" v-if="columns[1].visible" />
-      <el-table-column label="比赛级别" align="center" key="level" prop="level" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
-      <el-table-column label="补助或奖项的描述" align="center" key="description" prop="description" v-if="columns[4].visible" :show-overflow-tooltip="true" />
-      <el-table-column label="获奖企业ID" align="center" key="enterpriseId" prop="enterpriseId" v-if="columns[2].visible" />
-      <el-table-column label="比赛ID" align="center" key="competitionId" prop="competitionId" v-if="columns[2].visible" />
-      <el-table-column label="获奖创业园ID" align="center" key="incubatorId" prop="incubatorId" v-if="columns[2].visible" />
-      <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" />
-      <el-table-column label="记录更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[2].visible" />
+          <el-table-column label="奖项ID" align="center" key="awardId" prop="awardId" v-if="columns[0].visible" />
+          <el-table-column label="年份" align="center" key="year" prop="year" v-if="columns[1].visible" />
+          <el-table-column label="比赛级别" align="center" key="level" prop="level" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
+          <el-table-column label="补助或奖项的描述" align="center" key="description" prop="description" v-if="columns[4].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="获奖企业ID" align="center" key="enterpriseId" prop="enterpriseId" v-if="columns[2].visible" />
+          <el-table-column label="比赛ID" align="center" key="competitionId" prop="competitionId" v-if="columns[2].visible" />
+          <el-table-column label="获奖创业园ID" align="center" key="incubatorId" prop="incubatorId" v-if="columns[2].visible" />
+          <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" />
+          <el-table-column label="记录更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[2].visible" />
 
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
@@ -140,65 +140,66 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-   <el-dialog :title="title" v-model="open" width="700px" append-to-body>
-    <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="奖项ID" prop="awardId">
-            <el-input v-model="form.awardId" placeholder="请输入奖项ID" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="年份" prop="year">
-            <el-input v-model="form.year" placeholder="请输入年份" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="比赛级别" prop="level">
-            <el-input v-model="form.level" placeholder="请输入比赛级别" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="补助金额" prop="subsidyAmount">
-            <el-input v-model="form.subsidyAmount" placeholder="请输入补助金额" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="补助或奖项的描述" prop="description">
-            <el-input v-model="form.description" placeholder="请输入补助或奖项的描述" type="textarea" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="获奖企业ID" prop="enterpriseId">
-            <el-input v-model="form.enterpriseId" placeholder="请输入获奖企业ID" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="比赛ID" prop="competitionId">
-            <el-input v-model="form.competitionId" placeholder="请输入比赛ID" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="获奖创业园ID" prop="incubatorId">
-            <el-input v-model="form.incubatorId" placeholder="请输入获奖创业园ID" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </template>
-  </el-dialog>
-
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body>
+      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="年份" prop="year">
+              <el-input v-model="form.year" placeholder="请输入年份" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="比赛级别" prop="level">
+              <el-select v-model="form.level" placeholder="请选择比赛级别">
+                <el-option label="省级" value="省级" />
+                <el-option label="市级" value="市级" />
+                <el-option label="区级" value="区级" />
+                <el-option label="县级" value="县级" />
+                <el-option label="国际" value="国际" />
+                <el-option label="全国" value="全国" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="补助金额" prop="subsidyAmount">
+              <el-input v-model="form.subsidyAmount" placeholder="请输入补助金额" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="补助或奖项的描述" prop="description">
+              <el-input v-model="form.description" placeholder="请输入补助或奖项的描述" type="textarea" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="获奖企业ID" prop="enterpriseId">
+              <el-input v-model="form.enterpriseId" placeholder="请输入获奖企业ID" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="比赛ID" prop="competitionId">
+              <el-input v-model="form.competitionId" placeholder="请输入比赛ID" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="获奖创业园ID" prop="incubatorId">
+              <el-input v-model="form.incubatorId" placeholder="请输入获奖创业园ID" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -237,44 +238,42 @@
 </template>
 
 <script setup name="User">
-import { getToken } from "@/utils/auth";
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addAward, delAward, getAwardByAwardId, listAward, updateAward} from "@/api/monitor/award";
+import { ref, reactive, toRefs, getCurrentInstance, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+import { getToken } from "@/utils/auth"
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
+import { addAward, delAward, getAwardByAwardId, listAward, updateAward } from "@/api/monitor/award"
 
-const router = useRouter();
-const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
+const router = useRouter()
+const { proxy } = getCurrentInstance()
+const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex")
 
-const userList = ref([]);
-const open = ref(false);
-const loading = ref(true);
-const showSearch = ref(true);
-const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
-const total = ref(0);
-const title = ref("");
-const dateRange = ref([]);
-const deptName = ref("");
-const deptOptions = ref(undefined);
-const initPassword = ref(undefined);
-const postOptions = ref([]);
-const roleOptions = ref([]);
-/*** 用户导入参数 */
+const userList = ref([])
+const open = ref(false)
+const loading = ref(true)
+const showSearch = ref(true)
+const ids = ref([])
+const single = ref(true)
+const multiple = ref(true)
+const total = ref(0)
+const title = ref("")
+const dateRange = ref([])
+const deptName = ref("")
+const deptOptions = ref(undefined)
+const initPassword = ref(undefined)
+const postOptions = ref([])
+const roleOptions = ref([])
+
+// 用户导入参数
 const upload = reactive({
-  // 是否显示弹出层（用户导入）
   open: false,
-  // 弹出层标题（用户导入）
   title: "",
-  // 是否禁用上传
   isUploading: false,
-  // 是否更新已经存在的用户数据
   updateSupport: 0,
-  // 设置上传的请求头部
   headers: { Authorization: "Bearer " + getToken() },
-  // 上传的地址
   url: import.meta.env.VITE_APP_BASE_API + "/system/user/importData"
-});
+})
+
 // 列显隐信息
 const columns = ref([
   { key: 0, label: `用户编号`, visible: true },
@@ -284,10 +283,18 @@ const columns = ref([
   { key: 4, label: `手机号码`, visible: true },
   { key: 5, label: `状态`, visible: true },
   { key: 6, label: `创建时间`, visible: true }
-]);
+])
 
 const data = reactive({
-  form: {},
+  form: {
+    year: '',
+    level: '',
+    subsidyAmount: '',
+    description: '',
+    enterpriseId: '',
+    competitionId: '',
+    incubatorId: ''
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -297,118 +304,143 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
+    year: [
+      { required: true, message: '请选择年份', trigger: 'change' }
+    ],
+    level: [
+      { required: true, message: '请输入比赛级别', trigger: 'blur' }
+    ],
+    subsidyAmount: [
+      { required: true, message: '请输入补助金额', trigger: 'blur' }
+    ],
+    description: [
+      { required: true, message: '请输入补助或奖项的描述', trigger: 'blur' }
+    ],
+    enterpriseId: [
+      { required: true, message: '请输入获奖企业ID', trigger: 'blur' }
+    ],
+    competitionId: [
+      { required: true, message: '请输入比赛ID', trigger: 'blur' }
+    ],
+    incubatorId: [
+      { required: true, message: '请输入获奖创业园ID', trigger: 'blur' }
+    ]
   }
-});
+})
 
-const { queryParams, form, rules } = toRefs(data);
+const { queryParams, form, rules } = toRefs(data)
 
-/** 通过条件过滤节点  */
+// 通过条件过滤节点
 const filterNode = (value, data) => {
-  if (!value) return true;
-  return data.label.indexOf(value) !== -1;
-};
-/** 根据名称筛选部门树 */
+  if (!value) return true
+  return data.label.indexOf(value) !== -1
+}
+
+// 根据名称筛选部门树
 watch(deptName, val => {
-  proxy.$refs["deptTreeRef"].filter(val);
-});
-/** 查询部门下拉树结构 */
+  proxy.$refs["deptTreeRef"].filter(val)
+})
+
+// 查询部门下拉树结构
 function getDeptTree() {
   deptTreeSelect().then(response => {
-    deptOptions.value = response.data;
-  });
-};
-/** 查询用户列表 */
+    deptOptions.value = response.data
+  })
+}
+
+// 查询用户列表
 function getList() {
-  loading.value = true;
+  loading.value = true
   listAward(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-    loading.value = false;
+    loading.value = false
     const records = res.records.map(item => ({
       ...item,
       createdAt: formatDate(item.createdAt),
       updatedAt: formatDate(item.updatedAt)
-    }));
-    userList.value = records;
-    total.value = res.total;
-  });
+    }))
+    userList.value = records
+    total.value = res.total
+  })
 }
 
 // 日期格式化函数
 function formatDate(isoString) {
-  if (!isoString) return '';
-  const date = new Date(isoString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  if (!isoString) return ''
+  const date = new Date(isoString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
-/** 节点单击事件 */
+// 节点单击事件
 function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
-  handleQuery();
-};
-/** 搜索按钮操作 */
+  queryParams.value.deptId = data.id
+  handleQuery()
+}
+
+// 搜索按钮操作
 function handleQuery() {
-  queryParams.value.pageNum = 1;
-  getList();
-};
-/** 重置按钮操作 */
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+// 重置按钮操作
 function resetQuery() {
-  dateRange.value = [];
-  proxy.resetForm("queryRef");
-  queryParams.value.deptId = undefined;
-  proxy.$refs.tree.setCurrentKey(null);
-  handleQuery();
-};
-/** 删除按钮操作 */
+  dateRange.value = []
+  proxy.resetForm("queryRef")
+  queryParams.value.deptId = undefined
+  proxy.$refs.tree.setCurrentKey(null)
+  handleQuery()
+}
+
+// 删除按钮操作
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除奖项id为"' + row.awardId + '"的数据项？').then(function () {
-    return delAward(row.awardId);
+    return delAward(row.awardId)
   }).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
-};
-/** 导出按钮操作 */
+    getList()
+    proxy.$modal.msgSuccess("删除成功")
+  }).catch(() => {})
+}
+
+// 导出按钮操作
 function handleExport() {
   proxy.download("system/user/export", {
     ...queryParams.value,
-  },`user_${new Date().getTime()}.xlsx`);
-};
-/** 用户状态修改  */
+  }, `user_${new Date().getTime()}.xlsx`)
+}
+
+// 用户状态修改
 function handleStatusChange(row) {
-  let text = row.status === "0" ? "启用" : "停用";
+  let text = row.status === "0" ? "启用" : "停用"
   proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-    return changeUserStatus(row.userId, row.status);
+    return changeUserStatus(row.userId, row.status)
   }).then(() => {
-    proxy.$modal.msgSuccess(text + "成功");
+    proxy.$modal.msgSuccess(text + "成功")
   }).catch(function () {
-    row.status = row.status === "0" ? "1" : "0";
-  });
-};
-/** 更多操作 */
+    row.status = row.status === "0" ? "1" : "0"
+  })
+}
+
+// 更多操作
 function handleCommand(command, row) {
   switch (command) {
     case "handleResetPwd":
-      handleResetPwd(row);
-      break;
+      handleResetPwd(row)
+      break
     case "handleAuthRole":
-      handleAuthRole(row);
-      break;
+      handleAuthRole(row)
+      break
     default:
-      break;
+      break
   }
-};
+}
 
-/** 重置密码按钮操作 */
+// 重置密码按钮操作
 function handleResetPwd(row) {
   proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
     confirmButtonText: "确定",
@@ -418,43 +450,49 @@ function handleResetPwd(row) {
     inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
   }).then(({ value }) => {
     resetUserPwd(row.userId, value).then(response => {
-      proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
-    });
-  }).catch(() => {});
-};
-/** 选择条数  */
+      proxy.$modal.msgSuccess("修改成功，新密码是：" + value)
+    })
+  }).catch(() => {})
+}
+
+// 选择条数
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.userId);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
-};
-/** 导入按钮操作 */
+  ids.value = selection.map(item => item.userId)
+  single.value = selection.length != 1
+  multiple.value = !selection.length
+}
+
+// 导入按钮操作
 function handleImport() {
-  upload.title = "用户导入";
-  upload.open = true;
-};
-/** 下载模板操作 */
+  upload.title = "用户导入"
+  upload.open = true
+}
+
+// 下载模板操作
 function importTemplate() {
-  proxy.download("system/user/importTemplate", {
-  }, `user_template_${new Date().getTime()}.xlsx`);
-};
-/**文件上传中处理 */
+  proxy.download("system/user/importTemplate", {}, `user_template_${new Date().getTime()}.xlsx`)
+}
+
+// 文件上传中处理
 const handleFileUploadProgress = (event, file, fileList) => {
-  upload.isUploading = true;
-};
-/** 文件上传成功处理 */
+  upload.isUploading = true
+}
+
+// 文件上传成功处理
 const handleFileSuccess = (response, file, fileList) => {
-  upload.open = false;
-  upload.isUploading = false;
-  proxy.$refs["uploadRef"].handleRemove(file);
-  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
-  getList();
-};
-/** 提交上传文件 */
+  upload.open = false
+  upload.isUploading = false
+  proxy.$refs["uploadRef"].handleRemove(file)
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true })
+  getList()
+}
+
+// 提交上传文件
 function submitFileForm() {
-  proxy.$refs["uploadRef"].submit();
-};
-/** 重置操作表单 */
+  proxy.$refs["uploadRef"].submit()
+}
+
+// 重置操作表单
 function reset() {
   form.value = {
     awardId: null,
@@ -465,68 +503,70 @@ function reset() {
     enterpriseId: null,
     competitionId: null,
     incubatorId: null
-  };
-  // 确保 awardRef 存在
-  if (proxy.$refs["awardRef"]) {
-    proxy.$refs["awardRef"].resetFields();
   }
-}
-/** 取消按钮 */
-function cancel() {
-  open.value = false;
-  reset();
-};
-/** 新增按钮操作 */
-function handleAdd() {
-  reset();
-  getUser().then(response => {
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    open.value = true;
-    title.value = "添加用户";
-    form.value.password = initPassword.value;
-  });
-};
-/** 修改按钮操作 */
-function handleUpdate(row) {
-  reset();
-  console.log("row", row); // 添加这行来检查 row 对象
-  if (row && row.awardId) {
-    getAwardByAwardId(row.awardId).then(response => {
-      form.value = response.data;
-      console.log("form.value",form.value)
-      open.value = true;
-      title.value = "修改奖项";
-    }).catch(error => {
-      console.error("更新奖项时出错：", error);
-      proxy.$modal.msgError("更新奖项失败，请重试");
-    });
+  if (proxy.$refs["userRef"]) {
+    proxy.$refs["userRef"].resetFields()
   }
 }
 
-/** 提交按钮 */
+// 取消按钮
+function cancel() {
+  open.value = false
+  reset()
+}
+
+// 新增按钮操作
+function handleAdd() {
+  reset()
+  getUser().then(response => {
+    postOptions.value = response.posts
+    roleOptions.value = response.roles
+    open.value = true
+    title.value = "添加用户"
+    form.value.password = initPassword.value
+  })
+}
+
+// 修改按钮操作
+function handleUpdate(row) {
+  reset()
+  console.log("row", row)
+  if (row && row.awardId) {
+    getAwardByAwardId(row.awardId).then(response => {
+      form.value = response.data
+      console.log("form.value", form.value)
+      open.value = true
+      title.value = "修改奖项"
+    }).catch(error => {
+      console.error("更新奖项时出错：", error)
+      proxy.$modal.msgError("更新奖项失败，请重试")
+    })
+  }
+}
+
+// 提交按钮
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
       if (form.value.userId != undefined) {
         updateUser(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
+          proxy.$modal.msgSuccess("修改成功")
+          open.value = false
+          getList()
+        })
       } else {
         addAward(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
+          proxy.$modal.msgSuccess("新增成功")
+          open.value = false
+          getList()
+        })
       }
     }
-  });
-};
+  })
+}
 
-getDeptTree();
-getList();
+getDeptTree()
+getList()
 </script>
 
 <style scoped>
@@ -540,7 +580,6 @@ getList();
   width: 100%;
 }
 
-/* If you want to remove any default padding/margin */
 .el-table {
   margin: 0;
   padding: 0;

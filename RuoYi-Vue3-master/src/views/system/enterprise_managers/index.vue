@@ -127,12 +127,7 @@
               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
               </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
+
             </template>
           </el-table-column>
         </el-table>
@@ -149,118 +144,85 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select
-                  v-model="form.deptId"
-                  :data="deptOptions"
-                  :props="{ value: 'id', label: 'label', children: 'children' }"
-                  value-key="id"
-                  placeholder="请选择归属部门"
-                  check-strictly
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择">
-                <el-option
-                    v-for="dict in sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in postOptions"
-                    :key="item.postId"
-                    :label="item.postName"
-                    :value="item.postId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+  <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="管理者ID" prop="managerId">
+          <el-input v-model="form.managerId" placeholder="请输入管理者ID" maxlength="30" disabled />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="form.name" placeholder="请输入姓名" maxlength="30" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="form.gender" placeholder="请选择">
+            <el-option
+                v-for="dict in sys_user_gender"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="身份证号" prop="idCard">
+          <el-input v-model="form.idCard" placeholder="请输入身份证号" maxlength="18" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="生源地" prop="birthplace">
+          <el-input v-model="form.birthplace" placeholder="请输入生源地" maxlength="50" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="政治面貌" prop="politicalStatus">
+          <el-select v-model="form.politicalStatus" placeholder="请选择">
+            <el-option
+                v-for="dict in sys_political_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="毕业院校" prop="almaMater">
+          <el-input v-model="form.almaMater" placeholder="请输入毕业院校" maxlength="50" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="创建时间" prop="createTime">
+          <el-date-picker v-model="form.createTime" type="datetime" placeholder="选择日期时间" disabled></el-date-picker>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <el-form-item label="备注">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer">
+      <el-button type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="cancel">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
+
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -301,7 +263,11 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {listEnterprise_managers} from "@/api/system/enterprise_managers";
+import {
+  addEnterprise_managers,
+  delEnterprise_managers, getEnterprise_managers,
+  listEnterprise_managers
+} from "@/api/system/enterprise_managers";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -348,6 +314,21 @@ const columns = ref([
   { key: 6, label: `创建时间`, visible: true }
 ]);
 
+//性别选择
+const sys_user_gender = ref([
+  { value: 'Male', label: '男' },
+  { value: 'Female', label: '女' }
+]);
+
+//政治面貌
+
+const sys_political_status = ref([
+  { value: '0', label: '中共党员' },
+  { value: '1', label: '共青团员' },
+  { value: '2', label: '群众' },
+  { value: '3', label: '民主党派' }
+]);
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -359,12 +340,17 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
-  }
+    managerId: [{ required: false, message: "管理者ID不可更改", trigger: "blur" }],
+    name: [{ required: true, message: "姓名不能为空", trigger: "blur" }, { min: 2, max: 30, message: "姓名长度必须介于 2 和 30 之间", trigger: "blur" }],
+    gender: [{ required: true, message: "性别不能为空", trigger: "change" }],
+    idCard: [{ required: true, message: "身份证号不能为空", trigger: "blur" }, { pattern: /^\d{18}$/, message: "请输入有效的身份证号", trigger: "blur" }],
+    birthplace: [{ required: false, message: "生源地可以为空", trigger: "blur" }, { max: 50, message: "生源地长度不能超过 50 个字符", trigger: "blur" }],
+    politicalStatus: [{ required: false, message: "政治面貌可以为空", trigger: "change" }],
+    almaMater: [{ required: false, message: "毕业院校可以为空", trigger: "blur" }, { max: 50, message: "毕业院校长度不能超过 50 个字符", trigger: "blur" }],
+    createTime: [{ required: false, message: "创建时间不可更改", trigger: "blur" }],
+    remark: [{ required: false, message: "备注可以为空", trigger: "blur" }]
+}
+
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -413,9 +399,9 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
-    return delUser(userIds);
+
+  proxy.$modal.confirm('是否确认删除管理者编号为"' + row.managerId + '"的数据项？').then(function () {
+    return delEnterprise_managers(row.managerId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -532,22 +518,19 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加企业管理者";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
+
+  getEnterprise_managers( row.managerId).then(response => {
+     form.value = response;
+    console.log("response",response)
     open.value = true;
-    title.value = "修改用户";
+    title.value = "修改企业管理者";
     form.password = "";
   });
 };
@@ -562,7 +545,7 @@ function submitForm() {
           getList();
         });
       } else {
-        addUser(form.value).then(response => {
+        addEnterprise_managers(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

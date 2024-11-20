@@ -141,118 +141,50 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select
-                  v-model="form.deptId"
-                  :data="deptOptions"
-                  :props="{ value: 'id', label: 'label', children: 'children' }"
-                  value-key="id"
-                  placeholder="请选择归属部门"
-                  check-strictly
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择">
-                <el-option
-                    v-for="dict in sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in postOptions"
-                    :key="item.postId"
-                    :label="item.postName"
-                    :value="item.postId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+  <el-form :model="form" :rules="rules" ref="userRef" label-width="100px" style="padding: 0 20px;">
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="姓名" prop="applicantName">
+          <el-input v-model="form.applicantName" placeholder="请输入申请人姓名" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="手机号" prop="applicantPhone">
+          <el-input v-model="form.applicantPhone" placeholder="请输入申请人手机号" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+
+      <el-col :span="12">
+        <el-form-item label="邮箱" prop="applicantEmail">
+          <el-input v-model="form.applicantEmail" placeholder="请输入申请人邮箱" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="创建时间" prop="createdAt">
+          <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择创建时间" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-form-item label="企业描述" prop="enterpriseDescription">
+          <el-input v-model="form.enterpriseDescription" type="textarea" placeholder="请输入企业描述" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer" style="text-align: right; padding-right: 20px;">
+      <el-button type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="cancel">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
+
+
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -293,7 +225,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {listApplication,rejectApplication,passApplication} from "@/api/application/application";
+import {listApplication, rejectApplication, passApplication, addApplication} from "@/api/application/application";
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
@@ -352,12 +284,26 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
-  }
+  applicantName: [
+    { required: true, message: "申请人姓名不能为空", trigger: "blur" },
+    { min: 2, max: 20, message: "申请人姓名长度必须介于 2 和 20 之间", trigger: "blur" }
+  ],
+  applicantPhone: [
+    { required: true, message: "申请人手机号不能为空", trigger: "blur" },
+    { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }
+  ],
+  applicantEmail: [
+    { required: true, message: "申请人邮箱不能为空", trigger: "blur" },
+    { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }
+  ],
+  createdAt: [
+    { required: true, message: "创建时间不能为空", trigger: "change" }
+  ],
+  enterpriseDescription: [
+    { required: true, message: "企业描述不能为空", trigger: "blur" },
+    { min: 10, max: 500, message: "企业描述长度必须介于 10 和 500 之间", trigger: "blur" }
+  ]
+}
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -605,7 +551,7 @@ function rejectApplicationOperate(row) {
       postOptions.value = response.posts;
       roleOptions.value = response.roles;
       open.value = true;
-      title.value = "添加用户";
+      title.value = "添加申请";
       form.value.password = initPassword.value;
     });
   };
@@ -621,7 +567,7 @@ function rejectApplicationOperate(row) {
             getList();
           });
         } else {
-          addUser(form.value).then(response => {
+          addApplication(form.value).then(response => {
             proxy.$modal.msgSuccess("新增成功");
             open.value = false;
             getList();

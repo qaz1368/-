@@ -9,3 +9,10 @@ export function listPark(query) {
     })
 }
 
+// 删除奖项列表
+export function delPark(parkId) {
+  return request({
+    url: `/student-entrepreneurship-park/delete/${parkId}`, // 使用模板字符串来插入 awardId
+    method: 'delete'
+  });
+}

@@ -55,7 +55,6 @@ public class AwardDetailController {
     /**
      * 根据AwardId获取获奖情况
      */
-
     @ApiOperation("根据AwardId获取获奖情况")
     @GetMapping("/getAwardDetail/{awardId}")
     public AjaxResult getAwardDetail(@PathVariable Integer awardId) {
