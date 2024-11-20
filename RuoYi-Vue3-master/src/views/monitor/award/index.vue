@@ -108,12 +108,12 @@
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="奖项ID" align="center" key="awardId" prop="awardId" v-if="columns[0].visible" />
           <el-table-column label="年份" align="center" key="year" prop="year" v-if="columns[1].visible" />
-          <el-table-column label="比赛类型" align="center" key="type" prop="type" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="比赛类型" align="center" key="type" prop="type" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="获奖企业" align="center" key="enterprise" prop="enterprise" v-if="columns[2].visible" />
+          <el-table-column label="比赛" align="center" key="competition" prop="competition" v-if="columns[2].visible" />
+          <el-table-column label="比赛等级" align="center" key="level" prop="level" v-if="columns[2].visible" />
           <el-table-column label="补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
           <el-table-column label="补助或奖项的描述" align="center" key="description" prop="description" v-if="columns[4].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="获奖企业" align="center" key="enterprise" prop="enterprise" v-if="columns[5].visible" />
-          <el-table-column label="比赛" align="center" key="competition" prop="competition" v-if="columns[6].visible" />
-          <el-table-column label="比赛等级" align="center" key="level" prop="level" v-if="columns[2].visible" />
           <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" />
           <el-table-column label="记录更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[2].visible" />
 
@@ -150,9 +150,21 @@
           </el-col>
         </el-row>
         <el-row>
+         <el-col :span="12">
+            <el-form-item label="获奖企业" prop="enterpriseId">
+              <el-input v-model="form.enterprise" placeholder="请输入获奖企业ID" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="比赛级别" prop="level">
-              <el-select v-model="form.level" placeholder="请选择比赛级别">
+            <el-form-item label="比赛" prop="competitionId">
+              <el-input v-model="form.competition" placeholder="请输入比赛名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="比赛类型" prop="type">
+              <el-select v-model="form.type" placeholder="请选择比赛类型">
                 <el-option label="省级" value="省级" />
                 <el-option label="市级" value="市级" />
                 <el-option label="区级" value="区级" />
@@ -160,6 +172,11 @@
                 <el-option label="国际" value="国际" />
                 <el-option label="全国" value="全国" />
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="获奖等级" prop="enterpriseId">
+              <el-input v-model="form.level" placeholder="请输入获奖等级" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -172,18 +189,6 @@
           <el-col :span="12">
             <el-form-item label="补助或奖项的描述" prop="description">
               <el-input v-model="form.description" placeholder="请输入补助或奖项的描述" type="textarea" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="获奖企业ID" prop="enterpriseId">
-              <el-input v-model="form.enterpriseId" placeholder="请输入获奖企业ID" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="比赛ID" prop="competitionId">
-              <el-input v-model="form.competitionId" placeholder="请输入比赛ID" />
             </el-form-item>
           </el-col>
         </el-row>

@@ -109,6 +109,7 @@
     <el-table-column label="企业ID" align="center" key="companyId" prop="companyId" v-if="columns[0].visible" />
     <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
     <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+    <el-table-column label="地域" align="center" key="region" prop="region" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="注册地址" align="center" key="registeredAddress" prop="registeredAddress" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
     <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
@@ -143,8 +144,8 @@
     <el-table-column label="备注" align="center" key="remarks" prop="remarks" v-if="columns[1].visible" width="120" />
     <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[1].visible" width="160" />
     <el-table-column label="最后更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[0].visible" width="160" />
-    <el-table-column label="孵化器ID" align="center" key="incubatorId" prop="incubatorId" v-if="columns[1].visible" width="120" />
-    <el-table-column label="企业负责人ID" align="center" key="managerId" prop="managerId" v-if="columns[1].visible" width="120" />
+    <el-table-column label="创业园" align="center" key="incubator" prop="incubator" v-if="columns[1].visible" width="120" />
+    <el-table-column label="企业负责人" align="center" key="managerName" prop="managerName" v-if="columns[1].visible" width="120" />
 
     <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
       <template #default="scope">
@@ -153,12 +154,6 @@
         </el-tooltip>
         <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
-        </el-tooltip>
-        <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-          <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-        </el-tooltip>
-        <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-          <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
         </el-tooltip>
       </template>
     </el-table-column>
@@ -342,12 +337,12 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="孵化器ID" prop="incubatorId">
-          <el-input v-model="form.incubatorId" placeholder="请输入孵化器ID" maxlength="30" />
+          <el-input v-model="form.incubator" placeholder="请输入孵化器ID" maxlength="30" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="企业负责人ID" prop="managerId">
-          <el-input v-model="form.managerId" placeholder="请输入企业负责人ID" maxlength="30" />
+          <el-input v-model="form.managerName" placeholder="请输入企业负责人ID" maxlength="30" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -401,6 +396,7 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addEnterprise, listEnterprise} from "@/api/system/enterprise";
+import {getCurrentInstance, reactive, ref} from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -457,7 +453,36 @@ const formatBoolean = (value) => {
     ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    companyId: null,
+    companyName: null,
+    industry: null,
+    region: null,
+    registeredAddress: null,
+    legalPerson: null,
+    establishmentDate: null,
+    companyStatus: null,
+    subsidyReceivedDate: null,
+    subsidyAmount: null,
+    employmentImpact: null,
+    signedContracts: null,
+    socialSecurityContributors: null,
+    annualRevenue: null,
+    annualTax: null,
+    registeredCapital: null,
+    povertyAlleviation: null,
+    loanAmount: null,
+    governmentSubsidy: null,
+    socialSecurity: null,
+    awardsReceived: null,
+    entrepreneurshipGuidance: null,
+    remarks: null,
+    createdAt: null,
+    updatedAt: null,
+    incubator: null,
+    managerName: null,
+
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -526,6 +551,7 @@ function getList() {
       item.updatedAt = formatDate(item.updatedAt);
     });
 
+    console.log("企业管理", res.records)
     loading.value = false;
     userList.value = res.records;
     total.value = res.total;

@@ -111,8 +111,14 @@
           <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="身份证号" align="center" key="idCard" prop="idCard" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="生源地" align="center" key="birthplace" prop="birthplace" v-if="columns[4].visible" width="120" />
-    <el-table-column label="政治面貌" align="center" key="politicalStatus" prop="politicalStatus" v-if="columns[4].visible" width="120" />
-      <el-table-column label="毕业院校" align="center" key="almaMater" prop="almaMater" v-if="columns[4].visible" width="120" />
+          <el-table-column label="政治面貌" align="center" key="politicalStatus" prop="politicalStatus" v-if="columns[4].visible" width="120" />
+          <el-table-column label="毕业院校" align="center" key="almaMater" prop="almaMater" v-if="columns[4].visible" width="120" />
+          <el-table-column label="专业" align="center" key="major" prop="major" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="学历" align="center" key="educationLevel" prop="educationLevel" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="职位" align="center" key="position" prop="position" v-if="columns[4].visible" width="120" />
+          <el-table-column label="公司名称" align="center" key="company" prop="company" v-if="columns[4].visible" width="120" />
+          <el-table-column label="联系方式" align="center" key="contactInfo" prop="contactInfo" v-if="columns[4].visible" width="120" />
+          <el-table-column label="入职日期" align="center" key="hireDate" prop="hireDate" v-if="columns[4].visible" width="120" />
 
           <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
             <template #default="scope">
@@ -268,6 +274,8 @@ import {
   delEnterprise_managers, getEnterprise_managers,
   listEnterprise_managers
 } from "@/api/system/enterprise_managers";
+import {getCurrentInstance, reactive, ref} from "vue";
+import {toRefs} from "@vueuse/core";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -330,7 +338,24 @@ const sys_political_status = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    managerId: null,
+    name: null,
+    gender: null,
+    idCard: null,
+    birthplace: null,
+    politicalStatus: null,
+    graduationDate: null,
+    almaMater: null,
+    major: null,
+    educationLevel: null,
+    position: null,
+    company: null,
+    contactInfo: null,
+    hireDate: null,
+    createdAt: null,
+    updatedAt: null,
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -375,6 +400,7 @@ function getList() {
   loading.value = true;
   listEnterprise_managers(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
+    console.log("企业管理者",res.records)
     userList.value = res.records;
     total.value = res.total;
   });

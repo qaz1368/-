@@ -117,12 +117,6 @@
               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
               </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
@@ -196,6 +190,8 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addCompetitionName, delCompetitionName, listCompetitionName} from "@/api/monitor/competitionName";
+import { ref, reactive, toRefs, getCurrentInstance, nextTick } from 'vue'
+import {useRouter} from "vue-router";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -243,7 +239,10 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    competitionId: null,
+    competitionName: null
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,

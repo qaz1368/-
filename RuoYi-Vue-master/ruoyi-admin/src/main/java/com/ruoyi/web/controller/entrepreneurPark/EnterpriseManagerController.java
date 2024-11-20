@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.system.domain.entity.EnterpriseManagers;
+import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
 import com.ruoyi.system.service.entrepreneurPark.EnterpriseManagerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,7 +45,7 @@ public class EnterpriseManagerController {
 
      @ApiOperation("分页查询企业管理者")
        @GetMapping("/page")
-       public IPage<EnterpriseManagers> page(
+       public IPage<EnterpriseManagersVO> page(
                @RequestParam(value = "page", defaultValue = "1") int page,
                @RequestParam(value = "size", defaultValue = "10") int size) {
            return managerService.getManagersPage(page, size);
