@@ -119,11 +119,17 @@
 
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-tooltip content="修改" placement="top">
+              <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
-              <el-tooltip content="删除" placement="top" >
+              <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
+              </el-tooltip>
+              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -239,7 +245,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addAward, delAward, getAwardByAwardId, listAward, updateAward} from "@/api/monitor/award";
+import {addAward, delAward, listAward} from "@/api/monitor/award";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -407,7 +413,11 @@ function handleCommand(command, row) {
       break;
   }
 };
-
+/** 跳转角色分配 */
+function handleAuthRole(row) {
+  const userId = row.userId;
+  router.push("/system/user-auth/role/" + userId);
+};
 /** 重置密码按钮操作 */
 function handleResetPwd(row) {
   proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
@@ -457,20 +467,21 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    awardId: null,
-    year: null,
-    level: null,
-    subsidyAmount: null,
-    description: null,
-    enterpriseId: null,
-    competitionId: null,
-    incubatorId: null
+    userId: undefined,
+    deptId: undefined,
+    userName: undefined,
+    nickName: undefined,
+    password: undefined,
+    phonenumber: undefined,
+    email: undefined,
+    sex: undefined,
+    status: "0",
+    remark: undefined,
+    postIds: [],
+    roleIds: []
   };
-  // 确保 awardRef 存在
-  if (proxy.$refs["awardRef"]) {
-    proxy.$refs["awardRef"].resetFields();
-  }
-}
+  proxy.resetForm("userRef");
+};
 /** 取消按钮 */
 function cancel() {
   open.value = false;
@@ -490,20 +501,18 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  console.log("row", row); // 添加这行来检查 row 对象
-  if (row && row.awardId) {
-    getAwardByAwardId(row.awardId).then(response => {
-      form.value = response.data;
-      console.log("form.value",form.value)
-      open.value = true;
-      title.value = "修改奖项";
-    }).catch(error => {
-      console.error("更新奖项时出错：", error);
-      proxy.$modal.msgError("更新奖项失败，请重试");
-    });
-  }
-}
-
+  const userId = row.userId || ids.value;
+  getUser(userId).then(response => {
+    form.value = response.data;
+    postOptions.value = response.posts;
+    roleOptions.value = response.roles;
+    form.value.postIds = response.postIds;
+    form.value.roleIds = response.roleIds;
+    open.value = true;
+    title.value = "修改用户";
+    form.password = "";
+  });
+};
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {

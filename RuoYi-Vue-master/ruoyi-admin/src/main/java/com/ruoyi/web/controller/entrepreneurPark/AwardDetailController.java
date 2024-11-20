@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import com.ruoyi.system.service.entrepreneurPark.AwardDetailService;
 import io.swagger.annotations.Api;
@@ -48,5 +49,21 @@ public class AwardDetailController {
                @RequestParam(value = "page", defaultValue = "1") int page,
                @RequestParam(value = "size", defaultValue = "10") int size) {
         return awardDetailService.getAwardDetailsPage(page, size);
+    }
+
+
+    /**
+     * 根据AwardId获取获奖情况
+     */
+
+    @ApiOperation("根据AwardId获取获奖情况")
+    @GetMapping("/getAwardDetail/{awardId}")
+    public AjaxResult getAwardDetail(@PathVariable Integer awardId) {
+
+        try {
+            return AjaxResult.success(awardDetailService.getById(awardId));
+        } catch (Exception e) {
+            return AjaxResult.error("获取获奖详情失败，请稍后再试");
+        }
     }
 }

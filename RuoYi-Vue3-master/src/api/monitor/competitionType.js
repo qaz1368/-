@@ -19,3 +19,10 @@ export function addCompetitionType(data) {
   })
 }
 
+// 删除奖项类型列表
+export function delCompetitionType(competitionId) {
+  return request({
+    url: `/competition-types/delete/${competitionId}`, // 使用模板字符串来插入 awardId
+    method: 'delete'
+  });
+}

@@ -18,10 +18,11 @@ export function addCompetitionName(data) {
   })
 }
 
-// 删除奖项列表
+// 删除奖项名称列表
 export function delCompetitionName(competitionId) {
   return request({
-    url: `/award-details/delete/${competitionId}`, // 使用模板字符串来插入 awardId
+    url: `/competition-names/delete/${competitionId}`, // 使用模板字符串来插入 awardId
     method: 'delete'
   });
 }
+

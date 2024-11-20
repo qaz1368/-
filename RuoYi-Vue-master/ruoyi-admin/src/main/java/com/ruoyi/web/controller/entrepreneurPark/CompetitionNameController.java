@@ -49,4 +49,14 @@ public class CompetitionNameController {
                @RequestParam(value = "size", defaultValue = "10") int size) {
         return competitionNameService.getCompetitionNamesPage(page, size);
     }
+
+
+    /**
+     * 根据competition_id来查询比赛名称
+     */
+    @ApiOperation("根据competition_id来查询比赛名称")
+    @GetMapping("/getCompetitionName/{competitionId}")
+    public CompetitionName getCompetitionName(@PathVariable Integer competitionId) {
+        return competitionNameService.getById(competitionId);
+    }
 }

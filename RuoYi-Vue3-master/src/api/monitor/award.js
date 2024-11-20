@@ -26,3 +26,20 @@ export function delAward(awardId) {
     method: 'delete'
   });
 }
+
+// 修改用户
+export function updateAward(data) {
+  return request({
+    url: '/award-details/update',
+    method: 'put',
+    data: data
+  })
+}
+
+//根据award查询奖项信息
+export function getAwardByAwardId(awardId) {
+  return request({
+    url: `/award-details/getAwardDetail/${awardId}`,
+    method: 'get'
+  })
+}

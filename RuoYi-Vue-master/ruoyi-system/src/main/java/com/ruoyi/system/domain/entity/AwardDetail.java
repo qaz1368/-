@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,6 +16,9 @@ import java.util.Date;
 @Data
 @ApiModel("获奖情况")
 @TableName("award_details")  // 映射到数据库表 'award_details'
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AwardDetail {
 
     @ApiModelProperty("奖项ID")

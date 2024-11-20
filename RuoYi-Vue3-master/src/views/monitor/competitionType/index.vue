@@ -196,7 +196,7 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {listCompetitionName} from "@/api/monitor/competitionName";
-import {addCompetitionType, listCompetitionType} from "@/api/monitor/competitionType";
+import {addCompetitionType, delCompetitionType, listCompetitionType} from "@/api/monitor/competitionType";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -307,9 +307,9 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
-    return delUser(userIds);
+
+  proxy.$modal.confirm('是否确认删除用户编号为"' + row.id + '"的数据项？').then(function () {
+    return delCompetitionType(row.id);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
