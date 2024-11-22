@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.system.domain.entity.Industry;
+import com.ruoyi.system.domain.vo.IndustryRankVO;
 import com.ruoyi.system.service.entrepreneurPark.IndustryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,5 +47,11 @@ public class IndustryController {
     @GetMapping("/page")
     public IPage<Industry> page(@RequestParam int page, @RequestParam int size) {
         return industryService.getIndustriesPage(page, size);
+    }
+
+    @GetMapping("/ranking")
+    @ApiOperation("所属行业占比排行")
+    public List<IndustryRankVO> getIndustryRanking(@RequestParam int size) {
+        return industryService.getIndustryRanking(size);
     }
 }

@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.domain.entity.*;
+import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.domain.vo.EnterpriseVO;
 import com.ruoyi.system.mapper.entrepreneurPark.*;
+import com.ruoyi.system.service.entrepreneurPark.AwardDetailService;
 import com.ruoyi.system.service.entrepreneurPark.EnterpriseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -34,12 +37,23 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
     @Autowired
     private EnterpriseManagerMapper enterpriseManagersMapper;
 
+    @Autowired
+    private AwardDetailService awardDetailService;
+
     @Override
-    public Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String companyName) {
+    public Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String companyName, String companyStatus) {
         QueryWrapper<Enterprise> queryWrapper = new QueryWrapper<>();
-         if (companyName != null && !companyName.isEmpty()) {
+        if (companyName != null && !companyName.isEmpty()) {
             queryWrapper.eq("company_name", companyName);
         }
+        if (companyStatus != null && !companyStatus.isEmpty()) {
+             if ("初创".equals(companyStatus) || "成长".equals(companyStatus) || "成熟".equals(companyStatus) || "关闭".equals(companyStatus)) {
+                queryWrapper.eq("company_status", companyStatus);
+            }
+        }
+
+         // 添加按年份降序排序
+         queryWrapper.orderByDesc("year");
 
         IPage<Enterprise> enterprisePage = enterpriseMapper.selectPage(page, queryWrapper);
 
@@ -54,31 +68,61 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
             Industry industry = industryMapper.selectById(enterprise.getIndustryId());
             if (industry != null) {
                 enterpriseVO.setIndustry(industry.getIndustryName());
-            }else
+            } else
                 enterpriseVO.setIndustry("暂无");
 
             // 查询地域
             Region region = regionMapper.selectById(enterprise.getRegionId());
             if (region != null) {
                 enterpriseVO.setRegion(region.getRegionName());
-            }else
+            } else
                 enterpriseVO.setRegion("暂无");
 
             // 查询创业园信息
             StudentEntrepreneurshipPark studentEntrepreneurshipPark = studentEntrepreneurshipParkMapper.selectById(enterprise.getIncubatorId());
             if (studentEntrepreneurshipPark != null) {
                 enterpriseVO.setIncubator(studentEntrepreneurshipPark.getParkName());
-            }else
+            } else
                 enterpriseVO.setIncubator("暂无");
 
             // 查询企业管理者
             EnterpriseManagers enterpriseManagers = enterpriseManagersMapper.selectById(enterprise.getManagerId());
             if (enterpriseManagers != null) {
                 enterpriseVO.setManagerName(enterpriseManagers.getName());
-            }else
+            } else{
                 enterpriseVO.setManagerName("暂无");
+            }
 
             BeanUtils.copyProperties(enterprise, enterpriseVO);
+
+
+            StringBuilder awardsString = new StringBuilder();
+            String awardsReceived = enterprise.getAwardsReceived();
+            if (awardsReceived != null && !awardsReceived.isEmpty()) {
+                 if (awardsReceived.startsWith("[") && awardsReceived.endsWith("]")) {
+                        awardsReceived = awardsReceived.substring(1, awardsReceived.length() - 1);
+                 }
+                String[] awards = awardsReceived.split(",");
+                BigDecimal totalAmount = BigDecimal.ZERO;
+                for (String award : awards) {
+                    List<AwardDetailVO> awardDetails = awardDetailService.getAwardDetailsId(Integer.valueOf(award));
+                    for (AwardDetailVO awardDetail : awardDetails) {
+                        totalAmount = totalAmount.add(awardDetail.getSubsidyAmount());
+                        awardsString.append(awardDetail.getYear()).append(awardDetail.getCompetition())
+                                        .append(awardDetail.getLevel()).append("获得补助金额")
+                                .append(awardDetail.getSubsidyAmount()).append("元,   ");
+                    }
+                    awardsString.append(System.lineSeparator());
+
+                }
+            enterpriseVO.setAwards(totalAmount);
+            enterpriseVO.setAwardsReceived(String.valueOf(awardsString));
+            }else{
+                enterpriseVO.setAwards(BigDecimal.ZERO);
+                enterpriseVO.setAwardsReceived("暂无");
+            }
+
+
             enterpriseVOS.add(enterpriseVO);
         }
 

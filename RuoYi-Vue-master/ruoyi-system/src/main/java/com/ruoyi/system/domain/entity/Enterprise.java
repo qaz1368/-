@@ -44,6 +44,10 @@ public class Enterprise {
     @TableField("establishment_date")
     private LocalDateTime establishmentDate;
 
+    @ApiModelProperty(value = "企业标签，例如“重点企业”或“普通企业”")
+    @TableField("enterprise_label")
+    private String enterpriseLabel;
+
     @ApiModelProperty(value = "企业状态（初创、成长、成熟、关闭）", required = true)
     @TableField("company_status")
     private String companyStatus;

@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.system.domain.DTO.AwardDetailDTO;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
+import com.ruoyi.system.domain.vo.AwardTypeVO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AwardDetailService extends IService<AwardDetail> {
@@ -19,5 +21,13 @@ public interface AwardDetailService extends IService<AwardDetail> {
 
     boolean deleteBatch(List<Integer> awardIds);  // 批量删除获奖情况
 
-    Page<AwardDetailVO> getAwardDetailsPage(int page, int size);  // 分页查询获奖情况列表
+    Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer enterpriseId);  // 分页查询获奖情况列表
+
+    List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId);
+
+    long getTotalAwardCount();
+
+    BigDecimal getTotalSubsidyAmount();
+
+    List<AwardTypeVO> getAwardTypeSummary();
 }

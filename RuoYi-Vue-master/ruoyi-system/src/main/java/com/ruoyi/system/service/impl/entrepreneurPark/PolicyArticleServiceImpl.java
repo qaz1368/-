@@ -3,6 +3,7 @@ package com.ruoyi.system.service.impl.entrepreneurPark;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.DTO.PolicyArticleDTO;
 import com.ruoyi.system.domain.entity.PolicyArticle;
 import com.ruoyi.system.domain.entity.PolicyCategory;
@@ -30,6 +31,9 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
 
     @Autowired
     private PolicyCategoryMapper policyCategoryMapper;
+
+    @Autowired
+    private PolicyArticleMapper policyArticleMapper;
 
     @Override
     public boolean addPolicyArticle(PolicyArticleDTO policyArticleDTO) {
@@ -155,10 +159,26 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
     }
 
     @Override
-    public Page<PolicyArticleVO> getPolicyArticles(int page, int size) {
+    public Page<PolicyArticleVO> getPolicyArticles(int page, int size,String categoryName) {
+        int categoryId = 0;
+        QueryWrapper<PolicyCategory> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("category_name", categoryName);
+         // 使用 policyCategoryMapper 的 selectList 方法
+        List<PolicyCategory> categories = policyCategoryMapper.selectList(queryWrapper1);
+        if(categories.size()>0){
+            categoryId = categories.get(0).getCategoryId();
+        }
+
+
         Page<PolicyArticle> policyArticlePage = new Page<>(page, size);
-        Page<PolicyArticle> resultPage = page(policyArticlePage);
-        List<PolicyArticle> records = resultPage.getRecords();
+        QueryWrapper<PolicyArticle> queryWrapper = new QueryWrapper<>();
+        if (categoryId != 0) {
+           queryWrapper.eq("category_id", categoryId);
+        }
+
+       Page<PolicyArticle> resultPage = policyArticleMapper.selectPage(policyArticlePage, queryWrapper);
+       List<PolicyArticle> records = resultPage.getRecords();
+
         List<PolicyArticleVO> policyArticleVOList = new ArrayList<>();
         for (PolicyArticle policyArticle : records) {
             PolicyArticleVO policyArticleVO = new PolicyArticleVO();

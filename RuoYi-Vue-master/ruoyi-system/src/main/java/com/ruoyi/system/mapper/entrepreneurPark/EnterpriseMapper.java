@@ -4,9 +4,17 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.system.domain.entity.Enterprise;
 import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface EnterpriseMapper extends BaseMapper<Enterprise> {
 
-    // 可以添加自定义查询方法，如果有需求的话
+      @Select("SELECT COUNT(*) FROM enterprise")
+      int getTotalEnterpriseCount();
+
+      @Select("SELECT industry_id, COUNT(*) AS count FROM enterprise GROUP BY industry_id")
+      List<Map<String, Object>> getIndustryCounts();
 }

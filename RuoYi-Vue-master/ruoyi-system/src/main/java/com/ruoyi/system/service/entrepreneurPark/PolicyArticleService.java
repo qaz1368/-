@@ -16,6 +16,6 @@ public interface PolicyArticleService extends IService<PolicyArticle> {
 
     PolicyArticleVO getPolicyArticleById(Integer id);
 
-    Page<PolicyArticleVO> getPolicyArticles(int page, int size);
+    Page<PolicyArticleVO> getPolicyArticles(int page, int size,String categoryName);
     // 可以在此定义自定义的业务方法
 }

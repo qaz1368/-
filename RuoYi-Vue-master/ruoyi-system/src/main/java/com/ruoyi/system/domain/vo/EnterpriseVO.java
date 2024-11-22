@@ -37,6 +37,9 @@ public class EnterpriseVO {
     @ApiModelProperty(value = "企业成立日期")
     private LocalDateTime establishmentDate;
 
+    @ApiModelProperty(value = "企业标签，例如“重点企业”或“普通企业”")
+    private String enterpriseLabel;
+
     @ApiModelProperty(value = "企业状态（初创、成长、成熟、关闭）", required = true)
     private String companyStatus;
 
@@ -75,6 +78,10 @@ public class EnterpriseVO {
 
     @ApiModelProperty(value = "是否缴纳社会保障（TRUE/FALSE）")
     private Boolean socialSecurity;
+
+
+    @ApiModelProperty(value = "项目获奖金额")
+    private BigDecimal awards;
 
     @ApiModelProperty(value = "项目获奖情况")
     private String awardsReceived;

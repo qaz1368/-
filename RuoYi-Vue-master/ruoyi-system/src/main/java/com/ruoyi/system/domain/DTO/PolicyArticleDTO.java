@@ -28,11 +28,12 @@ public class PolicyArticleDTO {
     @ApiModelProperty("文章内容")
     private String content;
 
-    @TableField("publish_date")
     @ApiModelProperty("发布日期")
     private LocalDate publishDate;
 
-    @TableField("status")
+    @ApiModelProperty("截止时间")
+    private LocalDate deadlineDate;
+
     @ApiModelProperty("文章状态")
     private String status;
 

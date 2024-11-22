@@ -40,6 +40,10 @@ public class PolicyArticle {
     @ApiModelProperty("发布日期")
     private LocalDate publishDate;
 
+    @TableField("deadline_date")
+    @ApiModelProperty("截止时间")
+    private LocalDate deadlineDate;
+
     @TableField("status")
     @ApiModelProperty("文章状态")
     private String status;

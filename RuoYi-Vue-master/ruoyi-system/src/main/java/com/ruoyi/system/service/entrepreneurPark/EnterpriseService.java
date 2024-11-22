@@ -14,5 +14,5 @@ public interface EnterpriseService extends IService<Enterprise> {
      * @param companyName 企业名称
      * @return 分页后的企业信息
      */
-    Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String companyName);
+    Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String companyName,String companyStatus);
 }

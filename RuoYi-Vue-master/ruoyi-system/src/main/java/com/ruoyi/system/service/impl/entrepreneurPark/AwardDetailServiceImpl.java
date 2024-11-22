@@ -10,6 +10,7 @@ import com.ruoyi.system.domain.entity.CompetitionName;
 import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
+import com.ruoyi.system.domain.vo.AwardTypeVO;
 import com.ruoyi.system.mapper.entrepreneurPark.AwardDetailMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.CompetitionNameMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.CompetitionTypeMapper;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,9 +98,14 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
     }
 
     @Override
-    public Page<AwardDetailVO> getAwardDetailsPage(int page, int size) {
+    public Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer enterpriseId) {
         Page<AwardDetail> pageRequest = new Page<>(page, size);
-        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, null).getRecords();
+        QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
+         if (enterpriseId != null) {
+            queryWrapper.eq("enterprise_id", enterpriseId);
+        }
+
+        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, queryWrapper).getRecords();
 
         List<AwardDetailVO> awardDetailVOS = new ArrayList<>();
         for (AwardDetail awardDetail : awardDetails) {
@@ -132,4 +139,69 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
     }
 
+    @Override
+    public List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId) {
+        QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
+        if (enterpriseId != null) {
+            queryWrapper.eq("enterprise_id", enterpriseId);
+        }
+
+        List<AwardDetail> awardDetails = awardDetailMapper.selectList(queryWrapper);
+
+        List<AwardDetailVO> awardDetailVOS = new ArrayList<>();
+        for (AwardDetail awardDetail : awardDetails) {
+            AwardDetailVO awardDetailVO = new AwardDetailVO();
+            awardDetailVO.setAwardId(awardDetail.getAwardId());
+
+            // 查询企业名
+            Enterprise enterprise = enterpriseMapper.selectById(awardDetail.getEnterpriseId());
+            if (enterprise != null) {
+                awardDetailVO.setEnterprise(enterprise.getCompanyName());
+            }
+
+            // 查询比赛名
+            CompetitionName competitionNames = competitionNameMapper.selectById(awardDetail.getCompetitionId());
+            if (competitionNames != null) {
+                awardDetailVO.setCompetition(competitionNames.getCompetitionName());
+            }
+
+            // 查询级别
+            CompetitionType competitionTypes = competitionTypeMapper.selectById(awardDetail.getTypeId());
+            if (competitionTypes != null) {
+                awardDetailVO.setType(competitionTypes.getLevel());
+            }
+            BeanUtils.copyProperties(awardDetail, awardDetailVO);
+            awardDetailVOS.add(awardDetailVO);
+        }
+
+        return awardDetailVOS;
+    }
+
+    @Override
+    public long getTotalAwardCount() {
+        return count();
+    }
+
+    @Override
+    public BigDecimal getTotalSubsidyAmount() {
+        return awardDetailMapper.getTotalSubsidyAmount();
+    }
+
+    @Override
+    public List<AwardTypeVO> getAwardTypeSummary() {
+        List<AwardTypeVO> awardTypeVOS = new ArrayList<>();
+
+        List<CompetitionType> competitionTypes = competitionTypeMapper.selectList(null);
+        for (CompetitionType competitionType : competitionTypes) {
+            AwardTypeVO awardTypeVO = new AwardTypeVO();
+            awardTypeVO.setLevel(competitionType.getLevel());
+
+            BigDecimal totalSubsidyAmount = awardDetailMapper.getTotalSubsidyAmountByTypeId(competitionType.getId());
+            awardTypeVO.setTotalSubsidyAmount(totalSubsidyAmount);
+
+            awardTypeVOS.add(awardTypeVO);
+        }
+
+        return awardTypeVOS;
+    }
 }

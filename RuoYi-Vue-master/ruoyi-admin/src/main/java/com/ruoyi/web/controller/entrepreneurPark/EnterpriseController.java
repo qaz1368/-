@@ -25,10 +25,12 @@ public class EnterpriseController {
     public Page<EnterpriseVO> list(
             @ApiParam(value = "当前页", defaultValue = "1") @RequestParam(defaultValue = "1") int page,
             @ApiParam(value = "每页条数", defaultValue = "10") @RequestParam(defaultValue = "10") int size,
-            @ApiParam(value = "企业名称（模糊查询）") @RequestParam(required = false) String companyName) {
+            @ApiParam(value = "企业名称（模糊查询）") @RequestParam(required = false) String companyName,
+            @ApiParam(value = "企业状态（初创、成长、成熟、关闭）") @RequestParam(required = false) String companyStatus
+    ) {
 
         Page<Enterprise> pageRequest = new Page<>(page, size);
-        return enterpriseService.getEnterprisePage(pageRequest, companyName);
+        return enterpriseService.getEnterprisePage(pageRequest, companyName, companyStatus);
     }
 
     @ApiOperation("新增企业信息")

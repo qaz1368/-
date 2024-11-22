@@ -11,51 +11,71 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@ApiModel("创业园信息")
-@TableName("student_entrepreneurship_park") // 映射数据库表
+@ApiModel(description = "创业园区信息")
+@TableName("student_entrepreneurship_park")
 public class StudentEntrepreneurshipPark {
 
-    @ApiModelProperty("创业园ID")
-    @TableId("park_id") // 映射字段名
+    @TableId
+    @ApiModelProperty(value = "创业园区唯一标识", example = "1")
     private Integer parkId;
 
-    @ApiModelProperty("创业园名称")
     @TableField("park_name")
+    @ApiModelProperty(value = "创业园名称", example = "科技创新园区")
     private String parkName;
 
-    @ApiModelProperty("所属行业")
     @TableField("industry")
+    @ApiModelProperty(value = "所属行业", example = "科技")
     private String industry;
 
-    @ApiModelProperty("入驻地址")
     @TableField("address")
+    @ApiModelProperty(value = "入驻地址", example = "北京市海淀区")
     private String address;
 
-    @ApiModelProperty("团队成员数量")
     @TableField("company_members")
+    @ApiModelProperty(value = "团队成员数量", example = "50")
     private Integer companyMembers;
 
-    @ApiModelProperty("入驻日期")
     @TableField("entry_date")
+    @ApiModelProperty(value = "入驻日期", example = "2024-01-01")
     private Date entryDate;
 
-    @ApiModelProperty("资金支持金额")
     @TableField("financial_support")
+    @ApiModelProperty(value = "资金支持金额", example = "500000.00")
     private BigDecimal financialSupport;
 
-    @ApiModelProperty("投入经费")
     @TableField("investment_amount")
+    @ApiModelProperty(value = "投入经费（单位：元）", example = "2000000.00")
     private BigDecimal investmentAmount;
 
-    @ApiModelProperty("整体面积")
     @TableField("total_area")
+    @ApiModelProperty(value = "整体面积（单位：平方米）", example = "15000.50")
     private BigDecimal totalArea;
 
-    @ApiModelProperty("记录创建时间")
+    @TableField("graduate_count")
+    @ApiModelProperty(value = "创业毕业生数量", example = "100")
+    private Integer graduateCount;
+
+    @TableField("project_count")
+    @ApiModelProperty(value = "创业项目数量", example = "25")
+    private Integer projectCount;
+
+    @TableField("trainee_count")
+    @ApiModelProperty(value = "培训学员数量", example = "200")
+    private Integer traineeCount;
+
+    @TableField("employment_count")
+    @ApiModelProperty(value = "带动就业人数数量", example = "300")
+    private Integer employmentCount;
+
+    @TableField("government_subsidy")
+    @ApiModelProperty(value = "政府补贴金额", example = "100000.00")
+    private BigDecimal governmentSubsidy;
+
     @TableField("created_at")
+    @ApiModelProperty(value = "记录创建时间", example = "2024-01-01 12:00:00")
     private Date createdAt;
 
-    @ApiModelProperty("最后更新时间")
     @TableField("updated_at")
+    @ApiModelProperty(value = "最后更新时间", example = "2024-01-01 12:00:00")
     private Date updatedAt;
 }

@@ -6,12 +6,15 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.domain.DTO.AwardDetailDTO;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
+import com.ruoyi.system.domain.vo.AwardTypeVO;
 import com.ruoyi.system.service.entrepreneurPark.AwardDetailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Api(tags = "获奖情况管理接口")
@@ -46,14 +49,22 @@ public class AwardDetailController {
         return awardDetailService.deleteBatch(awardIds);
     }
 
+
     @ApiOperation("分页查询获奖情况")
     @GetMapping("/page")
     public Page<AwardDetailVO> page(
-               @RequestParam(value = "page", defaultValue = "1") int page,
-               @RequestParam(value = "size", defaultValue = "10") int size) {
-        return awardDetailService.getAwardDetailsPage(page, size);
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @ApiParam(value = "企业id") @RequestParam(required = false) Integer enterpriseId) {
+        return awardDetailService.getAwardDetailsPage(page, size, enterpriseId);
     }
 
+   @ApiOperation("获取企业id对应获奖情况")
+    @GetMapping("/getAwardDetailsId")
+    public List<AwardDetailVO> getAwardDetailsId(
+            @ApiParam(value = "企业id") @RequestParam(required = false) Integer enterpriseId) {
+        return awardDetailService.getAwardDetailsId(enterpriseId);
+    }
 
     /**
      * 根据AwardId获取获奖情况
@@ -66,6 +77,39 @@ public class AwardDetailController {
             return AjaxResult.success(awardDetailService.getById(awardId));
         } catch (Exception e) {
             return AjaxResult.error("获取获奖详情失败，请稍后再试");
+        }
+    }
+
+    @ApiOperation("获取获奖总数")
+    @GetMapping("/getTotalAwardCount")
+    public AjaxResult getTotalAwardCount() {
+        try {
+            long totalAwardCount = awardDetailService.getTotalAwardCount();
+            return AjaxResult.success(totalAwardCount);
+        } catch (Exception e) {
+            return AjaxResult.error("获取获奖总数失败，请稍后再试");
+        }
+    }
+
+    @ApiOperation("获取获奖总补贴")
+    @GetMapping("/getTotalSubsidyAmount")
+    public AjaxResult getTotalSubsidyAmount() {
+        try {
+            BigDecimal totalSubsidyAmount = awardDetailService.getTotalSubsidyAmount();
+            return AjaxResult.success(totalSubsidyAmount);
+        } catch (Exception e) {
+            return AjaxResult.error("获取获奖总补贴，请稍后再试");
+        }
+    }
+
+    @ApiOperation("获取获奖类型对应的补贴金额")
+    @GetMapping("/getAwardTypeSummary")
+    public AjaxResult getAwardTypeSummary() {
+        try {
+            List<AwardTypeVO> awardTypeSummary = awardDetailService.getAwardTypeSummary();
+            return AjaxResult.success(awardTypeSummary);
+        } catch (Exception e) {
+            return AjaxResult.error("获取不同类型获奖情况汇总失败，请稍后再试");
         }
     }
 }
