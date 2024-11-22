@@ -110,6 +110,7 @@
     <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
     <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
     <el-table-column label="地域" align="center" key="region" prop="region" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+    <el-table-column label="企业标签" align="center" key="enterpriseLabel" prop="enterpriseLabel" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="注册地址" align="center" key="registeredAddress" prop="registeredAddress" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
     <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
@@ -141,6 +142,8 @@
         {{ formatBoolean(scope.row.entrepreneurshipGuidance) }}
       </template>
     </el-table-column>
+    <el-table-column label="获奖补助金额" align="center" key="awards" prop="awards" v-if="columns[1].visible" width="120" />
+    <el-table-column label="获奖情况" align="center" key="awardsReceived" prop="awardsReceived" v-if="columns[1].visible" width="160" :show-overflow-tooltip="true"  />
     <el-table-column label="备注" align="center" key="remarks" prop="remarks" v-if="columns[1].visible" width="120" />
     <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[1].visible" width="160" />
     <el-table-column label="最后更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[0].visible" width="160" />
@@ -194,6 +197,18 @@
       <el-col :span="12">
         <el-form-item label="注册地址" prop="registeredAddress">
           <el-input v-model="form.registeredAddress" placeholder="请输入注册地址" maxlength="50" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+        <el-row>
+      <el-col :span="12">
+        <el-form-item label="地域" prop="industry">
+          <el-input v-model="form.region" placeholder="请输入地域" maxlength="30" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="企业标签" prop="registeredAddress">
+          <el-input v-model="form.enterpriseLabel" placeholder="请输入企业标签" maxlength="50" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -458,6 +473,7 @@ const data = reactive({
     companyName: null,
     industry: null,
     region: null,
+    enterpriseLabel: null,
     registeredAddress: null,
     legalPerson: null,
     establishmentDate: null,
@@ -474,6 +490,7 @@ const data = reactive({
     loanAmount: null,
     governmentSubsidy: null,
     socialSecurity: null,
+    awards: null,
     awardsReceived: null,
     entrepreneurshipGuidance: null,
     remarks: null,

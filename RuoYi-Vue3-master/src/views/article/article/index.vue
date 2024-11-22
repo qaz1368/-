@@ -116,6 +116,11 @@
                 <span>{{ scope.row.publishDate }}</span>
               </template>
             </el-table-column>
+             <el-table-column label="截止时间" align="center" key="publishDate" prop="publishDate" width="120">
+              <template #default="scope">
+                <span>{{ scope.row.deadlineDate }}</span>
+              </template>
+            </el-table-column>
             <el-table-column label="文章状态" align="center" key="status" prop="status">
 
             </el-table-column>
@@ -189,6 +194,11 @@
           <el-col :span="12">
             <el-form-item label="发布日期" prop="publishDate">
               <el-date-picker v-model="form.publishDate" type="date" placeholder="选择发布日期" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="截止时间" prop="publishDate">
+              <el-date-picker v-model="form.deadlineDate" type="date" placeholder="选择截止时间" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -315,6 +325,7 @@ const data = reactive({
     title: [{ required: true, message: "文章标题不能为空", trigger: "blur" }],
     content: [{ required: true, message: "文章内容不能为空", trigger: "blur" }],
     publishDate: [{ required: true, message: "发布日期不能为空", trigger: "change" }],
+    deadlineDate: [{ required: true, message: "截止时间不能为空", trigger: "change" }],
     status: [{ required: true, message: "文章状态不能为空", trigger: "change" }]
 }
 
