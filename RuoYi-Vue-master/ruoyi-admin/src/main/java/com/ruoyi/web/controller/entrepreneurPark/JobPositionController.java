@@ -23,10 +23,11 @@ public class JobPositionController {
     @ApiOperation(value = "获取岗位列表（分页）")
     @GetMapping("/list")
     public Page<JobPosition> getJobPositionsPage(
-            @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
-            @ApiParam(value = "每页大小", required = true) @RequestParam int pageSize) {
+            @ApiParam(value = "页码", required = false) @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         return jobPositionService.getJobPositionsPage(pageNum, pageSize);
     }
+
 
     @ApiOperation(value = "根据ID删除岗位")
     @DeleteMapping("/{id}")
@@ -43,14 +44,24 @@ public class JobPositionController {
     }
 
     @ApiOperation(value = "添加岗位")
-    @PostMapping
+    @PostMapping("/add")
     public boolean addJobPosition(@Valid @RequestBody JobPosition jobPosition) {
         return jobPositionService.save(jobPosition);
     }
 
     @ApiOperation(value = "更新岗位")
-    @PutMapping
+    @PutMapping("/update")
     public boolean updateJobPosition(@Valid @RequestBody JobPosition jobPosition) {
         return jobPositionService.updateById(jobPosition);
+    }
+
+    /**
+     * 根据positionId获得岗位信息
+     */
+    @ApiOperation(value = "根据ID查询岗位详情")
+    @GetMapping("/{positionId}")
+    public JobPosition getJobPositionById(
+            @ApiParam(value = "岗位ID", required = true) @PathVariable Integer positionId) {
+        return jobPositionService.getById(positionId);
     }
 }

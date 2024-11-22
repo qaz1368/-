@@ -47,13 +47,9 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
             queryWrapper.eq("company_name", companyName);
         }
         if (companyStatus != null && !companyStatus.isEmpty()) {
-             if ("初创".equals(companyStatus) || "成长".equals(companyStatus) || "成熟".equals(companyStatus) || "关闭".equals(companyStatus)) {
-                queryWrapper.eq("company_status", companyStatus);
-            }
+            queryWrapper.eq("company_status", companyStatus);
         }
 
-         // 添加按年份降序排序
-         queryWrapper.orderByDesc("year");
 
         IPage<Enterprise> enterprisePage = enterpriseMapper.selectPage(page, queryWrapper);
 

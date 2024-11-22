@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @TableName("job_positions") // 映射数据库表名
 public class JobPosition {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "岗位唯一标识符", example = "1")
     private Integer positionId;
 

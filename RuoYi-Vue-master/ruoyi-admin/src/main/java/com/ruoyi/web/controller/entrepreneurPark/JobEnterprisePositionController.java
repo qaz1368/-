@@ -24,13 +24,14 @@ public class JobEnterprisePositionController {
     @ApiOperation(value = "获取企业与岗位关联列表（分页）")
     @GetMapping("/list")
     public Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage(
-            @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
-            @ApiParam(value = "每页大小", required = true) @RequestParam int pageSize) {
+            @ApiParam(value = "页码", required = false) @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         return jobEnterprisePositionService.getJobEnterprisePositionsPage(pageNum, pageSize);
     }
 
+
     @ApiOperation(value = "根据ID删除企业与岗位关联")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/del/{id}")
     public boolean deleteJobEnterprisePositionById(
             @ApiParam(value = "企业岗位关联ID", required = true) @PathVariable Integer id) {
         return jobEnterprisePositionService.removeById(id);
@@ -44,14 +45,24 @@ public class JobEnterprisePositionController {
     }
 
     @ApiOperation(value = "添加企业与岗位关联")
-    @PostMapping
+    @PostMapping("/add")
     public boolean addJobEnterprisePosition(@Valid @RequestBody JobEnterprisePosition jobEnterprisePosition) {
         return jobEnterprisePositionService.save(jobEnterprisePosition);
     }
 
     @ApiOperation(value = "更新企业与岗位关联")
-    @PutMapping
+    @PutMapping("/update")
     public boolean updateJobEnterprisePosition(@Valid @RequestBody JobEnterprisePosition jobEnterprisePosition) {
         return jobEnterprisePositionService.updateById(jobEnterprisePosition);
+    }
+
+    /**
+     * 根据enterpriseJobId查询招聘信息
+     */
+    @ApiOperation(value = "根据ID查询招聘信息")
+    @GetMapping("/{enterpriseJobId}")
+    public JobEnterprisePosition getJobEnterprisePositionById(
+            @ApiParam(value = "招聘信息ID", required = true) @PathVariable Integer enterpriseJobId) {
+        return jobEnterprisePositionService.getById(enterpriseJobId);
     }
 }
