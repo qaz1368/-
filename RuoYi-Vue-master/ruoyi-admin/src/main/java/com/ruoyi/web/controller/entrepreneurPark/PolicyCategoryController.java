@@ -35,22 +35,20 @@ public class PolicyCategoryController {
     }
 
     @ApiOperation("新增政策分类")
-    @PostMapping
+    @PostMapping("/add")
     public boolean addPolicyCategory(@RequestBody PolicyCategory policyCategory) {
         return policyCategoryService.save(policyCategory);
     }
 
     @ApiOperation("更新政策分类")
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     public boolean updatePolicyCategory(
-            @ApiParam(value = "分类ID", required = true) @PathVariable Integer id,
             @RequestBody PolicyCategory policyCategory) {
-        policyCategory.setCategoryId(id);
         return policyCategoryService.updateById(policyCategory);
     }
 
     @ApiOperation("删除政策分类")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public boolean deletePolicyCategory(
             @ApiParam(value = "分类ID", required = true) @PathVariable Integer id) {
         return policyCategoryService.removeById(id);

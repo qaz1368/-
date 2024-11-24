@@ -109,22 +109,8 @@
           <el-table-column label="标签ID" align="center" key="tagId" prop="tagId" v-if="columns[0].visible" />
           <el-table-column label="标签名称" align="center" key="tagName" prop="tagName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="标签更新时间" align="center" key="updatedAt" prop="dept.updatedAt" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column>
-            <template #default="scope">
-              <el-switch
-                  v-model="scope.row.status"
-                  active-value="0"
-                  inactive-value="1"
-                  @change="handleStatusChange(scope.row)"
-              ></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-            <template #default="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
+          <el-table-column label="标签更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
               <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
@@ -152,7 +138,7 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.tagName == undefined" label="标签名称" prop="userName">
+            <el-form-item  label="标签名称" prop="userName">
               <el-input v-model="form.tagName" placeholder="请输入标签名称" maxlength="30" />
             </el-form-item>
           </el-col>
@@ -207,6 +193,7 @@ import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {getCurrentInstance, reactive, ref} from "vue";
 import {toRefs} from "@vueuse/core";
+import {addTag, delTag, getTag, listTag, updateTag} from "@/api/article/tag";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -267,12 +254,11 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
+    tagName: [
+      { required: true, message: "标签名称不能为空", trigger: "blur" },
+    ]
   }
+
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -293,14 +279,29 @@ function getDeptTree() {
   });
 };
 /** 查询用户列表 */
+function formatDateTime(dateTime) {
+  const date = new Date(dateTime);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 function getList() {
   loading.value = true;
-  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listTag(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
-    userList.value = res.rows;
+    userList.value = res.records.map(item => ({
+      ...item,
+      createdAt: formatDateTime(item.createdAt),
+      updatedAt: formatDateTime(item.updatedAt)
+    }));
     total.value = res.total;
   });
-};
+}
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
@@ -321,9 +322,8 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
-    return delUser(userIds);
+  proxy.$modal.confirm('是否确认删除标签编号为"' + row.tagId + '"的数据项？').then(function () {
+    return delTag(row.tagId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -440,22 +440,17 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加标签";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
+  getTag(row.tagId).then(response => {
     form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
     open.value = true;
-    title.value = "修改用户";
+    title.value = "修改标签";
     form.password = "";
   });
 };
@@ -470,7 +465,7 @@ function submitForm() {
           getList();
         });
       } else {
-        addUser(form.value).then(response => {
+        addTag(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

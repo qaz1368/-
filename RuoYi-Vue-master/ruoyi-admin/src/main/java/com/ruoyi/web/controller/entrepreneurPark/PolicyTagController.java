@@ -36,22 +36,20 @@ public class PolicyTagController {
     }
 
     @ApiOperation("新增政策标签")
-    @PostMapping
+    @PostMapping("/add")
     public boolean addPolicyTag(@RequestBody PolicyTag policyTag) {
         return policyTagService.save(policyTag);
     }
 
     @ApiOperation("更新政策标签")
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     public boolean updatePolicyTag(
-            @ApiParam(value = "标签ID", required = true) @PathVariable Integer id,
             @RequestBody PolicyTag policyTag) {
-        policyTag.setTagId(id);
         return policyTagService.updateById(policyTag);
     }
 
     @ApiOperation("删除政策标签")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/del/{id}")
     public boolean deletePolicyTag(
             @ApiParam(value = "标签ID", required = true) @PathVariable Integer id) {
         return policyTagService.removeById(id);

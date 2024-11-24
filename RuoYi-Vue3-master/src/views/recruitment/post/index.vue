@@ -350,7 +350,7 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除用户编号为"' + row.positionId + '"的数据项？').then(function () {
+  proxy.$modal.confirm('是否确认删除岗位编号为"' + row.positionId + '"的数据项？').then(function () {
     return delPost(row.positionId);
   }).then(() => {
     getList();
