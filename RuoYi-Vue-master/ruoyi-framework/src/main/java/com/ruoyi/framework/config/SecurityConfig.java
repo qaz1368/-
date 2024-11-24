@@ -94,8 +94,7 @@ public class SecurityConfig
      * authenticated       |   用户登录后可访问
      */
     @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception
-    {
+    protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 // CSRF禁用，因为不使用session
                 .csrf(csrf -> csrf.disable())
@@ -121,6 +120,8 @@ public class SecurityConfig
                             .antMatchers("/award-details/page").permitAll()
                             .antMatchers("/policy-articles/list").permitAll()
                             .antMatchers("/industries/page").permitAll()
+                            // 新增的放行接口
+                            .antMatchers("/industries/ranking").permitAll()
                             // 除上面外的所有请求全部需要鉴权认证
                             .anyRequest().authenticated();
                 })
@@ -133,6 +134,7 @@ public class SecurityConfig
                 .addFilterBefore(corsFilter, LogoutFilter.class)
                 .build();
     }
+
 
 
     /**
