@@ -65,6 +65,16 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
+                type="success"
+                plain
+                icon="Edit"
+                :disabled="single"
+                @click="handleUpdate"
+                v-hasPermi="['system:user:edit']"
+            >修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
                 type="danger"
                 plain
                 icon="Delete"
@@ -97,28 +107,29 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="标签ID" align="center" key="tagId" prop="tagId" v-if="columns[0].visible" />
-          <el-table-column label="标签名称" align="center" key="tagName" prop="tagName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.createdAt) }}</span>
-          </template>
+          <el-table-column label="标签名称" align="center" key="tagName" prop="tagName" v-if="columns[1].visible"  />
+          <el-table-column label="创建时间" align="center" prop="createdAt"  v-if="columns[2].visible" width="300">
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.createdAt) }}</span>
+            </template>
           </el-table-column>
-          <el-table-column label="标签更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[3].visible" :show-overflow-tooltip="true" >
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.updatedAt) }}</span>
-          </template>
+          <el-table-column label="更新时间" align="center" prop="updatedAt" v-if="columns[3].visible" width="300">
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.updatedAt) }}</span>
+            </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+          <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
             <template #default="scope">
               <el-tooltip content="修改" placement="top">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:policyCategory:edit']"></el-button>
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:tag:edit']"></el-button>
               </el-tooltip>
               <el-tooltip content="删除" placement="top">
-                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:policyCategory:remove']"></el-button>
+                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:tag:remove']"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
         </el-table>
+
 
         <pagination
             v-show="total > 0"
@@ -135,11 +146,12 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item  label="标签名称" prop="tagName">
+            <el-form-item label="标签名称" prop="tagName">
               <el-input v-model="form.tagName" placeholder="请输入标签名称" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -148,6 +160,7 @@
         </div>
       </template>
     </el-dialog>
+
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -188,9 +201,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {getCurrentInstance, reactive, ref} from "vue";
-import {toRefs} from "@vueuse/core";
-import {addPost, getPost, listTag,updatePost,delPost} from "../../../api/article/tag";
+import {addPost, delPost, getTag, listTag, updateTag} from "@/api/article/tag";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -238,11 +249,7 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {
-    tagId: null,
-    tagName: null,
-
-  },
+  form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -252,7 +259,10 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    tagName: [{ required: true, message: "标签不能为空", trigger: "blur" }],
+    tagName: [
+      { required: true, message: "标签名称不能为空", trigger: "blur" },
+      { min: 1, max: 30, message: "标签名称长度必须介于 1 和 30 之间", trigger: "blur" }
+    ]
   }
 });
 
@@ -302,7 +312,8 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除用户编号为"' + row.tagId + '"的数据项？').then(function () {
+
+  proxy.$modal.confirm('是否确认删除标签编号为"' + row.tagId + '"的数据项？').then(function () {
     return delPost(row.tagId);
   }).then(() => {
     getList();
@@ -314,6 +325,17 @@ function handleExport() {
   proxy.download("system/user/export", {
     ...queryParams.value,
   },`user_${new Date().getTime()}.xlsx`);
+};
+/** 用户状态修改  */
+function handleStatusChange(row) {
+  let text = row.status === "0" ? "启用" : "停用";
+  proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
+    return changeUserStatus(row.userId, row.status);
+  }).then(() => {
+    proxy.$modal.msgSuccess(text + "成功");
+  }).catch(function () {
+    row.status = row.status === "0" ? "1" : "0";
+  });
 };
 /** 更多操作 */
 function handleCommand(command, row) {
@@ -382,9 +404,18 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    tagId: null,
-    tagName: null,
-
+    userId: undefined,
+    deptId: undefined,
+    userName: undefined,
+    nickName: undefined,
+    password: undefined,
+    phonenumber: undefined,
+    email: undefined,
+    sex: undefined,
+    status: "0",
+    remark: undefined,
+    postIds: [],
+    roleIds: []
   };
   proxy.resetForm("userRef");
 };
@@ -408,10 +439,12 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
 
-  getPost(row.tagId).then(response => {
+  getTag(row.tagId).then(response => {
     form.value = response;
+
     open.value = true;
-    title.value = "修改标签信息";
+    title.value = "修改标签";
+    form.password = "";
   });
 };
 /** 提交按钮 */
@@ -419,7 +452,7 @@ function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
       if (form.value.tagId != undefined) {
-        updatePost(form.value).then(response => {
+        updateTag(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

@@ -9,15 +9,15 @@ export function listApply(query) {
   })
 }
 //根据tagId查询标签信息
-export function getPost(approvalId) {
+export function getApply(approvalId) {
   return request({
-    url: `/api/approval/${approvalId}`,
+    url: `/api/approval/get/${approvalId}`,
     method: 'get'
   })
 }
 
 //根据tagId删除标签信息
-export function delPost(approvalId) {
+export function delApply(approvalId) {
   return request({
     url: `/api/approval/delete/${approvalId}`,
     method: 'delete'
@@ -26,7 +26,7 @@ export function delPost(approvalId) {
 
 
 // 新增标签信息
-export function addPost(data) {
+export function addApply(data) {
   return request({
     url: '/api/approval/add',
     method: 'post',
@@ -35,7 +35,7 @@ export function addPost(data) {
 }
 
 // 修改标签信息
-export function updatePost(data) {
+export function updateApply(data) {
   return request({
     url: '/api/approval/update',
     method: 'put',

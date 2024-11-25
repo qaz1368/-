@@ -155,46 +155,30 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="申请ID" prop="applicationId">
-              <el-input v-model="form.applicationId" placeholder="请输入申请ID" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="流程ID" prop="processId">
-              <el-input v-model="form.processId" placeholder="请输入流程ID" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
             <el-form-item label="流程顺序" prop="sequence">
               <el-input v-model="form.sequence" placeholder="请输入流程顺序" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="审批状态" prop="approvalStatus">
-              <el-input v-model="form.approvalStatus" placeholder="请输入审批状态" maxlength="50" />
+              <!-- 使用 el-select 组件 -->
+              <el-select v-model="form.approvalStatus" placeholder="请选择审批状态">
+                <el-option
+                    v-for="item in approvalStatusOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="审批部门ID" prop="departmentId">
-              <el-input v-model="form.departmentId" placeholder="请输入审批部门ID" maxlength="50" />
+            <el-form-item label="审批备注" prop="comments">
+              <el-input v-model="form.comments" placeholder="请输入审批备注" maxlength="50" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="审批日期" prop="approvalDate">
-              <el-date-picker v-model="form.approvalDate" type="datetime" placeholder="选择日期时间" disabled></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-        <el-col :span="12">
-          <el-form-item label="审批备注" prop="comments">
-            <el-input v-model="form.comments" placeholder="请输入审批备注" maxlength="50" />
-          </el-form-item>
-        </el-col>
         </el-row>
       </el-form>
       <template #footer>
@@ -204,6 +188,7 @@
         </div>
       </template>
     </el-dialog>
+
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -244,7 +229,13 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addPost, listApply,delPost,updatePost,getPost} from "../../../api/approval/apply";
+import {
+
+  listApply,
+  addApply,
+  updateApply,
+  delApply, getApply
+} from "../../../api/approval/apply";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -314,14 +305,17 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
-  }
-});
+    sequence: [{ required: true, message: '请输入流程顺序', trigger: 'blur' }],
+    approvalStatus: [{ required: true, message: '请选择审批状态', trigger: 'change' }],
+    comments: [{ required: true, message: '请输入审批备注', trigger: 'blur' }]
+  },
 
+});
+const approvalStatusOptions = [
+  { value: 0, label: '拒绝' },
+  { value: 1, label: '通过' },
+  { value: 2, label: '待定' }
+];
 const { queryParams, form, rules } = toRefs(data);
 
 /** 通过条件过滤节点  */
@@ -340,15 +334,29 @@ function getDeptTree() {
   });
 };
 /** 查询用户列表 */
+// 定义审批状态的映射对象
+const approvalStatusMap = {
+  0: '拒绝',
+  1: '通过',
+  2: '待定'
+};
+
 function getList() {
   loading.value = true;
   listApply(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-    console.log("审批记录",res.records)
+    console.log("审批记录", res.records);
+
+    // 遍历记录，将审批状态转换为中文
+    const transformedRecords = res.records.map(record => ({
+      ...record,
+      approvalStatus: approvalStatusMap[record.approvalStatus] || '未知状态'
+    }));
+
     loading.value = false;
-    userList.value = res.records;
+    userList.value = transformedRecords;
     total.value = res.total;
   });
-};
+}
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
@@ -367,10 +375,12 @@ function resetQuery() {
   proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
 };
+
+
 /** 删除按钮操作 */
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除用户编号为"' + row.approvalId + '"的数据项？').then(function () {
-    return delPost(row.approvalId);
+    return delApply(row.approvalId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -470,6 +480,7 @@ function reset() {
     comments: null,
     createdAt: null,
     updatedAt: null,
+
   };
   proxy.resetForm("userRef");
 };
@@ -485,18 +496,22 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加标签";
+    title.value = "添加审批";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
+
 function handleUpdate(row) {
   reset();
 
-  getPost(row.approvalId).then(response => {
+  getApply(row.approvalId).then(response => {
+    // 将 approvalStatus 的值转换为中文
+    response.approvalStatus = approvalStatusMap[response.approvalStatus] || '未知状态';
+
     form.value = response;
     open.value = true;
-    title.value = "修改标签信息";
+    title.value = "修改审批信息";
   });
 };
 /** 提交按钮 */
@@ -504,13 +519,13 @@ function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
       if (form.value.approvalId != undefined) {
-        updatePost(form.value).then(response => {
+        updateApply(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addPost(form.value).then(response => {
+        addApply(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

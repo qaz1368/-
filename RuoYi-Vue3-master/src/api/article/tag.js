@@ -8,18 +8,12 @@ export function listTag(query) {
     params: query
   })
 }
-//根据tagId查询标签信息
-export function getPost(tagId) {
-  return request({
-    url: `/policy-tags/${tagId}`,
-    method: 'get'
-  })
-}
+
 
 //根据tagId删除标签信息
 export function delPost(tagId) {
   return request({
-    url: `/policy-tags/${tagId}`,
+    url: `/policy-tags/del/${tagId}`,
     method: 'delete'
   })
 }
@@ -34,16 +28,25 @@ export function addPost(data) {
   })
 }
 
-// 修改标签信息
-export function updatePost(data) {
+
+
+
+//根据tagId查询文章信息
+export function getTag(tagId) {
+  return request({
+    url: `/policy-tags/${tagId}`,
+    method: 'get',
+  })
+}
+
+
+//修改奖项名称信息
+export function updateTag(data) {
   return request({
     url: '/policy-tags/update',
     method: 'put',
     data: data
   })
 }
-
-//
-
 
 

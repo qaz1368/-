@@ -147,19 +147,27 @@
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
+
           <el-col :span="12">
             <el-form-item label="分类名称" prop="categoryName">
               <el-input v-model="form.categoryName" placeholder="请输入分类名称" maxlength="30" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="分类描述" prop="categoryDescription">
-              <el-input v-model="form.categoryDescription" placeholder="请输入分类描述" maxlength="30" />
+              <el-input v-model="form.categoryDescription" placeholder="请输入分类描述" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+
+          <el-col :span="12">
+            <el-form-item label="创建时间" prop="createdAt">
+              <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择日期时间" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -168,6 +176,7 @@
         </div>
       </template>
     </el-dialog>
+
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -208,8 +217,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addType, getTypeById, updateType,delType,listType} from "../../../api/article/type";
-import {getCurrentInstance, reactive, ref} from "vue";
+import {addType, delType, getType, listType, updateType} from "@/api/article/type";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -257,13 +265,7 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {
-    categoryId:null,
-    categoryName:null,
-    categoryDescription:null,
-    createdAt:null,
-    updatedAt:null,
-  },
+  form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -273,9 +275,11 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    categoryName: [{ required: true, message: "分类名称不能为空", trigger: "blur" }],
-    categoryDescription: [{ required: true, message: "分类描述不能为空", trigger: "blur" }]
-
+    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
+    nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
+    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
+    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
+    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
   }
 });
 
@@ -325,7 +329,8 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除用户编号为"' + row.categoryId + '"的数据项？').then(function () {
+
+  proxy.$modal.confirm('是否确认删除类型编号为"' + row.categoryId + '"的数据项？').then(function () {
     return delType(row.categoryId);
   }).then(() => {
     getList();
@@ -416,11 +421,18 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    categoryId:null,
-    categoryName:null,
-    categoryDescription:null,
-    createdAt:null,
-    updatedAt:null,
+    userId: undefined,
+    deptId: undefined,
+    userName: undefined,
+    nickName: undefined,
+    password: undefined,
+    phonenumber: undefined,
+    email: undefined,
+    sex: undefined,
+    status: "0",
+    remark: undefined,
+    postIds: [],
+    roleIds: []
   };
   proxy.resetForm("userRef");
 };
@@ -436,18 +448,19 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "修改类型";
+    title.value = "添加标签";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  getTypeById(row.categoryId).then(response => {
-    console.log("修改类型",response)
+
+  getType(row.categoryId).then(response => {
     form.value = response;
+
     open.value = true;
-    title.value = "修改类型";
+    title.value = "修改标签类型";
     form.password = "";
   });
 };
@@ -455,7 +468,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.categoryId != null) {
+      if (form.value.categoryId != undefined) {
         updateType(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;

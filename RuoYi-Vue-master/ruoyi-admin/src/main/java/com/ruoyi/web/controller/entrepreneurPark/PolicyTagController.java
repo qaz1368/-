@@ -1,21 +1,17 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ruoyi.system.domain.DTO.PolicyTagDTO;
 import com.ruoyi.system.domain.entity.PolicyTag;
 import com.ruoyi.system.service.entrepreneurPark.PolicyTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/policy-tags")
 @Api(tags = "政策标签管理")
@@ -33,20 +29,15 @@ public class PolicyTagController {
     }
 
     @ApiOperation("根据ID查询政策标签详情")
-    @GetMapping("/{id}")
+    @GetMapping("/{tagId}")
     public PolicyTag getPolicyTagById(
-            @ApiParam(value = "标签ID", required = true) @PathVariable Integer id) {
-        return policyTagService.getById(id);
+            @ApiParam(value = "标签ID", required = true) @PathVariable Integer tagId) {
+        return policyTagService.getById(tagId);
     }
 
     @ApiOperation("新增政策标签")
     @PostMapping("/add")
-    public boolean addPolicyTag(@RequestBody PolicyTagDTO policyTagDTO) {
-        log.info("新增政策标签：{}", policyTagDTO);
-        PolicyTag policyTag = new PolicyTag();
-        policyTag.setTagName(policyTagDTO.getTagName());
-        policyTag.setCreatedAt(LocalDateTime.now());
-        policyTag.setUpdatedAt(LocalDateTime.now());
+    public boolean addPolicyTag(@RequestBody PolicyTag policyTag) {
         return policyTagService.save(policyTag);
     }
 
@@ -58,7 +49,7 @@ public class PolicyTagController {
     }
 
     @ApiOperation("删除政策标签")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/del/{id}")
     public boolean deletePolicyTag(
             @ApiParam(value = "标签ID", required = true) @PathVariable Integer id) {
         return policyTagService.removeById(id);

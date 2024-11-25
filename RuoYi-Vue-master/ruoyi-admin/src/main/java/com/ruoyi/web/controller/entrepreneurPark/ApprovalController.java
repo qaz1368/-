@@ -47,6 +47,16 @@ public class ApprovalController {
         return approvalService.removeById(id);  // 使用 MyBatis-Plus 的 removeById 方法
     }
 
+    /**
+     * 根据approvalId查询审批信息
+     * @param approvalId
+     * @return
+     */
+    @GetMapping("/get/{approvalId}")
+    public Approval getApprovalById(@PathVariable Integer approvalId) {
+        return approvalService.getById(approvalId);  // 使用 MyBatis-Plus 的 getById 方法
+    }
+
     @ApiOperation(value = "批量删除审批", notes = "根据ID列表批量删除审批")
     @DeleteMapping("/delete-batch")
     public boolean deleteApprovalBatch(@RequestBody List<Integer> ids) {
