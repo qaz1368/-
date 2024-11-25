@@ -106,29 +106,26 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-          <el-table-column label="申请人姓名" align="center" key="applicant_name" prop="application_name" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="申请人手机号" align="center" key="applicant_phone" prop="application_phone" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="申请人邮箱" align="center" key="applicant_email" prop="applicant_email" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="申请日期" align="center" key="applicant_date" prop="applicant_date" v-if="columns[4].visible" width="120" />
-          <el-table-column label="申请状态" align="center" key="status" v-if="columns[5].visible">
+          <el-table-column label="审批记录ID" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+          <el-table-column label="申请ID" align="center" key="applicationId" prop="applicationId" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="流程ID" align="center" key="processId" prop="processId" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="流程顺序" align="center" key="sequence" prop="sequence" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="审批状态" align="center" key="approvalStatus" prop="approvalStatus" v-if="columns[4].visible" width="120" />
+          <el-table-column label="审批部门" align="center" key="departmentId" prop="departmentId" v-if="columns[4].visible" width="120" />
+          <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
             <template #default="scope">
-              <el-switch
-                  v-model="scope.row.status"
-                  active-value="0"
-                  inactive-value="1"
-                  @change="handleStatusChange(scope.row)"
-              ></el-switch>
+              <span>{{ parseTime(scope.row.approvalDate) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+          <el-table-column label="审批备注" align="center" key="comments" prop="comments" v-if="columns[4].visible" width="120" />
+          <el-table-column label="创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
             <template #default="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
+              <span>{{ parseTime(scope.row.createdAt) }}</span>
             </template>
           </el-table-column>
-            <el-table-column label="企业描述" align="center" prop="enterprise_description" v-if="columns[7].visible" width="160">
+          <el-table-column label="更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[3].visible" :show-overflow-tooltip="true" >
             <template #default="scope">
-              <span>{{ parseTime(scope.row.enterprise_description) }}</span>
+              <span>{{ parseTime(scope.row.updatedAt) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
@@ -138,12 +135,6 @@
               </el-tooltip>
               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -164,106 +155,46 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+            <el-form-item label="申请ID" prop="applicationId">
+              <el-input v-model="form.applicationId" placeholder="请输入申请ID" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select
-                  v-model="form.deptId"
-                  :data="deptOptions"
-                  :props="{ value: 'id', label: 'label', children: 'children' }"
-                  value-key="id"
-                  placeholder="请选择归属部门"
-                  check-strictly
-              />
+            <el-form-item label="流程ID" prop="processId">
+              <el-input v-model="form.processId" placeholder="请输入流程ID" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
+            <el-form-item label="流程顺序" prop="sequence">
+              <el-input v-model="form.sequence" placeholder="请输入流程顺序" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+            <el-form-item label="审批状态" prop="approvalStatus">
+              <el-input v-model="form.approvalStatus" placeholder="请输入审批状态" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
+            <el-form-item label="审批部门ID" prop="departmentId">
+              <el-input v-model="form.departmentId" placeholder="请输入审批部门ID" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
+            <el-form-item label="审批日期" prop="approvalDate">
+              <el-date-picker v-model="form.approvalDate" type="datetime" placeholder="选择日期时间" disabled></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择">
-                <el-option
-                    v-for="dict in sys_user_sex"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in postOptions"
-                    :key="item.postId"
-                    :label="item.postName"
-                    :value="item.postId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                    :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="备注">
-              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
+        <el-col :span="12">
+          <el-form-item label="审批备注" prop="comments">
+            <el-input v-model="form.comments" placeholder="请输入审批备注" maxlength="50" />
+          </el-form-item>
+        </el-col>
         </el-row>
       </el-form>
       <template #footer>
@@ -313,6 +244,8 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
+import {addPost, listApply} from "../../../api/approval/apply";
+import {delPost} from "../../../api/article/tag";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -361,7 +294,18 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    approvalId:null,
+    applicationId: null,
+    processId: null,
+    sequence: null,
+    approvalStatus: null,
+    departmentId: null,
+    approvalDate: null,
+    comments: null,
+    createdAt: null,
+    updatedAt: null,
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -399,7 +343,8 @@ function getDeptTree() {
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
-  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listApply(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+    console.log("审批记录",res.rows)
     loading.value = false;
     userList.value = res.rows;
     total.value = res.total;
@@ -425,9 +370,8 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
-    return delUser(userIds);
+  proxy.$modal.confirm('是否确认删除用户编号为"' + row.approvalId + '"的数据项？').then(function () {
+    return delPost(row.approvalId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -517,18 +461,16 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    approvalId:null,
+    applicationId: null,
+    processId: null,
+    sequence: null,
+    approvalStatus: null,
+    departmentId: null,
+    approvalDate: null,
+    comments: null,
+    createdAt: null,
+    updatedAt: null,
   };
   proxy.resetForm("userRef");
 };
@@ -544,37 +486,32 @@ function handleAdd() {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
     open.value = true;
-    title.value = "添加用户";
+    title.value = "添加标签";
     form.value.password = initPassword.value;
   });
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
+
+  getPost(row.approvalId).then(response => {
+    form.value = response;
     open.value = true;
-    title.value = "修改用户";
-    form.password = "";
+    title.value = "修改标签信息";
   });
 };
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+      if (form.value.approvalId != undefined) {
+        updatePost(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addUser(form.value).then(response => {
+        addPost(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
