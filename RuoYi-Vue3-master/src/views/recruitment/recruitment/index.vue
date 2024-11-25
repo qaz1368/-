@@ -4,48 +4,14 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="岗位类型" prop="positionType">
             <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                v-model="queryParams.positionType"
+                placeholder="请输入岗位类型"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
-          </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input
-                v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
-                clearable
-                style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select
-                v-model="queryParams.status"
-                placeholder="用户状态"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -62,16 +28,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -107,6 +63,8 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="企业岗位关联唯一标识符" align="center" key="enterpriseJobId" prop="enterpriseJobId" v-if="columns[0].visible" />
+          <el-table-column label="企业" align="center" key="enterprise" prop="enterprise" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="岗位" align="center" key="position" prop="position" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="岗位类型" align="center" key="positionType" prop="positionType" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="薪资范围" align="center" key="salaryRange" prop="salaryRange" v-if="columns[4].visible" width="120" />
           <el-table-column label="工作地点" align="center" key="location" prop="location" v-if="columns[5].visible" :show-overflow-tooltip="true" />

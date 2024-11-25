@@ -4,48 +4,14 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="比赛类型" prop="level">
             <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                v-model="queryParams.level"
+                placeholder="请输入比赛类型"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
-          </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input
-                v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
-                clearable
-                style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select
-                v-model="queryParams.status"
-                placeholder="用户状态"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -62,16 +28,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button

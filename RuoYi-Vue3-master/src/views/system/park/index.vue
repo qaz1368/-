@@ -4,53 +4,7 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
-            <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
-                clearable
-                style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input
-                v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
-                clearable
-                style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select
-                v-model="queryParams.status"
-                placeholder="用户状态"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-          </el-form-item>
+
         </el-form>
 
         <el-row :gutter="10" class="mb8">
@@ -62,16 +16,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -111,6 +55,11 @@
           <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="入驻地址" align="center" key="address" prop="address" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="团队成员数量" align="center" key="companyMembers" prop="companyMembers" v-if="columns[4].visible" width="120" />
+          <el-table-column label="创业毕业生数量" align="center" key="graduateCount" prop="graduateCount" v-if="columns[4].visible" width="120" />
+          <el-table-column label="创业项目数量" align="center" key="projectCount" prop="projectCount" v-if="columns[4].visible" width="120" />
+          <el-table-column label="培训学员数量" align="center" key="traineeCount" prop="traineeCount" v-if="columns[4].visible" width="120" />
+          <el-table-column label="带动就业人数数量" align="center" key="employmentCount" prop="employmentCount" v-if="columns[4].visible" width="120" />
+          <el-table-column label="政府补贴金额" align="center" key="governmentSubsidy" prop="governmentSubsidy" v-if="columns[4].visible" width="120" />
           <el-table-column label="入驻日期" align="center" key="entryDate" prop="entryDate" v-if="columns[1].visible" width="160">
             <template #default="scope">
               <span>{{ parseTime(scope.row.entryDate) }}</span>
@@ -124,7 +73,7 @@
               <span>{{ parseTime(scope.row.createdAt) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="最后更新时间" align="center" prop="updatedAt" v-if="columns[1].visible" width="160">
+          <el-table-column label="更新时间" align="center" prop="updatedAt" v-if="columns[1].visible" width="160">
             <template #default="scope">
               <span>{{ parseTime(scope.row.updatedAt) }}</span>
             </template>
@@ -180,6 +129,30 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="创业毕业生数量" prop="graduateCount">
+              <el-input v-model="form.graduateCount" placeholder="请输入创业毕业生数量" maxlength="100" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="创业项目数量" prop="projectCount">
+              <el-input v-model.number="form.projectCount" placeholder="请输入创业项目数量" type="number" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="培训学员数量" prop="traineeCount">
+              <el-input v-model="form.traineeCount" placeholder="请输入培训学员数量" maxlength="100" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="带动就业人数数量" prop="employmentCount">
+              <el-input v-model.number="form.employmentCount" placeholder="请输入带动就业人数数量" type="number" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="资金支持金额" prop="financialSupport">
               <el-input v-model.number="form.financialSupport" placeholder="请输入资金支持金额" type="number" />
             </el-form-item>
@@ -201,6 +174,13 @@
               <el-date-picker v-model="form.entryDate" type="date" placeholder="请选择入驻日期" style="width: 100%;" />
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
+        <el-col :span="12">
+          <el-form-item label="政府补贴金额" prop="governmentSubsidy">
+            <el-input v-model.number="form.governmentSubsidy" placeholder="请输入政府补贴金额" type="number" />
+          </el-form-item>
+        </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
@@ -306,7 +286,24 @@ const columns = ref([
 
 
 const data = reactive({
-  form: {},
+  form: {
+    parkId: undefined,
+    parkName: undefined,
+    industry: undefined,
+    address: undefined,
+    companyMembers: undefined,
+    financialSupport: undefined,
+    investmentAmount: undefined,
+    totalArea: undefined,
+    entryDate: undefined,
+    governmentSubsidy: undefined,
+    graduateCount: undefined,
+    projectCount: undefined,
+    traineeCount: undefined,
+    employmentCount: undefined,
+    createdAt: undefined,
+    updatedAt: undefined,
+  },
    queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -462,18 +459,22 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    parkId: undefined,
+    parkName: undefined,
+    industry: undefined,
+    address: undefined,
+    companyMembers: undefined,
+    financialSupport: undefined,
+    investmentAmount: undefined,
+    totalArea: undefined,
+    entryDate: undefined,
+    governmentSubsidy: undefined,
+    graduateCount: undefined,
+    projectCount: undefined,
+    traineeCount: undefined,
+    employmentCount: undefined,
+    createdAt: undefined,
+    updatedAt: undefined,
   };
   proxy.resetForm("userRef");
 };

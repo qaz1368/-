@@ -4,48 +4,23 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="分类" prop="category">
             <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                v-model="queryParams.category"
+                placeholder="请输入分类"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
+          <el-form-item label="标签" prop="primaryTag">
             <el-input
-                v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
+                v-model="queryParams.primaryTag"
+                placeholder="请输入标签"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select
-                v-model="queryParams.status"
-                placeholder="用户状态"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -62,16 +37,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -108,7 +73,7 @@
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column label="文章ID" align="center" key="articleId" prop="articleId" />
             <el-table-column label="分类" align="center" key="category" prop="category"  :show-overflow-tooltip="true" />
-            <el-table-column label="主要标签" align="center" key="primaryTag" prop="primaryTag"  :show-overflow-tooltip="true" />
+            <el-table-column label="标签" align="center" key="primaryTag" prop="primaryTag"  :show-overflow-tooltip="true" />
             <el-table-column label="文章标题" align="center" key="title" prop="title"  :show-overflow-tooltip="true" />
             <el-table-column label="文章内容" align="center" key="content" prop="content"  :show-overflow-tooltip="true" />
             <el-table-column label="发布日期" align="center" key="publishDate" prop="publishDate" width="120">
@@ -173,8 +138,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="主要标签" prop="primaryTag">
-              <el-input v-model="form.primaryTag" placeholder="请输入主要标签" />
+            <el-form-item label="标签" prop="primaryTag">
+              <el-input v-model="form.primaryTag" placeholder="请输入标签" />
             </el-form-item>
           </el-col>
           <el-col :span="12">

@@ -4,48 +4,23 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="姓名" prop="name">
             <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                v-model="queryParams.name"
+                placeholder="请输入姓名"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
+          <el-form-item label="学历" prop="educationLevel">
             <el-input
-                v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
+                v-model="queryParams.educationLevel"
+                placeholder="请输入学历"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select
-                v-model="queryParams.status"
-                placeholder="用户状态"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -62,16 +37,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -118,11 +83,9 @@
           <el-table-column label="职位" align="center" key="position" prop="position" v-if="columns[4].visible" width="120" />
           <el-table-column label="公司名称" align="center" key="company" prop="company" v-if="columns[4].visible" width="120" />
           <el-table-column label="联系方式" align="center" key="contactInfo" prop="contactInfo" v-if="columns[4].visible" width="120" />
-          <el-table-column label="入职日期" align="center" key="hireDate" prop="hireDate" v-if="columns[4].visible" width="120" />
-
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+          <el-table-column label="入职日期" align="center" prop="hireDate" v-if="columns[6].visible" width="160">
             <template #default="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
+              <span>{{ parseTime(scope.row.hireDate) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
@@ -153,17 +116,10 @@
   <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
     <el-row>
       <el-col :span="12">
-        <el-form-item label="管理者ID" prop="managerId">
-          <el-input v-model="form.managerId" placeholder="请输入管理者ID" maxlength="30" disabled />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入姓名" maxlength="30" />
         </el-form-item>
       </el-col>
-    </el-row>
-    <el-row>
       <el-col :span="12">
         <el-form-item label="性别" prop="gender">
           <el-select v-model="form.gender" placeholder="请选择">
@@ -174,6 +130,13 @@
                 :value="dict.value"
             ></el-option>
           </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="联系方式" prop="contactInfo">
+          <el-input v-model="form.contactInfo" placeholder="请输入姓名" maxlength="30" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -203,13 +166,37 @@
     </el-row>
     <el-row>
       <el-col :span="12">
+        <el-form-item label="专业" prop="major">
+          <el-input v-model="form.major" placeholder="请输入毕业院校" maxlength="50" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="学历" prop="educationLevel">
+          <el-input v-model="form.educationLevel" placeholder="请输入学历" maxlength="50" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
         <el-form-item label="毕业院校" prop="almaMater">
           <el-input v-model="form.almaMater" placeholder="请输入毕业院校" maxlength="50" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker v-model="form.createTime" type="datetime" placeholder="选择日期时间" disabled></el-date-picker>
+        <el-form-item label="毕业时间" prop="graduationDate">
+          <el-date-picker v-model="form.graduationDate" type="datetime" placeholder="选择日期时间"></el-date-picker>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="毕业院校" prop="position">
+          <el-input v-model="form.position" placeholder="请输入毕业院校" maxlength="50" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="公司ID" prop="companyId">
+          <el-input v-model="form.companyId" placeholder="请输入公司ID" maxlength="50" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -548,18 +535,22 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    managerId: null,
+    name: null,
+    gender: null,
+    idCard: null,
+    birthplace: null,
+    politicalStatus: null,
+    graduationDate: null,
+    almaMater: null,
+    major: null,
+    educationLevel: null,
+    position: null,
+    company: null,
+    contactInfo: null,
+    hireDate: null,
+    createdAt: null,
+    updatedAt: null,
   };
   proxy.resetForm("userRef");
 };

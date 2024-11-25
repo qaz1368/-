@@ -4,28 +4,28 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="企业名称" prop="userName">
+          <el-form-item label="地域" prop="region">
             <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入企业名称"
+                v-model="queryParams.region"
+                placeholder="请输入企业地域"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="所属行业" prop="phonenumber">
+          <el-form-item label="所属行业" prop="industry">
             <el-input
-                v-model="queryParams.phonenumber"
+                v-model="queryParams.industry"
                 placeholder="请输入所属行业"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="状态" prop="status">
+          <el-form-item label="企业状态" prop="companyStatus">
             <el-select
-                v-model="queryParams.status"
-                placeholder="企业状态"
+                v-model="queryParams.companyStatus"
+                placeholder="请输入企业状态"
                 clearable
                 style="width: 240px"
             >
@@ -36,16 +36,6 @@
                   :value="dict.value"
               />
             </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -62,16 +52,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -107,6 +87,7 @@
        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
     <el-table-column type="selection" width="50" align="center" />
     <el-table-column label="企业ID" align="center" key="companyId" prop="companyId" v-if="columns[0].visible" />
+    <el-table-column label="创业园" align="center" key="incubator" prop="incubator" v-if="columns[1].visible" width="120" />
     <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
     <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
     <el-table-column label="地域" align="center" key="region" prop="region" v-if="columns[3].visible" :show-overflow-tooltip="true" />
@@ -115,6 +96,7 @@
     <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
     <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
     <el-table-column label="企业状态" align="center" key="companyStatus" prop="companyStatus" v-if="columns[5].visible" width="160" />
+    <el-table-column label="年营业额" align="center" key="annualRevenue" prop="annualRevenue" v-if="columns[1].visible" width="120" />
     <el-table-column label="获得补助时间" align="center" key="subsidyReceivedDate" prop="subsidyReceivedDate" v-if="columns[5].visible" width="160" />
     <el-table-column label="获得补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[5].visible" width="160" />
 
@@ -122,7 +104,6 @@
     <el-table-column label="带动就业人数" align="center" key="employmentImpact" prop="employmentImpact" v-if="columns[1].visible" width="120" />
     <el-table-column label="签订劳动合同人数" align="center" key="signedContracts" prop="signedContracts" v-if="columns[1].visible" width="120" />
     <el-table-column label="缴纳社会保险人数" align="center" key="socialSecurityContributors" prop="socialSecurityContributors" v-if="columns[1].visible" width="120" />
-    <el-table-column label="年营业额" align="center" key="annualRevenue" prop="annualRevenue" v-if="columns[1].visible" width="120" />
     <el-table-column label="年纳税金额" align="center" key="annualTax" prop="annualTax" v-if="columns[1].visible" width="120" />
     <el-table-column label="注册资本" align="center" key="registeredCapital" prop="registeredCapital" v-if="columns[1].visible" width="120" />
     <el-table-column label="带动扶贫人数" align="center" key="povertyAlleviation" prop="povertyAlleviation" v-if="columns[1].visible" width="120" />
@@ -147,7 +128,6 @@
     <el-table-column label="备注" align="center" key="remarks" prop="remarks" v-if="columns[1].visible" width="120" />
     <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[1].visible" width="160" />
     <el-table-column label="最后更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[0].visible" width="160" />
-    <el-table-column label="创业园" align="center" key="incubator" prop="incubator" v-if="columns[1].visible" width="120" />
     <el-table-column label="企业负责人" align="center" key="managerName" prop="managerName" v-if="columns[1].visible" width="120" />
 
     <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
@@ -512,8 +492,7 @@ const data = reactive({
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
     nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
     password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
+
   }
 });
 
