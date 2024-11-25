@@ -106,7 +106,7 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="审批记录ID" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+          <el-table-column label="审批记录ID" align="center" key="approvalId" prop="approvalId" v-if="columns[0].visible" />
           <el-table-column label="申请ID" align="center" key="applicationId" prop="applicationId" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程ID" align="center" key="processId" prop="processId" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程顺序" align="center" key="sequence" prop="sequence" v-if="columns[3].visible" :show-overflow-tooltip="true" />
@@ -244,8 +244,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addPost, listApply} from "../../../api/approval/apply";
-import {delPost} from "../../../api/article/tag";
+import {addPost, listApply,delPost,updatePost,getPost} from "../../../api/approval/apply";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -344,9 +343,9 @@ function getDeptTree() {
 function getList() {
   loading.value = true;
   listApply(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-    console.log("审批记录",res.rows)
+    console.log("审批记录",res.records)
     loading.value = false;
-    userList.value = res.rows;
+    userList.value = res.records;
     total.value = res.total;
   });
 };
