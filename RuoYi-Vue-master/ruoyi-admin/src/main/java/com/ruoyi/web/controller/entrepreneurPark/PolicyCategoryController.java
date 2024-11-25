@@ -23,8 +23,10 @@ public class PolicyCategoryController {
     @GetMapping("/list")
     public Page<PolicyCategory> getPolicyCategories(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return policyCategoryService.page(new Page<>(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @ApiParam(value = "分类名称") @RequestParam(required = false) String categoryName
+    ) {
+        return policyCategoryService.getPolicyCategoriesPage(page, size, categoryName);
     }
 
     @ApiOperation("根据ID查询政策分类详情")

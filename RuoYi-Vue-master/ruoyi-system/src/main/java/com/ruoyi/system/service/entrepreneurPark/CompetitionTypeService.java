@@ -16,5 +16,5 @@ public interface CompetitionTypeService extends IService<CompetitionType> {
 
     boolean deleteBatch(List<Integer> ids);  // 批量删除比赛类型
 
-    IPage<CompetitionType> getCompetitionTypesPage(int page, int size);  // 分页查询比赛类型列表
+    IPage<CompetitionType> getCompetitionTypesPage(int page, int size,String level);  // 分页查询比赛类型列表
 }

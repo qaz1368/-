@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.domain.entity.*;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 @Service
 public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterprise> implements EnterpriseService {
@@ -41,14 +43,37 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
     private AwardDetailService awardDetailService;
 
     @Override
-    public Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String companyName, String companyStatus) {
+    public Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String regionName, String industryName, String companyStatus) {
         QueryWrapper<Enterprise> queryWrapper = new QueryWrapper<>();
-        if (companyName != null && !companyName.isEmpty()) {
-            queryWrapper.eq("company_name", companyName);
+        if (industryName != null && !industryName.isEmpty()) {
+            // 通过 industry 模糊查询获取对应的 id
+            List<Integer> industryIds = industryMapper.selectList(Wrappers.<Industry>lambdaQuery()
+                            .like(Industry::getIndustryName, industryName))
+                    .stream()
+                    .map(Industry::getIndustryId)
+                    .collect(Collectors.toList());
+
+            if (!industryIds.isEmpty()) {
+                queryWrapper.in("industry_id", industryIds);
+            }
+        }
+        // 通过 region 模糊查询获取对应的 id
+        if (regionName != null && !regionName.isEmpty()) {
+            List<Integer> regionIds = regionMapper.selectList(Wrappers.<Region>lambdaQuery()
+                            .like(Region::getRegionName, regionName))
+                    .stream()
+                    .map(Region::getRegionId)
+                    .collect(Collectors.toList());
+
+            if (!regionIds.isEmpty()) {
+                queryWrapper.in("region_id", regionIds);
+            }
         }
         if (companyStatus != null && !companyStatus.isEmpty()) {
             queryWrapper.eq("company_status", companyStatus);
         }
+        queryWrapper.orderByAsc("company_status");
+        queryWrapper.orderByAsc("annual_revenue");
 
 
         IPage<Enterprise> enterprisePage = enterpriseMapper.selectPage(page, queryWrapper);

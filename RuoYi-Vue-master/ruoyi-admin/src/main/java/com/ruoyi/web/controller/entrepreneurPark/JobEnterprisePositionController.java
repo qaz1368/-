@@ -25,8 +25,10 @@ public class JobEnterprisePositionController {
     @GetMapping("/list")
     public Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage(
             @ApiParam(value = "页码", required = false) @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-            @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        return jobEnterprisePositionService.getJobEnterprisePositionsPage(pageNum, pageSize);
+            @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @ApiParam(value = "岗位类型") @RequestParam(required = false) String positionType
+    ) {
+        return jobEnterprisePositionService.getJobEnterprisePositionsPage(pageNum, pageSize,positionType);
     }
 
 

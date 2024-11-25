@@ -5,6 +5,7 @@ import com.ruoyi.system.domain.entity.CompetitionName;
 import com.ruoyi.system.service.entrepreneurPark.CompetitionNameService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,8 +47,10 @@ public class CompetitionNameController {
     @GetMapping("/page")
     public IPage<CompetitionName> page(
                @RequestParam(value = "page", defaultValue = "1") int page,
-               @RequestParam(value = "size", defaultValue = "10") int size) {
-        return competitionNameService.getCompetitionNamesPage(page, size);
+               @RequestParam(value = "size", defaultValue = "10") int size,
+               @ApiParam(value = "比赛名称") @RequestParam(required = false) String competitionName
+    ) {
+        return competitionNameService.getCompetitionNamesPage(page, size,competitionName);
     }
 
 

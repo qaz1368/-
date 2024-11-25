@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -38,8 +39,17 @@ public class CompetitionNameServiceImpl extends ServiceImpl<CompetitionNameMappe
     }
 
     @Override
-    public IPage<CompetitionName> getCompetitionNamesPage(int page, int size) {
+    public IPage<CompetitionName> getCompetitionNamesPage(int page, int size,String competitionName) {
         Page<CompetitionName> pageRequest = new Page<>(page, size);
-        return page(pageRequest);  // 使用 MyBatis-Plus 提供的分页查询方法
+
+        QueryWrapper<CompetitionName> queryWrapper = new QueryWrapper<>();
+
+        // 通过 competitionName 进行模糊查询
+        if (competitionName != null && !competitionName.isEmpty()) {
+            queryWrapper.like("competition_name", competitionName);
+        }
+        // 按 id 升序排序
+        queryWrapper.orderByAsc("competition_id");
+        return competitionNameMapper.selectPage(pageRequest, queryWrapper);
     }
 }

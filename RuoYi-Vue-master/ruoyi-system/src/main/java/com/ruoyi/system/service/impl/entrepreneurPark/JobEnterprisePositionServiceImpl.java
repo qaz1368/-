@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.system.domain.entity.Enterprise;
@@ -29,9 +30,16 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
 
 
     @Override
-    public Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage(int pageNum, int pageSize) {
+    public Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage(int pageNum, int pageSize,String positionType) {
         Page<JobEnterprisePosition> page = new Page<>(pageNum, pageSize);
-        Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, null);
+        QueryWrapper<JobEnterprisePosition> queryWrapper = new QueryWrapper<>();
+
+        // 通过 positionType 进行模糊查询
+        if (positionType != null && !positionType.isEmpty()) {
+            queryWrapper.like("position_type", positionType);
+        }
+
+        Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, queryWrapper);
         List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords();
 
         List<JobEnterprisePositionVO> JobEnterprisePositionVOS = new ArrayList<>();

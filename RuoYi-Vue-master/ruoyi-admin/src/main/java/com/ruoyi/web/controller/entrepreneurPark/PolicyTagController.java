@@ -24,8 +24,10 @@ public class PolicyTagController {
     @GetMapping("/list")
     public Page<PolicyTag> getPolicyTags(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return policyTagService.page(new Page<>(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @ApiParam(value = "标签名称") @RequestParam(required = false) String tagName
+    ) {
+        return policyTagService.getPolicyTagsPage(page, size, tagName);
     }
 
     @ApiOperation("根据ID查询政策标签详情")

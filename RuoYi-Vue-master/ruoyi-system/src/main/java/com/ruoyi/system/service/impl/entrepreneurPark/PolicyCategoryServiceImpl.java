@@ -1,12 +1,32 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.entity.PolicyCategory;
 import com.ruoyi.system.mapper.entrepreneurPark.PolicyCategoryMapper;
 import com.ruoyi.system.service.entrepreneurPark.PolicyCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyCategoryServiceImpl extends ServiceImpl<PolicyCategoryMapper, PolicyCategory> implements PolicyCategoryService {
-    // 如果有额外的业务逻辑，可以在这里实现
+
+    @Autowired
+    private PolicyCategoryMapper policyCategoryMapper;
+
+    @Override
+    public Page<PolicyCategory> getPolicyCategoriesPage(int page, int size, String categoryName) {
+        Page<PolicyCategory> pageRequest = new Page<>(page, size);
+
+        QueryWrapper<PolicyCategory> queryWrapper = new QueryWrapper<>();
+
+        // 通过 competitionName 进行模糊查询
+        if (categoryName != null && !categoryName.isEmpty()) {
+            queryWrapper.like("category_name", categoryName);
+        }
+
+        return policyCategoryMapper.selectPage(pageRequest, queryWrapper);
+    }
 }

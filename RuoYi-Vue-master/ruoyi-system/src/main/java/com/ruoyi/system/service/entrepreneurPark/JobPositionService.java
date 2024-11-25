@@ -9,7 +9,7 @@ import java.util.List;
 public interface JobPositionService extends IService<JobPosition> {
 
     // 分页查询
-    Page<JobPosition> getJobPositionsPage(int pageNum, int pageSize);
+    Page<JobPosition> getJobPositionsPage(int pageNum, int pageSize, String positionName);
 
     // 批量删除
     boolean removeBatchByIds(List<Integer> positionIds);

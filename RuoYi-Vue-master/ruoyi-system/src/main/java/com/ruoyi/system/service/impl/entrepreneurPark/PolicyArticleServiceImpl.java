@@ -159,24 +159,38 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
     }
 
     @Override
-    public Page<PolicyArticleVO> getPolicyArticles(int page, int size,String categoryName) {
-        int categoryId = 0;
-        QueryWrapper<PolicyCategory> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("category_name", categoryName);
-         // 使用 policyCategoryMapper 的 selectList 方法
-        List<PolicyCategory> categories = policyCategoryMapper.selectList(queryWrapper1);
-        if(categories.size()>0){
-            categoryId = categories.get(0).getCategoryId();
-        }
+    public Page<PolicyArticleVO> getPolicyArticles(int page, int size,String categoryName,String tagName) {
 
+        // 通过 categoryName 模糊查询 PolicyCategory 表
+        QueryWrapper<PolicyCategory> categoryQueryWrapper = new QueryWrapper<>();
+        if (categoryName != null && !categoryName.isEmpty()) {
+            categoryQueryWrapper.like("category_name", categoryName);
+        }
+        List<PolicyCategory> categories = policyCategoryMapper.selectList(categoryQueryWrapper);
+        List<Integer> categoryIds = categories.stream().map(PolicyCategory::getCategoryId).collect(Collectors.toList());
+
+        // 通过 tagName 模糊查询 PolicyTag 表
+        QueryWrapper<PolicyTag> tagQueryWrapper = new QueryWrapper<>();
+        if (tagName != null && !tagName.isEmpty()) {
+            tagQueryWrapper.like("tag_name", tagName);
+        }
+        List<PolicyTag> tags = policyTagMapper.selectList(tagQueryWrapper);
+        List<Integer> tagIds = tags.stream().map(PolicyTag::getTagId).collect(Collectors.toList());
+
+        // 创建 PolicyArticle 的 QueryWrapper
+        QueryWrapper<PolicyArticle> articleQueryWrapper = new QueryWrapper<>();
+
+        // 添加 category_id 和 tag_id 的查询条件
+        if (!categoryIds.isEmpty()) {
+            articleQueryWrapper.in("category_id", categoryIds);
+        }
+        if (!tagIds.isEmpty()) {
+            articleQueryWrapper.in("primary_tag_id", tagIds);
+        }
 
         Page<PolicyArticle> policyArticlePage = new Page<>(page, size);
-        QueryWrapper<PolicyArticle> queryWrapper = new QueryWrapper<>();
-        if (categoryId != 0) {
-           queryWrapper.eq("category_id", categoryId);
-        }
 
-       Page<PolicyArticle> resultPage = policyArticleMapper.selectPage(policyArticlePage, queryWrapper);
+       Page<PolicyArticle> resultPage = policyArticleMapper.selectPage(policyArticlePage, articleQueryWrapper);
        List<PolicyArticle> records = resultPage.getRecords();
 
         List<PolicyArticleVO> policyArticleVOList = new ArrayList<>();
