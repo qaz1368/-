@@ -1,17 +1,21 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.PolicyTagDTO;
 import com.ruoyi.system.domain.entity.PolicyTag;
 import com.ruoyi.system.service.entrepreneurPark.PolicyTagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/policy-tags")
 @Api(tags = "政策标签管理")
@@ -36,17 +40,20 @@ public class PolicyTagController {
     }
 
     @ApiOperation("新增政策标签")
-    @PostMapping
-    public boolean addPolicyTag(@RequestBody PolicyTag policyTag) {
+    @PostMapping("/add")
+    public boolean addPolicyTag(@RequestBody PolicyTagDTO policyTagDTO) {
+        log.info("新增政策标签：{}", policyTagDTO);
+        PolicyTag policyTag = new PolicyTag();
+        policyTag.setTagName(policyTagDTO.getTagName());
+        policyTag.setCreatedAt(LocalDateTime.now());
+        policyTag.setUpdatedAt(LocalDateTime.now());
         return policyTagService.save(policyTag);
     }
 
     @ApiOperation("更新政策标签")
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     public boolean updatePolicyTag(
-            @ApiParam(value = "标签ID", required = true) @PathVariable Integer id,
             @RequestBody PolicyTag policyTag) {
-        policyTag.setTagId(id);
         return policyTagService.updateById(policyTag);
     }
 
