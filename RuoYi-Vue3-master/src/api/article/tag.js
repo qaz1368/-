@@ -8,6 +8,40 @@ export function listTag(query) {
     params: query
   })
 }
+//根据tagId查询标签信息
+export function getPost(tagId) {
+  return request({
+    url: `/policy-tags/${tagId}`,
+    method: 'get'
+  })
+}
+
+//根据tagId删除标签信息
+export function delPost(tagId) {
+  return request({
+    url: `/policy-tags/${tagId}`,
+    method: 'delete'
+  })
+}
+
+
+// 新增标签信息
+export function addPost(data) {
+  return request({
+    url: '/policy-tags/add',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改标签信息
+export function updatePost(data) {
+  return request({
+    url: '/policy-tags/update',
+    method: 'put',
+    data: data
+  })
+}
 
 //
 
