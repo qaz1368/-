@@ -410,7 +410,7 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除用户编号为"' + row.enterpriseJobId + '"的数据项？').then(function () {
+  proxy.$modal.confirm('是否确认删除招聘信息为"' + row.enterpriseJobId + '"的数据项？').then(function () {
     return delRecruitment(row.enterpriseJobId);
   }).then(() => {
     getList();

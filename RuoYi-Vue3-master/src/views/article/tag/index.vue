@@ -65,6 +65,16 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
+                type="success"
+                plain
+                icon="Edit"
+                :disabled="single"
+                @click="handleUpdate"
+                v-hasPermi="['system:user:edit']"
+            >修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
                 type="danger"
                 plain
                 icon="Delete"
@@ -98,23 +108,16 @@
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="标签ID" align="center" key="tagId" prop="tagId" v-if="columns[0].visible" />
           <el-table-column label="标签名称" align="center" key="tagName" prop="tagName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.createdAt) }}</span>
-          </template>
-          </el-table-column>
-          <el-table-column label="标签更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[3].visible" :show-overflow-tooltip="true" >
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.updatedAt) }}</span>
-          </template>
-          </el-table-column>
+          <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="标签更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-tooltip content="修改" placement="top">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:policyCategory:edit']"></el-button>
+              <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
-              <el-tooltip content="删除" placement="top">
-                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:policyCategory:remove']"></el-button>
+              <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
+                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -135,7 +138,7 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item  label="标签名称" prop="tagName">
+            <el-form-item  label="标签名称" prop="userName">
               <el-input v-model="form.tagName" placeholder="请输入标签名称" maxlength="30" />
             </el-form-item>
           </el-col>
@@ -190,7 +193,7 @@ import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {getCurrentInstance, reactive, ref} from "vue";
 import {toRefs} from "@vueuse/core";
-import {addPost, getPost, listTag,updatePost,delPost} from "../../../api/article/tag";
+import {addTag, delTag, getTag, listTag, updateTag} from "@/api/article/tag";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -239,7 +242,6 @@ const columns = ref([
 
 const data = reactive({
   form: {
-    tagId: null,
     tagName: null,
 
   },
@@ -252,8 +254,11 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    tagName: [{ required: true, message: "标签不能为空", trigger: "blur" }],
+    tagName: [
+      { required: true, message: "标签名称不能为空", trigger: "blur" },
+    ]
   }
+
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -274,14 +279,29 @@ function getDeptTree() {
   });
 };
 /** 查询用户列表 */
+function formatDateTime(dateTime) {
+  const date = new Date(dateTime);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 function getList() {
   loading.value = true;
   listTag(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;
-    userList.value = res.records;
+    userList.value = res.records.map(item => ({
+      ...item,
+      createdAt: formatDateTime(item.createdAt),
+      updatedAt: formatDateTime(item.updatedAt)
+    }));
     total.value = res.total;
   });
-};
+}
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
@@ -302,8 +322,8 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除用户编号为"' + row.tagId + '"的数据项？').then(function () {
-    return delPost(row.tagId);
+  proxy.$modal.confirm('是否确认删除标签编号为"' + row.tagId + '"的数据项？').then(function () {
+    return delTag(row.tagId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -314,6 +334,17 @@ function handleExport() {
   proxy.download("system/user/export", {
     ...queryParams.value,
   },`user_${new Date().getTime()}.xlsx`);
+};
+/** 用户状态修改  */
+function handleStatusChange(row) {
+  let text = row.status === "0" ? "启用" : "停用";
+  proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
+    return changeUserStatus(row.userId, row.status);
+  }).then(() => {
+    proxy.$modal.msgSuccess(text + "成功");
+  }).catch(function () {
+    row.status = row.status === "0" ? "1" : "0";
+  });
 };
 /** 更多操作 */
 function handleCommand(command, row) {
@@ -382,9 +413,18 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    tagId: null,
-    tagName: null,
-
+    userId: undefined,
+    deptId: undefined,
+    userName: undefined,
+    nickName: undefined,
+    password: undefined,
+    phonenumber: undefined,
+    email: undefined,
+    sex: undefined,
+    status: "0",
+    remark: undefined,
+    postIds: [],
+    roleIds: []
   };
   proxy.resetForm("userRef");
 };
@@ -407,25 +447,25 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-
-  getPost(row.tagId).then(response => {
-    form.value = response;
+  getTag(row.tagId).then(response => {
+    form.value = response.data;
     open.value = true;
-    title.value = "修改标签信息";
+    title.value = "修改标签";
+    form.password = "";
   });
 };
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.tagId != undefined) {
-        updatePost(form.value).then(response => {
+      if (form.value.userId != undefined) {
+        updateUser(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addPost(form.value).then(response => {
+        addTag(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

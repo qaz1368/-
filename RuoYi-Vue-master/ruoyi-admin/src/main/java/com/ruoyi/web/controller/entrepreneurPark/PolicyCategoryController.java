@@ -48,7 +48,7 @@ public class PolicyCategoryController {
     }
 
     @ApiOperation("删除政策分类")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public boolean deletePolicyCategory(
             @ApiParam(value = "分类ID", required = true) @PathVariable Integer id) {
         return policyCategoryService.removeById(id);
