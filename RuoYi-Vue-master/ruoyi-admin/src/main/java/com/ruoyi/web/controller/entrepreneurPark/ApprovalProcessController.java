@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.system.domain.entity.ApprovalProcess;
+import com.ruoyi.system.domain.vo.ApprovalProcessVO;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalProcessService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,10 +22,10 @@ public class ApprovalProcessController {
 
     @ApiOperation(value = "获取审批流程分页数据", notes = "根据页码和每页数据量获取审批流程分页数据")
     @GetMapping("/list")
-    public Page<ApprovalProcess> getApprovalProcessPage(
+    public Page<ApprovalProcessVO> getApprovalProcessPage(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
             @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
-        return approvalProcessService.getPage(pageNum, pageSize);
+        return approvalProcessService.getApprovalProcessPage(pageNum, pageSize);
     }
 
     @ApiOperation(value = "新增审批流程", notes = "添加新的审批流程")
