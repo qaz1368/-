@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -97,12 +98,16 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         return removeByIds(awardIds);  // 批量删除
     }
 
+
     @Override
-    public Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer enterpriseId) {
+    public Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer year, Integer typeId) {
         Page<AwardDetail> pageRequest = new Page<>(page, size);
         QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
-         if (enterpriseId != null) {
-            queryWrapper.eq("enterprise_id", enterpriseId);
+        if (year != null) {
+            queryWrapper.eq("year", year);
+        }
+        if (typeId != null) {
+            queryWrapper.eq("type_id", typeId);
         }
 
         List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, queryWrapper).getRecords();
@@ -205,14 +210,23 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         return awardTypeVOS;
     }
 
-    //根据awardId查询获奖信息，并且用type_id字段关联competition_types表的type_id,
-    //并且用competition_id字段关联competition_names表的competition_id
     @Override
     public String getByAwardId(Integer awardId) {
-        AwardDetail awardDetail = awardDetailMapper.getAwardDetailById(awardId);
-        if (awardDetail != null) {
-            return awardDetail.toString();
+        return null;
+    }
+
+    @Override
+    public List<Integer> getAwardDetailstypeId(Integer typeId) {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        List<Integer> awardCounts = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            int startYear = currentYear - i;
+            Long count = awardDetailMapper.countAwardsByTypeIdAndYear(typeId, startYear);
+            awardCounts.add(count.intValue());
         }
-        return "No award detail found for the given ID";
+
+        return awardCounts;
     }
 }

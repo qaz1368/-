@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
@@ -25,4 +26,7 @@ public interface AwardDetailMapper extends BaseMapper<AwardDetail> {
             "WHERE a.award_id = #{awardId}"
     })
     AwardDetail getAwardDetailById(Integer awardId);
+
+    @Select("SELECT COUNT(*) FROM award_details WHERE type_id = #{typeId} AND year >= #{startYear}")
+    Long countAwardsByTypeIdAndYear(@Param("typeId") Integer typeId, @Param("startYear") Integer startYear);
 }

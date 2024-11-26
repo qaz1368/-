@@ -51,12 +51,21 @@ public class AwardDetailController {
 
 
     @ApiOperation("分页查询获奖情况")
-    @GetMapping("/page")
-    public Page<AwardDetailVO> page(
+    @GetMapping("/getAwardDetailsPage")
+    public Page<AwardDetailVO> getAwardDetailsPage(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            @ApiParam(value = "企业id") @RequestParam(required = false) Integer enterpriseId) {
-        return awardDetailService.getAwardDetailsPage(page, size, enterpriseId);
+            @ApiParam(value = "年份") @RequestParam(required = false) Integer year,
+            @ApiParam(value = "比赛类型") @RequestParam(required = false) Integer typeId) {
+        return awardDetailService.getAwardDetailsPage(page, size, year, typeId);
+    }
+
+    @ApiOperation("获取对应级别近4年获奖情况")
+    @GetMapping("/getAwardDetailstypeId")
+    public List<Integer> getAwardDetailstypeId(
+            @ApiParam(value = "比赛类型") @RequestParam(required = false) Integer typeId
+    ) {
+        return awardDetailService.getAwardDetailstypeId(typeId);
     }
 
    @ApiOperation("获取企业id对应获奖情况")

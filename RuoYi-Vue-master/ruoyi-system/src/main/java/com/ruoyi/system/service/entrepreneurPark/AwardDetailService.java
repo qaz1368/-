@@ -20,7 +20,7 @@ public interface AwardDetailService extends IService<AwardDetail> {
 
     boolean deleteBatch(List<Integer> awardIds);  // 批量删除获奖情况
 
-    Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer enterpriseId);  // 分页查询获奖情况列表
+    Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer year, Integer typeId);  // 分页查询获奖情况列表
 
     List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId);
 
@@ -31,4 +31,6 @@ public interface AwardDetailService extends IService<AwardDetail> {
     List<AwardTypeVO> getAwardTypeSummary();
 
     String getByAwardId(Integer awardId);
+
+    List<Integer> getAwardDetailstypeId(Integer typeId);
 }
