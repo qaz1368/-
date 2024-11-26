@@ -21,19 +21,19 @@ public class IndustryController {
 
     @ApiOperation("新增行业")
     @PostMapping("/add")
-    public boolean add(@RequestBody Industry industry) {
+    public boolean addIndustry(@RequestBody Industry industry) {
         return industryService.saveIndustry(industry);
     }
 
     @ApiOperation("更新行业信息")
     @PutMapping("/update")
-    public boolean update(@RequestBody Industry industry) {
+    public boolean updateIndustry(@RequestBody Industry industry) {
         return industryService.updateIndustry(industry);
     }
 
     @ApiOperation("删除行业")
     @DeleteMapping("/delete/{industryId}")
-    public boolean delete(@PathVariable Integer industryId) {
+    public boolean deleteIndustry(@PathVariable Integer industryId) {
         return industryService.deleteIndustry(industryId);
     }
 
@@ -45,9 +45,16 @@ public class IndustryController {
 
     @ApiOperation("分页查询行业")
     @GetMapping("/page")
-    public IPage<Industry> page(@RequestParam int page, @RequestParam int size) {
+    public IPage<Industry> pageIndustry(@RequestParam int page, @RequestParam int size) {
         return industryService.getIndustriesPage(page, size);
     }
+
+    @GetMapping("/getIndustryById/{industryId}")
+    @ApiOperation("通过ID获取行业信息")
+    public Industry getIndustryById(@PathVariable("industryId") Integer industryId) {
+        return industryService.getById(industryId);
+    }
+
 
     @GetMapping("/ranking")
     @ApiOperation("所属行业占比排行")

@@ -40,9 +40,9 @@ public class ApprovalProcessController {
     }
 
     @ApiOperation(value = "删除审批流程", notes = "根据ID删除审批流程")
-    @DeleteMapping("/delete/{id}")
-    public boolean deleteApprovalProcess(@PathVariable Integer id) {
-        return approvalProcessService.removeById(id);
+    @DeleteMapping("/delete/{processId}")
+    public boolean deleteApprovalProcess(@PathVariable Integer processId) {
+        return approvalProcessService.removeById(processId);
     }
 
     @ApiOperation(value = "批量删除审批流程", notes = "根据ID列表批量删除审批流程")
@@ -50,4 +50,10 @@ public class ApprovalProcessController {
     public boolean deleteApprovalProcessBatch(@RequestBody List<Integer> ids) {
         return approvalProcessService.removeByIds(ids);
     }
+    @ApiOperation(value = "通过ID获取审批流程", notes = "根据指定的ID获取审批流程信息")
+    @GetMapping("/getApprovalProcessById/{processId}")
+    public ApprovalProcess getApprovalProcessById(@PathVariable("processId") Long processId) {
+        return approvalProcessService.getById(processId);
+    }
+
 }

@@ -20,19 +20,19 @@ public class ApplicationTypeController {
 
     @ApiOperation("新增申请类型")
     @PostMapping("/add")
-    public boolean add(@RequestBody ApplicationType applicationType) {
+    public boolean addApplicationType(@RequestBody ApplicationType applicationType) {
         return applicationTypeService.saveApplicationType(applicationType);
     }
 
     @ApiOperation("更新申请类型")
     @PutMapping("/update")
-    public boolean update(@RequestBody ApplicationType applicationType) {
+    public boolean updateApplicationType(@RequestBody ApplicationType applicationType) {
         return applicationTypeService.updateApplicationType(applicationType);
     }
 
     @ApiOperation("删除申请类型")
     @DeleteMapping("/delete/{applicationTypeId}")
-    public boolean delete(@PathVariable Integer applicationTypeId) {
+    public boolean deleteApplicationType(@PathVariable Integer applicationTypeId) {
         return applicationTypeService.deleteApplicationType(applicationTypeId);
     }
 
@@ -48,5 +48,11 @@ public class ApplicationTypeController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         return applicationTypeService.getApplicationTypePage(page, size);
+    }
+
+    @ApiOperation("通过ID获取申请类型信息")
+    @GetMapping("/get/{applicationTypeId}")
+    public ApplicationType getApplicationTypeById(@PathVariable("applicationTypeId") Integer applicationTypeId) {
+        return applicationTypeService.getById(applicationTypeId);
     }
 }

@@ -19,5 +19,7 @@ public class Industry {
     @ApiModelProperty("行业名称")
     @TableField("industry_name")  // 映射到 industry_name 字段
     private String industryName;
+
+
 }
 
