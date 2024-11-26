@@ -204,4 +204,15 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
         return awardTypeVOS;
     }
+
+    //根据awardId查询获奖信息，并且用type_id字段关联competition_types表的type_id,
+    //并且用competition_id字段关联competition_names表的competition_id
+    @Override
+    public String getByAwardId(Integer awardId) {
+        AwardDetail awardDetail = awardDetailMapper.getAwardDetailById(awardId);
+        if (awardDetail != null) {
+            return awardDetail.toString();
+        }
+        return "No award detail found for the given ID";
+    }
 }

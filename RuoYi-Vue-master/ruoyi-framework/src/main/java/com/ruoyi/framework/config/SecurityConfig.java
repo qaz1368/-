@@ -116,12 +116,13 @@ public class SecurityConfig
                             .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
                             .antMatchers("/api/application/add").permitAll()
                             // 新增的路径，允许匿名访问
-                            .antMatchers("/student-entrepreneurship-park/page").permitAll()
-                            .antMatchers("/award-details/page").permitAll()
-                            .antMatchers("/policy-articles/list").permitAll()
-                            .antMatchers("/industries/page").permitAll()
-                            // 新增的放行接口
-                            .antMatchers("/industries/ranking").permitAll()
+                            .antMatchers("/DP/articleList").permitAll()
+                            .antMatchers("/DP/get/{parkId}").permitAll()
+                            .antMatchers("/DP/getAwardTypeSummary").permitAll()
+                            .antMatchers("/DP/getTotalAwardCount").permitAll()
+                            .antMatchers("/DP/getTotalSubsidyAmount").permitAll()
+                            .antMatchers("/DP/positionsList").permitAll()
+                            .antMatchers("/DP/ranking").permitAll()
                             // 除上面外的所有请求全部需要鉴权认证
                             .anyRequest().authenticated();
                 })
@@ -134,6 +135,7 @@ public class SecurityConfig
                 .addFilterBefore(corsFilter, LogoutFilter.class)
                 .build();
     }
+
 
 
 

@@ -11,7 +11,7 @@ export function getApprovalProcessPage(query) {
 //通过ID获取审批流程
 export function getApprovalProcessById(processId) {
   return request({
-    url: `/api/approval-process/get/${processId}`,
+    url: `/api/approval-process/getApprovalProcessById/${processId}`,
     method: 'get'
   })
 }

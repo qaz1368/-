@@ -14,6 +14,7 @@ public interface ApprovalProcessService extends IService<ApprovalProcess> {
     List<ApprovalProcess> list(QueryWrapper<ApprovalProcess> queryWrapper);
 
     ApprovalProcess getApprovalProcessByProcessId(Integer processId);
+    ApprovalProcess getApprovalProcessByProcessId2(Integer processId);
 
     Integer getMaxStepOrderByApplicationTypeId(Integer applicationTypeId);
 

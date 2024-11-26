@@ -42,3 +42,11 @@ export function updateCompetitionName(data) {
     data: data
   })
 }
+
+//查询数据库的全部奖项名称
+export function listCompetitionNameAll() {
+  return request({
+    url: '/competition-names/getAllCompetitionName',
+    method: 'get'
+  })
+}

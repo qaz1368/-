@@ -84,6 +84,13 @@
             </dependency>
 
 
+            <!--       邮箱依赖     -->
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>1.6.2</version>
+            </dependency>
+
             <!-- 覆盖SpringFramework的依赖配置-->
             <dependency>
                 <groupId>org.springframework</groupId>

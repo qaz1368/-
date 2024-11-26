@@ -16,7 +16,12 @@
     </description>
 
     <dependencies>
-
+        <!--       邮箱依赖     -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
  <!-- 集成mybatis-plus -->
 <dependency>
    <groupId>com.baomidou</groupId>

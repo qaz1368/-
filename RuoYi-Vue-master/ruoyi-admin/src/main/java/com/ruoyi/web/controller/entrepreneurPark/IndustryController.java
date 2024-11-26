@@ -45,7 +45,9 @@ public class IndustryController {
 
     @ApiOperation("分页查询行业")
     @GetMapping("/page")
-    public IPage<Industry> pageIndustry(@RequestParam int page, @RequestParam int size) {
+    public IPage<Industry> pageIndustry(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         return industryService.getIndustriesPage(page, size);
     }
 

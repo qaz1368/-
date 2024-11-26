@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="用户名称" prop="userName">
@@ -128,7 +127,6 @@
             </template>
           </el-table-column>
         </el-table>
-
         <pagination
             v-show="total > 0"
             :total="total"
@@ -148,34 +146,22 @@
               <el-input v-model="form.year" placeholder="请输入年份" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-         <el-col :span="12">
-            <el-form-item label="获奖企业" prop="enterpriseId">
-              <el-input v-model="form.enterprise" placeholder="请输入获奖企业ID" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
-            <el-form-item label="比赛" prop="competitionId">
-              <el-input v-model="form.competition" placeholder="请输入比赛名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="比赛类型" prop="type">
-              <el-select v-model="form.type" placeholder="请选择比赛类型">
-                <el-option label="省级" value="省级" />
-                <el-option label="市级" value="市级" />
-                <el-option label="区级" value="区级" />
-                <el-option label="县级" value="县级" />
-                <el-option label="国际" value="国际" />
-                <el-option label="全国" value="全国" />
+            <el-form-item label="比赛" prop="competition">
+              <el-select v-model="form.competition" placeholder="请选择比赛名称">
+                <el-option
+                    v-for="option in form.competitionOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="获奖等级" prop="enterpriseId">
+            <el-form-item label="获奖等级" prop="level">
               <el-input v-model="form.level" placeholder="请输入获奖等级" />
             </el-form-item>
           </el-col>
@@ -187,6 +173,25 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="获奖企业" prop="enterprise">
+              <el-input v-model="form.enterprise" placeholder="请输入获奖企业" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="比赛类型" prop="type">
+              <el-select v-model="form.type" placeholder="请选择比赛类型">
+                <el-option
+                    v-for="option in form.competitionTypeOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item label="补助或奖项的描述" prop="description">
               <el-input v-model="form.description" placeholder="请输入补助或奖项的描述" type="textarea" />
             </el-form-item>
@@ -238,11 +243,13 @@
 </template>
 
 <script setup name="User">
-import { ref, reactive, toRefs, getCurrentInstance, nextTick } from 'vue'
+import { ref, reactive, toRefs, getCurrentInstance, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getToken } from "@/utils/auth"
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
 import { addAward, delAward, getAwardByAwardId, listAward, updateAward } from "@/api/monitor/award"
+import { listCompetitionNameAll } from "@/api/monitor/competitionName"
+import {getCompetitionType} from "@/api/monitor/competitionType";
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -294,7 +301,8 @@ const data = reactive({
     competition: '',
     enterprise: '',
     description: '',
-    subsidyAmount: ''
+    subsidyAmount: '',
+    competitionOptions: []
   },
   queryParams: {
     pageNum: 1,
@@ -309,7 +317,8 @@ const data = reactive({
       { required: true, message: '请选择年份', trigger: 'change' }
     ],
     level: [
-      { required: true, message: '请输入比赛等级', trigger: 'blur' }
+      { required: true, message: '请输入比赛等级', trigger
+            : 'blur' }
     ],
     type: [
       { required: true, message: '请输入比赛类型', trigger: 'blur' }
@@ -506,11 +515,16 @@ function reset() {
     competition: null,
     enterprise: null,
     description: null,
-    subsidyAmount: null
+    subsidyAmount: null,
+    competitionOptions: form.value.competitionOptions,
+    competitionTypeOptions: form.value.competitionTypeOptions
   }
-  if (proxy.$refs["userRef"]) {
-    proxy.$refs["userRef"].resetFields()
-  }
+  // 使用 nextTick 确保 DOM 更新后再重置表单
+  nextTick(() => {
+    if (proxy.$refs["userRef"]) {
+      proxy.$refs["userRef"].resetFields()
+    }
+  })
 }
 
 // 取消按钮
@@ -522,13 +536,9 @@ function cancel() {
 // 新增按钮操作
 function handleAdd() {
   reset()
-  getUser().then(response => {
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
-    open.value = true
-    title.value = "添加用户"
-    form.value.password = initPassword.value
-  })
+  open.value = true
+  title.value = "添加奖项"
+  form.value.password = initPassword.value
 }
 
 // 修改按钮操作
@@ -537,7 +547,7 @@ function handleUpdate(row) {
   console.log("row", row)
   if (row && row.awardId) {
     getAwardByAwardId(row.awardId).then(response => {
-      form.value = response.data
+      form.value = { ...response.data, competitionOptions: form.value.competitionOptions }
       console.log("form.value", form.value)
       open.value = true
       title.value = "修改奖项"
@@ -552,7 +562,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.awardId!= undefined) {
+      if (form.value.awardId != undefined) {
         updateAward(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
@@ -569,8 +579,34 @@ function submitForm() {
   })
 }
 
-getDeptTree()
-getList()
+// 查询全部比赛名称
+function GetCompetitionNameAll() {
+  listCompetitionNameAll().then(res => {
+    const competitionNames = res.map(item => item.competitionName)
+    form.value.competitionOptions = competitionNames
+    console.log("form.value.competitionOptions", form.value.competitionOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+//查询全部比赛类型
+function GetCompetitionTypeAll() {
+  getCompetitionType().then(res => {
+    const competitionTypes = res.map(item => item.level)
+    form.value.competitionTypeOptions = competitionTypes
+    console.log("form.value.competitionTypeOptions", form.value.competitionTypeOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  GetCompetitionNameAll()
+  GetCompetitionTypeAll()
+})
 </script>
 
 <style scoped>
@@ -589,3 +625,4 @@ getList()
   padding: 0;
 }
 </style>
+

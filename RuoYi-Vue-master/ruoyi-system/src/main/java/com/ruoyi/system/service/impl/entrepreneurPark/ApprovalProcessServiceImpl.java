@@ -77,6 +77,11 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
     public ApprovalProcess getApprovalProcessByProcessId(Integer processId) {
         return baseMapper.selectById(processId);
     }
+    @Override
+    public ApprovalProcess getApprovalProcessByProcessId2(Integer processId) {
+        return baseMapper.selectById(processId);
+    }
+
 
     @Override
     public Integer getMaxStepOrderByApplicationTypeId(Integer applicationTypeId) {

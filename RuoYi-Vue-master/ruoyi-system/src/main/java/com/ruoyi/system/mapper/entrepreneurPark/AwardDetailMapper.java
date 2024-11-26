@@ -17,5 +17,12 @@ public interface AwardDetailMapper extends BaseMapper<AwardDetail> {
 
     @Select("SELECT SUM(subsidy_amount) FROM award_details WHERE type_id = #{typeId}")
     BigDecimal getTotalSubsidyAmountByTypeId(Integer typeId);
-
+    @Select({
+            "SELECT a.*, ct.type_name, cn.competition_name",
+            "FROM award_details a",
+            "LEFT JOIN competition_types ct ON a.type_id = ct.type_id",
+            "LEFT JOIN competition_names cn ON a.competition_id = cn.competition_id",
+            "WHERE a.award_id = #{awardId}"
+    })
+    AwardDetail getAwardDetailById(Integer awardId);
 }

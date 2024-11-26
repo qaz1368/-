@@ -30,7 +30,7 @@ export function deleteApplicationType(applicationTypeId) {
 // 通过ID获取申请类型信息
 export function getApplicationTypeById(applicationTypeId) {
   return request({
-    url: '/application-type/get/${applicationTypeId}',
+    url: `/application-type/get/${applicationTypeId}`,
     method: 'get',
   })
 }

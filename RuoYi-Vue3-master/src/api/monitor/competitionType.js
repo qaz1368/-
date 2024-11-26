@@ -26,3 +26,12 @@ export function delCompetitionType(competitionId) {
     method: 'delete'
   });
 }
+
+
+//查询数据库全部的比赛类型
+export function getCompetitionType() {
+  return request({
+    url: '/competition-types/getAllCompetitionType',
+    method: 'get'
+  })
+}

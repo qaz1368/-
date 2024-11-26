@@ -52,4 +52,13 @@ public class CompetitionTypeController {
     ) {
         return competitionTypeService.getCompetitionTypesPage(page, size,level);
     }
+
+    /**
+     * 查询数据库全部的比赛类型
+     */
+    @ApiOperation("查询数据库全部的比赛类型")
+    @GetMapping("/getAllCompetitionType")
+    public List<CompetitionType> getAllCompetitionType() {
+        return competitionTypeService.list();
+    }
 }

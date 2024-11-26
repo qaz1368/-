@@ -74,7 +74,7 @@ public class AwardDetailController {
     public AjaxResult getAwardDetail(@PathVariable Integer awardId) {
 
         try {
-            return AjaxResult.success(awardDetailService.getById(awardId));
+            return AjaxResult.success(awardDetailService.getByAwardId(awardId));
         } catch (Exception e) {
             return AjaxResult.error("获取获奖详情失败，请稍后再试");
         }

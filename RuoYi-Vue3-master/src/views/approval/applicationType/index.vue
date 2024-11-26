@@ -90,18 +90,17 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="申请类型名称" prop="applicationName">
+            <el-form-item label="类型名称" prop="applicationName">
               <el-input v-model="form.applicationName" placeholder="请输入申请类型名称" maxlength="30" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
-            <el-form-item label="申请类型描述" prop="description">
+            <el-form-item label="类型描述" prop="description">
               <el-input v-model="form.description" placeholder="请输入申请类型描述" maxlength="30" />
             </el-form-item>
           </el-col>
         </el-row>
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">

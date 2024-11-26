@@ -88,8 +88,8 @@ spring:
   # redis 配置
   redis:
     # 地址
-#    host: 192.168.88.130
-    host: 192.168.220.134
+    host: 192.168.88.130
+#    host: 192.168.220.134
     # 端口，默认为6379
     port: 6379
     # 数据库索引
@@ -108,6 +108,25 @@ spring:
         max-active: 8
         # #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: -1ms
+  # 发送邮件配置
+  mail:
+    host: smtp.qq.com # 配置 smtp 服务器地址
+    port: 465
+    username: 790734188@qq.com # 配置邮箱用户名(你的邮箱地址)
+    password: skroedtgkdyebbbd # 配置申请到的授权码(刚让复制的授权码)
+    default-encoding: UTF-8 # 配置邮件编码
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+          ssl:
+            enable: true
+            trust: smtp.qq.com
+          socketFactoryClass: javax.net.ssl.SSLSocketFactory # 配饰 SSL 加密工厂
+        debug: true
+    from: 790734188@qq.com # 发送方邮件，配在yml中可方便更改
 
 # token配置
 token:

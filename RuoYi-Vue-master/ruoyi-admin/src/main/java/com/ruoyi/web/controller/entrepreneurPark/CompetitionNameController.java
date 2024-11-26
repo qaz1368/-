@@ -62,4 +62,14 @@ public class CompetitionNameController {
     public CompetitionName getCompetitionName(@PathVariable Integer competitionId) {
         return competitionNameService.getById(competitionId);
     }
+
+
+    /**
+     * 查询数据库全部的比赛名称
+     */
+    @ApiOperation("查询数据库全部的比赛名称")
+    @GetMapping("/getAllCompetitionName")
+    public List<CompetitionName> getAllCompetitionName() {
+        return competitionNameService.list();
+    }
 }

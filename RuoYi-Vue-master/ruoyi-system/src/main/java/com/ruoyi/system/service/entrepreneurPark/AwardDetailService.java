@@ -29,4 +29,6 @@ public interface AwardDetailService extends IService<AwardDetail> {
     BigDecimal getTotalSubsidyAmount();
 
     List<AwardTypeVO> getAwardTypeSummary();
+
+    String getByAwardId(Integer awardId);
 }
