@@ -12,7 +12,7 @@ public interface PolicyArticleService extends IService<PolicyArticle> {
 
     boolean addPolicyArticle(PolicyArticleDTO policyArticleDTO);
 
-    boolean updatePolicyArticle(Integer id, PolicyArticleDTO policyArticleDTO);
+    boolean updatePolicyArticle(PolicyArticleDTO policyArticleDTO);
 
     PolicyArticleVO getPolicyArticleById(Integer id);
 

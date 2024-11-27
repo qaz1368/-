@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @ApiModel(description = "扶持政策文章实体类")
 public class PolicyArticleDTO {
 
+    @ApiModelProperty("文章ID")
+    private Integer articleId;
 
     @ApiModelProperty("分类，指向文章分类表")
     private String category;

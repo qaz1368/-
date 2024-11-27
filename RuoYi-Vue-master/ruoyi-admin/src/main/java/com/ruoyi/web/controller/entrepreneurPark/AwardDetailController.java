@@ -68,11 +68,12 @@ public class AwardDetailController {
         return awardDetailService.getAwardDetailstypeId(typeId);
     }
 
-    @ApiOperation("获取企业id对应获奖情况")
-    @GetMapping("/getAwardDetailsId")
+    @ApiOperation("获取id对应获奖情况")
+    @GetMapping("/getAwardDetailsId/{awardId}")
     public AwardDetailVO getAwardDetailsId(
-            @ApiParam(value = "企业id") @RequestParam(required = false) Integer enterpriseId) {
-        return awardDetailService.getAwardDetailsId(enterpriseId).get(0);
+            @ApiParam(value = "获奖情况ID", required = true) @PathVariable Integer awardId) {
+
+        return awardDetailService.getAwardDetailsId(awardId).get(0);
     }
 
     /**

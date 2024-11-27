@@ -50,12 +50,9 @@ public class PolicyArticleController {
     }
 
     @ApiOperation("更新扶持政策文章")
-    @PutMapping("/{id}")
-    public boolean updatePolicyArticle(
-            @ApiParam(value = "文章ID", required = true) @PathVariable Integer id,
-            @RequestBody PolicyArticleDTO policyArticleDTO) {
-
-        return policyArticleService.updatePolicyArticle(id, policyArticleDTO);
+    @PutMapping("/updatePolicyArticle")
+    public boolean updatePolicyArticle(@RequestBody PolicyArticleDTO policyArticleDTO) {
+        return policyArticleService.updatePolicyArticle(policyArticleDTO);
     }
 
     @ApiOperation("删除扶持政策文章")

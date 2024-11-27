@@ -53,7 +53,8 @@ public class EnterpriseController {
      */
     @ApiOperation("根据id查询企业信息")
     @GetMapping("/{companyId}")
-    public EnterpriseVO getCompanyId(@PathVariable Integer companyId) {
+    public EnterpriseVO getCompanyId(
+            @ApiParam(value = "企业信息ID", required = true) @PathVariable Integer companyId){
 
         return enterpriseService.getCompanyId(companyId);
     }

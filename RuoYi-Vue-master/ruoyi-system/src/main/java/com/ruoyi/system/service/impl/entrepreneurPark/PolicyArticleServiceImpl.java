@@ -89,7 +89,7 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
     }
 
     @Override
-    public boolean updatePolicyArticle(Integer id, PolicyArticleDTO policyArticleDTO) {
+    public boolean updatePolicyArticle(PolicyArticleDTO policyArticleDTO) {
          // 创建 PolicyArticle 实体对象
         PolicyArticle policyArticle = new PolicyArticle();
         BeanUtils.copyProperties(policyArticleDTO, policyArticle);
