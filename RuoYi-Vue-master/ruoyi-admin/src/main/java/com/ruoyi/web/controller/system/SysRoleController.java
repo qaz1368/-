@@ -190,6 +190,16 @@ public class SysRoleController extends BaseController
     }
 
     /**
+     * 获取角色选择框列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:role:query')")
+    @GetMapping("/optionselect1")
+    public List<SysRole> optionselect1()
+    {
+        return roleService.selectRoleAll();
+    }
+
+    /**
      * 查询已分配用户角色列表
      */
     @PreAuthorize("@ss.hasPermi('system:role:list')")

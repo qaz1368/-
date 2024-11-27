@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.domain.DTO.ApprovalProcessDTO;
 import com.ruoyi.system.domain.entity.ApplicationType;
 import com.ruoyi.system.domain.entity.ApprovalProcess;
+import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.vo.ApprovalProcessVO;
 import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.mapper.SysRoleMapper;
@@ -18,6 +20,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +72,97 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
 
         return resultPage;
     }
-     @Override
+
+    @Override
+    public boolean addApprovalProcess(ApprovalProcessDTO approvalProcessDTO) {
+        if (approvalProcessDTO != null) {
+            ApprovalProcess approvalProcess = new ApprovalProcess();
+            BeanUtils.copyProperties(approvalProcessDTO, approvalProcess);
+            approvalProcess.setCreatedAt(LocalDateTime.now());
+            approvalProcess.setUpdatedAt(LocalDateTime.now());
+
+            QueryWrapper<ApplicationType> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("application_name", approvalProcessDTO.getApplicationType());
+            ApplicationType applicationType = applicationTypeService.getOne(queryWrapper);
+            if (applicationType != null) {
+                approvalProcess.setApplicationTypeId(applicationType.getApplicationTypeId());
+            }
+
+            if (approvalProcessDTO.getRole() != null){
+                SysRole sysRole = sysRoleMapper.getRoleByName(approvalProcessDTO.getRole());
+                if (sysRole != null) {
+                    approvalProcess.setRoleId(Math.toIntExact(sysRole.getRoleId()));
+                }
+            }
+
+            if (approvalProcessDTO.getDepartment() != null){
+                SysDept sysDept = sysDeptMapper.getDeptByName(approvalProcessDTO.getDepartment());
+                if (sysDept != null) {
+                    approvalProcess.setDepartmentId(Math.toIntExact(sysDept.getDeptId()));;
+                }
+            }
+            return save(approvalProcess);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateApprovalProcess(ApprovalProcessDTO approvalProcessDTO) {
+        if (approvalProcessDTO != null) {
+            ApprovalProcess approvalProcess = new ApprovalProcess();
+            BeanUtils.copyProperties(approvalProcessDTO, approvalProcess);
+            approvalProcess.setUpdatedAt(LocalDateTime.now());
+
+            QueryWrapper<ApplicationType> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("application_name", approvalProcessDTO.getApplicationType());
+            ApplicationType applicationType = applicationTypeService.getOne(queryWrapper);
+            if (applicationType != null) {
+                approvalProcess.setApplicationTypeId(applicationType.getApplicationTypeId());
+            }
+
+            if (approvalProcessDTO.getRole() != null){
+                SysRole sysRole = sysRoleMapper.getRoleByName(approvalProcessDTO.getRole());
+                if (sysRole != null) {
+                    approvalProcess.setRoleId(Math.toIntExact(sysRole.getRoleId()));
+                }
+            }
+
+            if (approvalProcessDTO.getDepartment() != null){
+                SysDept sysDept = sysDeptMapper.getDeptByName(approvalProcessDTO.getDepartment());
+                if (sysDept != null) {
+                    approvalProcess.setDepartmentId(Math.toIntExact(sysDept.getDeptId()));;
+                }
+            }
+            return updateById(approvalProcess);
+        }
+        return false;
+    }
+
+    @Override
+    public ApprovalProcessVO getApprovalProcessById(Long processId) {
+        ApprovalProcess approvalProcess = baseMapper.selectById(processId);
+        if (approvalProcess != null) {
+            ApprovalProcessVO vo = new ApprovalProcessVO();
+            BeanUtils.copyProperties(approvalProcess, vo);
+            ApplicationType applicationType = applicationTypeService.getById(approvalProcess.getApplicationTypeId());
+            if (applicationType != null) {
+                vo.setApplicationType(applicationType.getApplicationName());
+            }
+            SysDept sysDept = sysDeptMapper.selectDeptById(Long.valueOf(approvalProcess.getDepartmentId()));
+            if (sysDept != null) {
+                vo.setDepartment(sysDept.getDeptName());
+            }
+            SysRole sysRole = sysRoleMapper.selectRoleById(Long.valueOf(approvalProcess.getRoleId()));
+            if (sysRole != null) {
+                vo.setRole(sysRole.getRoleName());
+            }
+            return vo;
+
+        }
+        return null;
+    }
+
+    @Override
     public List<ApprovalProcess> list(QueryWrapper<ApprovalProcess> queryWrapper) {
         return baseMapper.selectList(queryWrapper);
     }
