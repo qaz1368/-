@@ -801,6 +801,7 @@ function submitForm() {
 };
 function getIndustryOption() {
   getIndustryOptions().then(res => {
+
     const industryNames = res.map(item => item.industryName)
     form.value.industryOptions = industryNames
     console.log("form.value.industryOptions", form.value.industryOptions)

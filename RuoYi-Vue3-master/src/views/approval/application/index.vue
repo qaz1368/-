@@ -121,7 +121,7 @@
                 <el-button link type="primary" icon="CircleCheck" @click="openPassDialog(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
               <el-tooltip content="拒绝" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="rejectApplicationOperate(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
+                <el-button link type="primary" icon="Key" @click="openRejectDialog(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -224,7 +224,22 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="passDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="confirmPass">确 定</el-button>
+          <el-button type="primary" @click="confirmPass" :loading="passLoading">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!--拒绝申请对话框-->
+    <el-dialog title="拒绝申请" v-model="rejectDialogVisible" width="30%">
+      <el-form :model="rejectForm" label-width="80px">
+        <el-form-item label="拒绝原因">
+          <el-input v-model="rejectForm.reason" type="textarea" :rows="4" placeholder="请输入拒绝原因"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="rejectDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="rejectApplicationOperate">确 定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -241,6 +256,7 @@ import { listApplication, rejectApplication, passApplication, addApplication } f
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
+import { ElLoading } from 'element-plus'; // 引入 ElLoading
 
 const userList = ref([]);
 const ApplicationList = ref([]);
@@ -258,10 +274,16 @@ const deptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
-
+const passLoading = ref(false);
 // 新增：通过申请对话框相关数据
 const passDialogVisible = ref(false);
 const passForm = reactive({
+  applicationId: null,
+  reason: ''
+});
+
+const rejectDialogVisible = ref(false);
+const rejectForm = reactive({
   applicationId: null,
   reason: ''
 });
@@ -384,6 +406,17 @@ function openPassDialog(row) {
 }
 
 /**
+ * 打开拒绝申请对话框
+ */
+function openRejectDialog(row) {
+  rejectForm.applicationId = parseInt(row.applicationId, 10);
+  rejectDialogVisible.value = true;
+}
+
+/**
+ * 确认通过申请
+ */
+/**
  * 确认通过申请
  */
 function confirmPass() {
@@ -392,36 +425,57 @@ function confirmPass() {
     return;
   }
 
+  passLoading.value = true;
+  const loadingInstance = ElLoading.service({
+    lock: true,
+    text: '处理中...',
+    background: 'rgba(0, 0, 0, 0.7)',
+  });
+
   proxy.$modal.confirm('确认通过该申请吗?').then(function () {
     // 调用通过申请的 API
     return passApplication(passForm);
   }).then(() => {
     proxy.$modal.msgSuccess("通过成功");
     passDialogVisible.value = false;
-    passForm.reason=""
+    passForm.reason = "";
     getList(); // 刷新列表
   }).catch((error) => {
     console.error("通过申请失败:", error);
     proxy.$modal.msgError("通过申请失败，请重试!");
+  }).finally(() => {
+    passLoading.value = false;
+    console.log("结束了吗")
+    loadingInstance.close();
   });
 }
 
 /**
  * 拒绝申请操作
  */
+/**
+ * 拒绝申请操作
+ */
 function rejectApplicationOperate(row) {
-  const applicationId = parseInt(row.applicationId, 10);
-  console.log("row.applicationId", row.applicationId);
+  if (!rejectForm.reason.trim()) {
+    proxy.$modal.msgError("请输入拒绝原因");
+    return;
+  }
+
   proxy.$modal.confirm('确认拒绝该申请吗?').then(function () {
-    return rejectApplication(applicationId);
+    // 调用拒绝申请的 API
+    return rejectApplication(rejectForm);
   }).then(() => {
     proxy.$modal.msgSuccess("拒绝成功");
-    getList();
+    rejectDialogVisible.value = false;
+    rejectForm.reason = "";
+    getList(); // 刷新列表
   }).catch((error) => {
     console.error("拒绝申请失败:", error);
     proxy.$modal.msgError("拒绝申请失败，请重试!");
   });
 }
+
 
 /** 搜索按钮操作 */
 function handleQuery() {
