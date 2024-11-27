@@ -22,10 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, AwardDetail> implements AwardDetailService {
@@ -43,8 +40,34 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
     private CompetitionTypeMapper competitionTypeMapper;
 
     @Override
-    public boolean saveAwardDetail(AwardDetail awardDetail) {
-        return save(awardDetail);  // 使用 MyBatis-Plus 提供的保存方法
+    public boolean saveAwardDetail(AwardDetailDTO awardDetailDTO) {
+        AwardDetail awardDetail = new AwardDetail();
+        BeanUtils.copyProperties(awardDetailDTO, awardDetail);
+        awardDetail.setCreatedAt(new Date());
+         // 创建查询条件
+        QueryWrapper<CompetitionType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("level", awardDetailDTO.getType());
+        // 查询类型
+        CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper);
+        if (competitionType != null) {
+            awardDetail.setTypeId(competitionType.getId());
+        }
+        QueryWrapper<CompetitionName> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("competition_name", awardDetailDTO.getCompetition());
+        // 查询比赛名
+        CompetitionName competitionName = competitionNameMapper.selectOne(queryWrapper1);
+        if (competitionName != null) {
+            awardDetail.setCompetitionId(competitionName.getCompetitionId());
+        }
+        QueryWrapper<Enterprise> queryWrapper2 = new QueryWrapper<>();
+        queryWrapper2.eq("company_name", awardDetailDTO.getEnterprise());
+        // 查询企业名
+        Enterprise enterprise = enterpriseMapper.selectOne(queryWrapper2);
+        if (enterprise != null) {
+            awardDetail.setEnterpriseId(enterprise.getCompanyId());
+        }
+
+        return save(awardDetail);
     }
 
     @Override
@@ -76,7 +99,7 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
 
         QueryWrapper<Enterprise> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("enterprise", awardDetailDTO.getEnterprise());
+        queryWrapper2.eq("company_name", awardDetailDTO.getEnterprise());
         // 查询企业名
         Enterprise enterprise = enterpriseMapper.selectOne(queryWrapper2);
         if (enterprise != null) {
@@ -85,7 +108,17 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
             throw new RuntimeException("企业不存在");
         }
 
-        return updateById(awardDetail);  // 使用 MyBatis-Plus 提供的更新方法
+        if (awardDetail.getAwardId() == null) {
+            throw new IllegalArgumentException("ID cannot be null for update operation");
+        }
+
+        // 查询记录是否存在
+        AwardDetail existingRecord = getById(awardDetail.getAwardId());
+        if (existingRecord == null) {
+            throw new NoSuchElementException("No record found with ID: " + awardDetail.getAwardId());
+        }
+
+        return updateById(awardDetail);
     }
 
     @Override

@@ -27,8 +27,8 @@ public class AwardDetailController {
 
     @ApiOperation("新增获奖情况")
     @PostMapping("/add")
-    public boolean add(@RequestBody AwardDetail awardDetail) {
-        return awardDetailService.saveAwardDetail(awardDetail);
+    public boolean add(@RequestBody AwardDetailDTO awardDetailDTO) {
+        return awardDetailService.saveAwardDetail(awardDetailDTO);
     }
 
     @ApiOperation("更新获奖情况")
@@ -68,11 +68,11 @@ public class AwardDetailController {
         return awardDetailService.getAwardDetailstypeId(typeId);
     }
 
-   @ApiOperation("获取企业id对应获奖情况")
+    @ApiOperation("获取企业id对应获奖情况")
     @GetMapping("/getAwardDetailsId")
-    public List<AwardDetailVO> getAwardDetailsId(
+    public AwardDetailVO getAwardDetailsId(
             @ApiParam(value = "企业id") @RequestParam(required = false) Integer enterpriseId) {
-        return awardDetailService.getAwardDetailsId(enterpriseId);
+        return awardDetailService.getAwardDetailsId(enterpriseId).get(0);
     }
 
     /**

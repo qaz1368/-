@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.entity.PolicyCategory;
 import com.ruoyi.system.domain.entity.PolicyTag;
 import com.ruoyi.system.service.entrepreneurPark.PolicyTagService;
 import io.swagger.annotations.Api;
@@ -62,5 +63,14 @@ public class PolicyTagController {
     public boolean deletePolicyTags(
             @ApiParam(value = "标签ID列表", required = true) @RequestBody List<Integer> ids) {
         return policyTagService.removeByIds(ids);
+    }
+
+    /**
+     * 查询数据库全部标签
+     */
+    @ApiOperation("查询数据库全部的标签")
+    @GetMapping("/getPrimaryTagOptions")
+    public List<PolicyTag> getPrimaryTagOptions() {
+        return policyTagService.list();
     }
 }

@@ -19,7 +19,7 @@ public class PolicyArticleDTO {
     @ApiModelProperty("分类，指向文章分类表")
     private String category;
 
-    @ApiModelProperty("主要标签，指向标签表")
+    @ApiModelProperty("标签，指向标签表")
     private String primaryTag;
 
     @ApiModelProperty("文章标题")

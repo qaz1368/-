@@ -25,8 +25,10 @@ public class EnterpriseVO {
     private String industry;
 
     @ApiModelProperty(value = "地域")
-    @TableField("region")
     private String region;
+
+    @ApiModelProperty(value = "坐标")
+    private String coordinate;
 
     @ApiModelProperty(value = "注册地址")
     private String registeredAddress;

@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface AwardDetailService extends IService<AwardDetail> {
 
-    boolean saveAwardDetail(AwardDetail awardDetail);  // 新增获奖情况
+    boolean saveAwardDetail(AwardDetailDTO awardDetailDTO);  // 新增获奖情况
 
     boolean updateAwardDetail(AwardDetailDTO awardDetailDTO); // 更新获奖情况信息
 

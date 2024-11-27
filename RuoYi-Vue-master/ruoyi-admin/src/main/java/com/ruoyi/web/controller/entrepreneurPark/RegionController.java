@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.Region;
 import com.ruoyi.system.service.entrepreneurPark.RegionService;
 import io.swagger.annotations.Api;
@@ -56,4 +57,14 @@ public class RegionController {
     public Region getRegionById(@PathVariable("regionId") Integer regionId) {
         return regionService.getById(regionId);
     }
+
+    /**
+     * 查询数据库全部地域
+     */
+    @ApiOperation("查询数据库全部地域")
+    @GetMapping("/getRegionOptions")
+    public List<Region> getRegionOptions() {
+        return regionService.list();
+    }
+
 }

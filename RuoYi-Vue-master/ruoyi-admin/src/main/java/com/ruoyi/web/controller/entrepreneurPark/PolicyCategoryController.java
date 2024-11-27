@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.entity.PolicyCategory;
 import com.ruoyi.system.service.entrepreneurPark.PolicyCategoryService;
 import io.swagger.annotations.Api;
@@ -61,5 +62,14 @@ public class PolicyCategoryController {
     public boolean deletePolicyCategories(
             @ApiParam(value = "分类ID列表", required = true) @RequestBody List<Integer> ids) {
         return policyCategoryService.removeByIds(ids);
+    }
+
+    /**
+     * 查询数据库全部的分类
+     */
+    @ApiOperation("查询数据库全部的分类")
+    @GetMapping("/getCategoryOptions")
+    public List<PolicyCategory> getCategoryOptions() {
+        return policyCategoryService.list();
     }
 }

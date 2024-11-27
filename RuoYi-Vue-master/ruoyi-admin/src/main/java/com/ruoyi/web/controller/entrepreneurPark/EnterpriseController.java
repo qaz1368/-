@@ -1,7 +1,10 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.EnterpriseDTO;
 import com.ruoyi.system.domain.entity.Enterprise;
+import com.ruoyi.system.domain.entity.EnterpriseManagers;
+import com.ruoyi.system.domain.entity.Industry;
 import com.ruoyi.system.domain.vo.EnterpriseVO;
 import com.ruoyi.system.service.entrepreneurPark.EnterpriseService;
 import io.swagger.annotations.Api;
@@ -36,19 +39,29 @@ public class EnterpriseController {
 
     @ApiOperation("新增企业信息")
     @PostMapping("/add")
-    public boolean add(@RequestBody Enterprise enterprise) {
-        return enterpriseService.save(enterprise);
+    public boolean addEnterprise(@RequestBody EnterpriseDTO enterpriseDTO) {
+        return enterpriseService.addEnterprise(enterpriseDTO);
     }
 
     @ApiOperation("更新企业信息")
     @PutMapping("/update")
-    public boolean update(@RequestBody Enterprise enterprise) {
-        return enterpriseService.updateById(enterprise);
+    public boolean updateEnterprise(@RequestBody EnterpriseDTO enterpriseDTO) {
+        return enterpriseService.updateEnterprise(enterpriseDTO);
     }
+    /**
+     * 根据id查询企业信息
+     */
+    @ApiOperation("根据id查询企业信息")
+    @GetMapping("/{companyId}")
+    public EnterpriseVO getCompanyId(@PathVariable Integer companyId) {
+
+        return enterpriseService.getCompanyId(companyId);
+    }
+
 
     @ApiOperation("删除企业信息")
     @DeleteMapping("/delete/{id}")
-    public boolean delete(@PathVariable Integer id) {
+    public boolean deleteEnterprise(@PathVariable Integer id) {
         return enterpriseService.removeById(id);
     }
 
@@ -57,4 +70,14 @@ public class EnterpriseController {
     public boolean deleteBatch(@RequestBody List<Integer> ids) {
         return enterpriseService.removeByIds(ids);
     }
+
+    /**
+     * 查询数据库全部企业
+     */
+    @ApiOperation("查询数据库全部企业")
+    @GetMapping("/getEnterpriseOptions")
+    public List<Enterprise> getEnterpriseOptions() {
+        return enterpriseService.list();
+    }
+
 }

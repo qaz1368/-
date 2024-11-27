@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.JobEnterprisePositionDTO;
 import com.ruoyi.system.domain.entity.JobEnterprisePosition;
 import com.ruoyi.system.domain.vo.JobEnterprisePositionVO;
 import com.ruoyi.system.service.entrepreneurPark.JobEnterprisePositionService;
@@ -48,14 +49,14 @@ public class JobEnterprisePositionController {
 
     @ApiOperation(value = "添加企业与岗位关联")
     @PostMapping("/add")
-    public boolean addJobEnterprisePosition(@Valid @RequestBody JobEnterprisePosition jobEnterprisePosition) {
-        return jobEnterprisePositionService.save(jobEnterprisePosition);
+    public boolean addJobEnterprisePosition(@Valid @RequestBody JobEnterprisePositionDTO jobEnterprisePositionDTO) {
+        return jobEnterprisePositionService.addJobEnterprisePosition(jobEnterprisePositionDTO);
     }
 
     @ApiOperation(value = "更新企业与岗位关联")
     @PutMapping("/update")
-    public boolean updateJobEnterprisePosition(@Valid @RequestBody JobEnterprisePosition jobEnterprisePosition) {
-        return jobEnterprisePositionService.updateById(jobEnterprisePosition);
+    public boolean updateJobEnterprisePosition(@Valid @RequestBody JobEnterprisePositionDTO jobEnterprisePositionDTO) {
+        return jobEnterprisePositionService.updateJobEnterprisePosition(jobEnterprisePositionDTO);
     }
 
     /**
@@ -63,8 +64,8 @@ public class JobEnterprisePositionController {
      */
     @ApiOperation(value = "根据ID查询招聘信息")
     @GetMapping("/{enterpriseJobId}")
-    public JobEnterprisePosition getJobEnterprisePositionById(
+    public JobEnterprisePositionVO getJobEnterprisePositionById(
             @ApiParam(value = "招聘信息ID", required = true) @PathVariable Integer enterpriseJobId) {
-        return jobEnterprisePositionService.getById(enterpriseJobId);
+        return jobEnterprisePositionService.getJobEnterprisePositionById(enterpriseJobId);
     }
 }

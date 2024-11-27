@@ -2,10 +2,12 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.system.domain.entity.Industry;
+import com.ruoyi.system.domain.entity.JobPosition;
 import com.ruoyi.system.domain.vo.IndustryRankVO;
 import com.ruoyi.system.service.entrepreneurPark.IndustryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,8 +48,8 @@ public class IndustryController {
     @ApiOperation("分页查询行业")
     @GetMapping("/page")
     public IPage<Industry> pageIndustry(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @ApiParam(value = "当前页", required = false) @RequestParam(value = "page", defaultValue = "1") int page,
+            @ApiParam(value = "每页记录数", required = false) @RequestParam(value = "size", defaultValue = "10") int size) {
         return industryService.getIndustriesPage(page, size);
     }
 
@@ -62,5 +64,14 @@ public class IndustryController {
     @ApiOperation("所属行业占比排行")
     public List<IndustryRankVO> getIndustryRanking(@RequestParam int size) {
         return industryService.getIndustryRanking(size);
+    }
+
+    /**
+     * 查询数据库全部行业
+     */
+    @ApiOperation("查询数据库全部的行业")
+    @GetMapping("/getIndustryOptions")
+    public List<Industry> getIndustryOptions() {
+        return industryService.list();
     }
 }

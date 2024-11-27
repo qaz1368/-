@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.EnterpriseManagers;
 import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
 import com.ruoyi.system.service.entrepreneurPark.EnterpriseManagerService;
@@ -58,6 +59,15 @@ public class EnterpriseManagerController {
     @GetMapping("/getManager/{managerId}")
     public EnterpriseManagers getManager(@PathVariable Integer managerId) {
         return managerService.getById(managerId);
+    }
+
+    /**
+     * 查询数据库全部企业管理者
+     */
+    @ApiOperation("查询数据库全部企业管理者")
+    @GetMapping("/getEnterpriseManagersOptions")
+    public List<EnterpriseManagers> getEnterpriseManagersOptions() {
+        return managerService.list();
     }
 
 }

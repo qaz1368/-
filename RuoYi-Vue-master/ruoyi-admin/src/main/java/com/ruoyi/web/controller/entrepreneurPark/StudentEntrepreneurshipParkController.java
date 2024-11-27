@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.StudentEntrepreneurshipParkDTO;
+import com.ruoyi.system.domain.entity.EnterpriseManagers;
 import com.ruoyi.system.domain.entity.StudentEntrepreneurshipPark;
 import com.ruoyi.system.service.entrepreneurPark.StudentEntrepreneurshipParkService;
 import io.swagger.annotations.Api;
@@ -21,14 +23,14 @@ public class StudentEntrepreneurshipParkController {
 
     @ApiOperation("新增创业园")
     @PostMapping("/add")
-    public boolean add(@RequestBody StudentEntrepreneurshipPark park) {
-        return parkService.saveStudentPark(park);
+    public boolean add(@RequestBody StudentEntrepreneurshipParkDTO studentEntrepreneurshipParkDTO) {
+        return parkService.saveStudentPark(studentEntrepreneurshipParkDTO);
     }
 
     @ApiOperation("更新创业园信息")
     @PutMapping("/update")
-    public boolean update(@RequestBody StudentEntrepreneurshipPark park) {
-        return parkService.updateStudentPark(park);
+    public boolean update(@RequestBody StudentEntrepreneurshipParkDTO studentEntrepreneurshipParkDTO) {
+        return parkService.updateStudentPark(studentEntrepreneurshipParkDTO);
     }
 
     @ApiOperation("删除创业园")
@@ -58,6 +60,15 @@ public class StudentEntrepreneurshipParkController {
     @GetMapping("/get/{parkId}")
     public StudentEntrepreneurshipPark get(@PathVariable Integer parkId) {
         return parkService.getById(parkId);
+    }
+
+    /**
+     * 查询数据库全部创业园
+     */
+    @ApiOperation("查询数据库全部创业园")
+    @GetMapping("/getStudentEntrepreneurshipParkOptions")
+    public List<StudentEntrepreneurshipPark> getStudentEntrepreneurshipParkOptions() {
+        return parkService.list();
     }
 
 }

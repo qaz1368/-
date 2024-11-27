@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.system.domain.entity.JobPosition;
+import com.ruoyi.system.domain.entity.PolicyTag;
 import com.ruoyi.system.service.entrepreneurPark.JobPositionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,5 +66,14 @@ public class JobPositionController {
     public JobPosition getJobPositionById(
             @ApiParam(value = "岗位ID", required = true) @PathVariable Integer positionId) {
         return jobPositionService.getById(positionId);
+    }
+
+    /**
+     * 查询数据库全部岗位
+     */
+    @ApiOperation("查询数据库全部的岗位")
+    @GetMapping("/getJobPositionOptions")
+    public List<JobPosition> getJobPositionOptions() {
+        return jobPositionService.list();
     }
 }
