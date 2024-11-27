@@ -39,7 +39,7 @@ export function updateAward(data) {
 //根据award查询奖项信息
 export function getAwardByAwardId(awardId) {
   return request({
-    url: `/award-details/getAwardDetail/${awardId}`,
+    url: `/award-details/getAwardDetailsId/${awardId}`,
     method: 'get'
   })
 }

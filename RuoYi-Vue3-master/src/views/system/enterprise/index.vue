@@ -764,17 +764,12 @@ function handleUpdate(row) {
   console.log("row", row)
   if (row && row.companyId) {
     getEnterprise(row.companyId).then(response => {
-      form.value = { ...response.data,     industryOptions: form.value.industryOptions,
-        regionOptions: form.value.regionOptions,
+      form.value = { ...response, industryOptions: form.value.industryOptions, regionOptions: form.value.regionOptions,
         legalPersonOptions: form.value.legalPersonOptions,
         incubatorOptions: form.value.incubatorOptions,
         managerNameOptions: form.value.managerNameOptions}
       console.log("form.value", form.value)
       form.value = response.data;
-      postOptions.value = response.posts;
-      roleOptions.value = response.roles;
-      form.value.postIds = response.postIds;
-      form.value.roleIds = response.roleIds;
       open.value = true
       title.value = "修改企业"
     }).catch(error => {

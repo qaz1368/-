@@ -517,7 +517,7 @@ function handleUpdate(row) {
   console.log("row", row)
   if (row && row.enterpriseJobId) {
     getRecruitment(row.enterpriseJobId).then(response => {
-      form.value = { ...response.data, enterpriseOptions: form.value.enterpriseOptions,positionOptions: form.value.positionOptions }
+      form.value = { ...response, enterpriseOptions: form.value.enterpriseOptions,positionOptions: form.value.positionOptions }
       console.log("form.value", form.value)
       open.value = true
       title.value = "修改招聘信息"

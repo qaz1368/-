@@ -238,7 +238,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addArticle, delArticle, getArticle, listArticle} from "@/api/article/article";
+import {addArticle, delArticle, getArticle, listArticle,updatePolicyArticle} from "@/api/article/article";
 import {onMounted} from "vue";
 import {getPrimaryTagOptions} from "../../../api/article/tag";
 import {getCategoryOptions} from "../../../api/article/type";
@@ -312,7 +312,7 @@ const data = reactive({
   rules: {
     articleId: [{ required: false, message: "文章ID不能为空", trigger: "blur" }],
     category: [{ required: true, message: "分类不能为空", trigger: "blur" }],
-    primaryTag: [{ required: true, message: "主要标签不能为空", trigger: "blur" }],
+    primaryTag: [{ required: true, message: "标签不能为空", trigger: "blur" }],
     title: [{ required: true, message: "文章标题不能为空", trigger: "blur" }],
     content: [{ required: true, message: "文章内容不能为空", trigger: "blur" }],
     publishDate: [{ required: true, message: "发布日期不能为空", trigger: "change" }],
@@ -499,7 +499,7 @@ function handleUpdate(row) {
 
   if (row && row.articleId) {
     getArticle(row.articleId).then(response => {
-      form.value = { ...response.data, categoryOptions: form.value.categoryOptions,primaryTagOptions: form.value.primaryTagOptions }
+      form.value = { ...response, categoryOptions: form.value.categoryOptions,primaryTagOptions: form.value.primaryTagOptions }
       console.log("form.value", form.value)
       open.value = true
       title.value = "修改文章"
@@ -514,7 +514,7 @@ function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
       if (form.value.articleId != undefined) {
-        updateUser(form.value).then(response => {
+        updatePolicyArticle(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

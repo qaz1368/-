@@ -254,10 +254,10 @@ import { ref, reactive, toRefs, getCurrentInstance, nextTick, onMounted } from '
 import { useRouter } from 'vue-router'
 import { getToken } from "@/utils/auth"
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
-import { addAward, delAward, getAwardByAwardId, listAward, updateAward } from "@/api/monitor/award"
-import { listCompetitionNameAll } from "@/api/monitor/competitionName"
-import {getCompetitionType} from "@/api/monitor/competitionType";
 import {getEnterpriseOptions} from "../../../api/system/enterprise";
+import {addAward, delAward, getAwardByAwardId, listAward, updateAward} from "../../../api/monitor/award";
+import {listCompetitionNameAll} from "../../../api/monitor/competitionName";
+import {getCompetitionType} from "../../../api/monitor/competitionType";
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -554,8 +554,9 @@ function handleUpdate(row) {
   console.log("row", row)
   if (row && row.awardId) {
     getAwardByAwardId(row.awardId).then(response => {
-      form.value = { ...response.data, competitionOptions: form.value.competitionOptions,
-        competitionTypeOptions: form.value.competitionTypeOptions, enterpriseOptions: form.value.enterpriseOptions }
+      form.value = { ...response,   competitionOptions: form.value.competitionOptions,
+        competitionTypeOptions: form.value.competitionTypeOptions,
+        enterpriseOptions: form.value.enterpriseOptions, }
       console.log("form.value", form.value)
       open.value = true
       title.value = "修改奖项"

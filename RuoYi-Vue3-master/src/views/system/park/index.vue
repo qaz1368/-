@@ -511,7 +511,7 @@ function handleUpdate(row) {
   reset();
     if (row && row.parkId) {
       getParkById(row.parkId).then(response => {
-        form.value = { ...response.data, industryOptions: form.value.industryOptions}
+        form.value = { ...response, industryOptions: form.value.industryOptions}
         console.log("form.value", form.value)
         open.value = true
         title.value = "修改创业园"

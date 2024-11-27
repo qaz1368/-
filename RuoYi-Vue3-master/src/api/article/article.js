@@ -27,7 +27,6 @@ export function getArticle(articleId) {
   })
 }
 
-//删除企业管理者
 export function delArticle(articleId) {
   return request({
     url: `/policy-articles/${articleId}`, // 使用模板字符串来插入 awardId
@@ -36,9 +35,9 @@ export function delArticle(articleId) {
 }
 
 //修改奖项名称信息
-export function updateArticle(data) {
+export function updatePolicyArticle(data) {
   return request({
-    url: '/policy-articles/update',
+    url: '/policy-articles/updatePolicyArticle',
     method: 'put',
     data: data
   })
