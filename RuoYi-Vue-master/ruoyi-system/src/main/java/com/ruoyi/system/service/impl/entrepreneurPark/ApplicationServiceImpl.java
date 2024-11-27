@@ -190,14 +190,6 @@ public boolean save(ApplicationDTO applicationDTO) {
                 // 修改流程 id、流程顺序、审批部门 ID
                 updateApprovalDetails(applicationId, currentProcessStep);
 
-                // 发送通过通知邮件
-                String to = application.getApplicantEmail();
-                if (to == null || to.isEmpty()) {
-                    throw new RuntimeException("申请人邮箱地址为空");
-                }
-                String title = "申请已通过";
-
-                emailUtil.sendMessage(to, title, reason);
             } else {
                 // 查找下一个流程步骤
                 QueryWrapper<ApprovalProcess> queryWrapper = new QueryWrapper<>();
@@ -217,7 +209,16 @@ public boolean save(ApplicationDTO applicationDTO) {
 
                 // 修改流程 id、流程顺序、审批部门 ID
                 updateApprovalDetails(applicationId, nextProcessStep);
+
             }
+            // 发送通过通知邮件
+            String to = application.getApplicantEmail();
+            if (to == null || to.isEmpty()) {
+                throw new RuntimeException("申请人邮箱地址为空");
+            }
+            String title = "申请已通过";
+
+            emailUtil.sendMessage(to, title, reason);
         }
     }
 
