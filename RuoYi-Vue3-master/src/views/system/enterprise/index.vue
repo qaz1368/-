@@ -91,6 +91,7 @@
     <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
     <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
     <el-table-column label="地域" align="center" key="region" prop="region" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+    <el-table-column label="坐标" align="center" key="coordinate" prop="coordinate" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="企业标签" align="center" key="enterpriseLabel" prop="enterpriseLabel" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="注册地址" align="center" key="registeredAddress" prop="registeredAddress" v-if="columns[3].visible" :show-overflow-tooltip="true" />
     <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
@@ -158,11 +159,6 @@
   <el-form :model="form"  ref="userRef" label-width="120px">
     <el-row>
       <el-col :span="12">
-        <el-form-item label="企业ID" prop="companyId">
-          <el-input v-model="form.companyId" placeholder="请输入企业ID" maxlength="30" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
         <el-form-item label="企业名称" prop="companyName">
           <el-input v-model="form.companyName" placeholder="请输入企业名称" maxlength="30" />
         </el-form-item>
@@ -171,7 +167,14 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="所属行业" prop="industry">
-          <el-input v-model="form.industry" placeholder="请输入所属行业" maxlength="30" />
+          <el-select v-model="form.industry" placeholder="请选择行业">
+            <el-option
+                v-for="option in form.industryOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -180,22 +183,50 @@
         </el-form-item>
       </el-col>
     </el-row>
-        <el-row>
+    <el-row>
       <el-col :span="12">
-        <el-form-item label="地域" prop="industry">
-          <el-input v-model="form.region" placeholder="请输入地域" maxlength="30" />
+        <el-form-item label="坐标" prop="coordinate">
+          <el-input v-model="form.coordinate" placeholder="请输入坐标" style="width: 100%;" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="地域" prop="region">
+          <el-select v-model="form.region" placeholder="请选择行业">
+            <el-option
+                v-for="option in form.regionOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="企业标签" prop="registeredAddress">
-          <el-input v-model="form.enterpriseLabel" placeholder="请输入企业标签" maxlength="50" />
+          <el-select v-model="form.industry" placeholder="请选择行业">
+            <el-option
+                v-for="option in form.industryOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="12">
         <el-form-item label="法定代表人" prop="legalPerson">
-          <el-input v-model="form.legalPerson" placeholder="请输入法定代表人" maxlength="30" />
+          <el-select v-model="form.legalPerson" placeholder="请选择行业">
+            <el-option
+                v-for="option in form.legalPersonOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -296,11 +327,6 @@
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <el-form-item label="项目获奖情况" prop="awardsReceived">
-          <el-input v-model="form.awardsReceived" placeholder="请输入项目获奖情况" maxlength="50" />
-        </el-form-item>
-      </el-col>
     </el-row>
     <el-row>
       <el-col :span="12">
@@ -319,25 +345,27 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="记录创建时间" prop="createdAt">
-          <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择记录创建时间" style="width: 100%;" />
+        <el-form-item label="创业园" prop="incubator">
+          <el-select v-model="form.incubator" placeholder="请选择创业园">
+            <el-option
+                v-for="option in form.incubatorOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="最后更新时间" prop="updatedAt">
-          <el-date-picker v-model="form.updatedAt" type="datetime" placeholder="选择最后更新时间" style="width: 100%;" />
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="12">
-        <el-form-item label="孵化器ID" prop="incubatorId">
-          <el-input v-model="form.incubator" placeholder="请输入孵化器ID" maxlength="30" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="企业负责人ID" prop="managerId">
-          <el-input v-model="form.managerName" placeholder="请输入企业负责人ID" maxlength="30" />
+        <el-form-item label="企业负责人" prop="managerName">
+          <el-select v-model="form.managerName" placeholder="请选择企业负责人">
+            <el-option
+                v-for="option in form.managerNameOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
     </el-row>
@@ -391,7 +419,12 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addEnterprise, listEnterprise} from "@/api/system/enterprise";
-import {getCurrentInstance, reactive, ref} from "vue";
+import {getCurrentInstance, onMounted, reactive, ref} from "vue";
+import {deleteEnterprise, getEnterprise, getEnterpriseOptions, updateEnterprise} from "../../../api/system/enterprise";
+import {getIndustryOptions} from "../../../api/system/industry";
+import {getRegionOptions} from "../../../api/system/region";
+import {getEnterpriseManagersOptions} from "../../../api/system/enterprise_managers";
+import {getStudentEntrepreneurshipParkOptions} from "../../../api/system/park";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -453,6 +486,7 @@ const data = reactive({
     companyName: null,
     industry: null,
     region: null,
+    coordinate: null,
     enterpriseLabel: null,
     registeredAddress: null,
     legalPerson: null,
@@ -478,7 +512,11 @@ const data = reactive({
     updatedAt: null,
     incubator: null,
     managerName: null,
-
+    industryOptions: [],
+    regionOptions: [],
+    legalPersonOptions: [],
+    incubatorOptions: [],
+    managerNameOptions: []
   },
   queryParams: {
     pageNum: 1,
@@ -575,9 +613,8 @@ function resetQuery() {
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
-    return delUser(userIds);
+  proxy.$modal.confirm('是否确认删除用户编号为"' + row.companyId + '"的数据项？').then(function () {
+    return deleteEnterprise(row.companyId);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -667,18 +704,41 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    companyId: undefined,
+    companyName: undefined,
+    industry: undefined,
+    region: undefined,
+    coordinate: undefined,
+    registeredAddress: undefined,
+    legalPerson: undefined,
+    establishmentDate: undefined,
+    enterpriseLabel: undefined,
+    companyStatus: undefined,
+    subsidyReceivedDate: undefined,
+    subsidyAmount: undefined,
+    employmentImpact: undefined,
+    signedContracts: undefined,
+    socialSecurityContributors: undefined,
+    annualRevenue: undefined,
+    annualTax: undefined,
+    registeredCapital: undefined,
+    povertyAlleviation: undefined,
+    loanAmount: undefined,
+    governmentSubsidy: undefined,
+    socialSecurity: undefined,
+    awards: undefined,
+    awardsReceived: undefined,
+    entrepreneurshipGuidance: undefined,
+    remarks: undefined,
+    createdAt: undefined,
+    updatedAt: undefined,
+    incubator: undefined,
+    managerName: undefined,
+    industryOptions: form.value.industryOptions,
+    regionOptions: form.value.regionOptions,
+    legalPersonOptions: form.value.legalPersonOptions,
+    incubatorOptions: form.value.incubatorOptions,
+    managerNameOptions: form.value.managerNameOptions,
   };
   proxy.resetForm("userRef");
 };
@@ -701,24 +761,35 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
-    open.value = true;
-    title.value = "修改用户";
-    form.password = "";
-  });
+  console.log("row", row)
+  if (row && row.companyId) {
+    getEnterprise(row.companyId).then(response => {
+      form.value = { ...response.data,     industryOptions: form.value.industryOptions,
+        regionOptions: form.value.regionOptions,
+        legalPersonOptions: form.value.legalPersonOptions,
+        incubatorOptions: form.value.incubatorOptions,
+        managerNameOptions: form.value.managerNameOptions}
+      console.log("form.value", form.value)
+      form.value = response.data;
+      postOptions.value = response.posts;
+      roleOptions.value = response.roles;
+      form.value.postIds = response.postIds;
+      form.value.roleIds = response.roleIds;
+      open.value = true
+      title.value = "修改企业"
+    }).catch(error => {
+      console.error("修改企业时出错：", error)
+      proxy.$modal.msgError("修改企业失败，请重试")
+    })
+  }
+
 };
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+      if (form.value.companyId != undefined) {
+        updateEnterprise(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
@@ -733,9 +804,54 @@ function submitForm() {
     }
   });
 };
+function getIndustryOption() {
+  getIndustryOptions().then(res => {
+    const industryNames = res.map(item => item.industryName)
+    form.value.industryOptions = industryNames
+    console.log("form.value.industryOptions", form.value.industryOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
 
-getDeptTree();
-getList();
+function getRegionOption() {
+  getRegionOptions().then(res => {
+    const regionNames = res.map(item => item.regionName)
+    form.value.regionOptions = regionNames
+    console.log("form.value.regionOptions", form.value.regionOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+function getEnterpriseManagersOption() {
+  getEnterpriseManagersOptions().then(res => {
+    const names = res.map(item => item.name)
+    form.value.managerNameOptions = names
+    console.log("form.value.enterpriseOptions", form.value.managerNameOptions)
+    form.value.legalPersonOptions = names
+    console.log("form.value.enterpriseOptions", form.value.legalPersonOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+function getStudentEntrepreneurshipParkOption() {
+  getStudentEntrepreneurshipParkOptions().then(res => {
+    const parkNames = res.map(item => item.parkName)
+    form.value.incubatorOptions = parkNames
+    console.log("form.value.regionOptions", form.value.incubatorOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  getIndustryOption()
+  getRegionOption()
+  getEnterpriseManagersOption()
+  getStudentEntrepreneurshipParkOption()
+})
 </script>
 
 <style scoped>

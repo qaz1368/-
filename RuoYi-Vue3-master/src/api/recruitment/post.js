@@ -43,3 +43,11 @@ export function updatePost(data) {
         data: data
     })
 }
+
+//查询数据库的全部岗位名称
+export function getJobPositionOptions() {
+    return request({
+        url: '/api/job-positions/getJobPositionOptions',
+        method: 'get'
+    })
+}

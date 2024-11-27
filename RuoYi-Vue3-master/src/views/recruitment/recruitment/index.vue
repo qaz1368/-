@@ -116,6 +116,32 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="120px">
         <el-row>
           <el-col :span="12">
+            <el-form-item label="企业" prop="enterprise">
+              <el-select v-model="form.enterprise" placeholder="请选择企业">
+                <el-option
+                    v-for="option in form.enterpriseOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="岗位" prop="position">
+              <el-select v-model="form.position" placeholder="请选择岗位">
+                <el-option
+                    v-for="option in form.positionOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="岗位类型" prop="positionType">
               <el-select v-model="form.positionType" placeholder="请选择岗位类型">
                 <el-option label="全职" value="Full-time"></el-option>
@@ -155,13 +181,6 @@
           <el-col :span="12">
             <el-form-item label="是否启用" prop="isActive">
               <el-switch v-model="form.isActive" active-text="启用" inactive-text="禁用" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20">
-            <el-form-item label="记录创建时间" prop="createdAt">
-              <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择日期时间" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -222,6 +241,10 @@ import {
   listRecruitment,
   updateRecruitment
 } from "@/api/recruitment/recruitment";
+import {onMounted} from "vue";
+import {getIndustryOptions} from "../../../api/system/industry";
+import {getJobPositionOptions} from "../../../api/recruitment/post";
+import {getEnterpriseOptions} from "../../../api/system/enterprise";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -269,7 +292,20 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    enterpriseJobId: undefined,
+    enterpriseId: undefined,
+    positionType: undefined,
+    enterpriseName: undefined,
+    jobPosition: undefined,
+    jobStatus: undefined,
+    jobDescription: undefined,
+    isActive: undefined,
+    enterpriseJobName: undefined,
+    location: undefined,
+    enterpriseOptions: [],
+    positionOptions: [],
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -282,24 +318,6 @@ const data = reactive({
     positionType: [
       { required: true, message: "岗位类型不能为空", trigger: "change" }
     ],
-    salaryRange: [
-      { required: true, message: "薪资范围不能为空", trigger: "blur" }
-    ],
-    location: [
-      { required: true, message: "工作地点不能为空", trigger: "blur" }
-    ],
-    jobStatus: [
-      { required: true, message: "岗位状态不能为空", trigger: "change" }
-    ],
-    jobDescription: [
-      { required: true, message: "岗位描述不能为空", trigger: "blur" },
-    ],
-    isActive: [
-      { required: true, message: "是否启用不能为空", trigger: "change" }
-    ],
-    createdAt: [
-      { required: true, message: "记录创建时间不能为空", trigger: "change" }
-    ]
   }
 });
 
@@ -459,18 +477,21 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
+    enterpriseJobId: undefined,
+    enterpriseId: undefined,
+    enterpriseName: undefined,
+    jobPosition: undefined,
+    isActive: undefined,
+    enterpriseJobName: undefined,
+    location: undefined,
+    positionType: "Full-time",
+    jobName: "",
+    jobDescription: "",
+    jobStatus: "Open",
+    jobRequirements: "",
+    jobBenefits: "",
+    enterpriseOptions: form.value.enterpriseOptions,
+    positionOptions: form.value.positionOptions
   };
   proxy.resetForm("userRef");
 };
@@ -493,12 +514,18 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  getRecruitment(row.enterpriseJobId).then(response => {
-    form.value = response;
-    open.value = true;
-    title.value = "修改招聘信息";
-    form.password = "";
-  });
+  console.log("row", row)
+  if (row && row.enterpriseJobId) {
+    getRecruitment(row.enterpriseJobId).then(response => {
+      form.value = { ...response.data, enterpriseOptions: form.value.enterpriseOptions,positionOptions: form.value.positionOptions }
+      console.log("form.value", form.value)
+      open.value = true
+      title.value = "修改招聘信息"
+    }).catch(error => {
+      console.error("修改招聘信息时出错：", error)
+      proxy.$modal.msgError("修改招聘信息失败，请重试")
+    })
+  }
 };
 /** 提交按钮 */
 function submitForm() {
@@ -521,8 +548,32 @@ function submitForm() {
   });
 };
 
-getDeptTree();
-getList();
+function getJobPositionOption() {
+  getJobPositionOptions().then(res => {
+    const positionNames = res.map(item => item.positionName)
+    form.value.positionOptions = positionNames
+    console.log("form.value.positionOptions", form.value.positionOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+function getEnterpriseOption() {
+  getEnterpriseOptions().then(res => {
+    const companyNames = res.map(item => item.companyName)
+    form.value.enterpriseOptions = companyNames
+    console.log("form.value.enterpriseOptions", form.value.enterpriseOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  getEnterpriseOption()
+  getJobPositionOption()
+})
 </script>
 
 <style scoped>

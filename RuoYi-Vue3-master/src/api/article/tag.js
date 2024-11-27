@@ -49,4 +49,12 @@ export function updateTag(data) {
   })
 }
 
+//查询数据库的全部奖项名称
+export function getPrimaryTagOptions() {
+  return request({
+    url: '/policy-tags/getPrimaryTagOptions',
+    method: 'get'
+  })
+}
+
 

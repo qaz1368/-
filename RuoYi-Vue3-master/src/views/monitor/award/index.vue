@@ -174,7 +174,14 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="获奖企业" prop="enterprise">
-              <el-input v-model="form.enterprise" placeholder="请输入获奖企业" />
+              <el-select v-model="form.enterprise" placeholder="请选择比赛类型">
+                <el-option
+                    v-for="option in form.enterpriseOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -250,6 +257,7 @@ import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser,
 import { addAward, delAward, getAwardByAwardId, listAward, updateAward } from "@/api/monitor/award"
 import { listCompetitionNameAll } from "@/api/monitor/competitionName"
 import {getCompetitionType} from "@/api/monitor/competitionType";
+import {getEnterpriseOptions} from "../../../api/system/enterprise";
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -302,7 +310,9 @@ const data = reactive({
     enterprise: '',
     description: '',
     subsidyAmount: '',
-    competitionOptions: []
+    competitionOptions: [],
+    competitionTypeOptions: [],
+    enterpriseOptions: [],
   },
   queryParams: {
     pageNum: 1,
@@ -317,8 +327,7 @@ const data = reactive({
       { required: true, message: '请选择年份', trigger: 'change' }
     ],
     level: [
-      { required: true, message: '请输入比赛等级', trigger
-            : 'blur' }
+      { required: true, message: '请输入比赛等级', trigger: 'blur' }
     ],
     type: [
       { required: true, message: '请输入比赛类型', trigger: 'blur' }
@@ -335,9 +344,6 @@ const data = reactive({
     competition: [
       { required: true, message: '请输入比赛', trigger: 'blur' }
     ],
-    incubatorId: [
-      { required: true, message: '请输入获奖创业园ID', trigger: 'blur' }
-    ]
   }
 })
 
@@ -517,7 +523,8 @@ function reset() {
     description: null,
     subsidyAmount: null,
     competitionOptions: form.value.competitionOptions,
-    competitionTypeOptions: form.value.competitionTypeOptions
+    competitionTypeOptions: form.value.competitionTypeOptions,
+    enterpriseOptions: form.value.enterpriseOptions,
   }
   // 使用 nextTick 确保 DOM 更新后再重置表单
   nextTick(() => {
@@ -547,7 +554,8 @@ function handleUpdate(row) {
   console.log("row", row)
   if (row && row.awardId) {
     getAwardByAwardId(row.awardId).then(response => {
-      form.value = { ...response.data, competitionOptions: form.value.competitionOptions }
+      form.value = { ...response.data, competitionOptions: form.value.competitionOptions,
+        competitionTypeOptions: form.value.competitionTypeOptions, enterpriseOptions: form.value.enterpriseOptions }
       console.log("form.value", form.value)
       open.value = true
       title.value = "修改奖项"
@@ -600,10 +608,20 @@ function GetCompetitionTypeAll() {
     console.error(error)
   })
 }
+function getEnterpriseOption() {
+  getEnterpriseOptions().then(res => {
+    const companyNames = res.map(item => item.companyName)
+    form.value.enterpriseOptions = companyNames
+    console.log("form.value.enterpriseOptions", form.value.enterpriseOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
 
 onMounted(() => {
   getDeptTree()
   getList()
+  getEnterpriseOption()
   GetCompetitionNameAll()
   GetCompetitionTypeAll()
 })

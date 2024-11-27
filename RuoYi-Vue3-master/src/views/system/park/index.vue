@@ -111,7 +111,14 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="所属行业" prop="industry">
-              <el-input v-model="form.industry" placeholder="请输入所属行业" maxlength="22" />
+              <el-select v-model="form.industry" placeholder="请选择行业">
+                <el-option
+                    v-for="option in form.industryOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -238,6 +245,9 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addPark, delPark, getParkById, listPark, updatePark} from "@/api/system/park";
+import {onMounted} from "vue";
+import {getRegionOptions} from "../../../api/system/region";
+import {getIndustryOptions} from "../../../api/system/industry";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -303,6 +313,7 @@ const data = reactive({
     employmentCount: undefined,
     createdAt: undefined,
     updatedAt: undefined,
+    industryOptions:[],
   },
    queryParams: {
     pageNum: 1,
@@ -475,6 +486,7 @@ function reset() {
     employmentCount: undefined,
     createdAt: undefined,
     updatedAt: undefined,
+    industryOptions: form.value.industryOptions,
   };
   proxy.resetForm("userRef");
 };
@@ -497,13 +509,18 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  getParkById(row.parkId).then(response => {
-    form.value = response;
-    open.value = true;
-    title.value = "修改创业园";
-    form.password = "";
-  });
-};
+    if (row && row.parkId) {
+      getParkById(row.parkId).then(response => {
+        form.value = { ...response.data, industryOptions: form.value.industryOptions}
+        console.log("form.value", form.value)
+        open.value = true
+        title.value = "修改创业园"
+      }).catch(error => {
+        console.error("修改创业园时出错：", error)
+        proxy.$modal.msgError("修改创业园失败，请重试")
+      })
+    }
+  }
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["parkRef"].validate(valid => {
@@ -524,9 +541,21 @@ function submitForm() {
     }
   });
 };
+function getIndustryOption() {
+  getIndustryOptions().then(res => {
+    const industryNames = res.map(item => item.industryName)
+    form.value.industryOptions = industryNames
+    console.log("form.value.industryOptions", form.value.industryOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
 
-getDeptTree();
-getList();
+onMounted(() => {
+  getDeptTree()
+  getList()
+  getIndustryOption()
+})
 </script>
 
 <style scoped>

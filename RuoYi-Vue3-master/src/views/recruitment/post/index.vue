@@ -245,18 +245,6 @@ const data = reactive({
     positionName: [
       { required: true, message: "岗位名称不能为空", trigger: "blur" },
     ],
-    positionDescription: [
-      { required: true, message: "岗位描述不能为空", trigger: "blur" }
-    ],
-    requiredSkills: [
-      { required: true, message: "要求技能不能为空", trigger: "blur" }
-    ],
-    positionResponsibilities: [
-      { required: true, message: "岗位职责不能为空", trigger: "blur" }
-    ],
-    createdAt: [
-      { required: true, message: "创建时间不能为空", trigger: "change" }
-    ]
   }
 });
 

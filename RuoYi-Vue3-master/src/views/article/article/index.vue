@@ -132,14 +132,28 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="分类" prop="category">
-              <el-input v-model="form.category" placeholder="请输入分类" />
+              <el-select v-model="form.category" placeholder="请选择分类">
+                <el-option
+                    v-for="option in form.categoryOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="标签" prop="primaryTag">
-              <el-input v-model="form.primaryTag" placeholder="请输入标签" />
+              <el-select v-model="form.primaryTag" placeholder="请选择标签">
+                <el-option
+                    v-for="option in form.primaryTagOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -225,6 +239,9 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addArticle, delArticle, getArticle, listArticle} from "@/api/article/article";
+import {onMounted} from "vue";
+import {getPrimaryTagOptions} from "../../../api/article/tag";
+import {getCategoryOptions} from "../../../api/article/type";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -273,7 +290,16 @@ const columns = ref([
 
 const data = reactive({
   form: {
-
+    articleId: null,
+    category: null,
+    primaryTag: null,
+    title: null,
+    content: null,
+    publishDate: null,
+    deadlineDate: null,
+    status: null,
+    categoryOptions: [],
+    primaryTagOptions: []
   },
   queryParams: {
     pageNum: 1,
@@ -445,7 +471,9 @@ function reset() {
     status: "草稿",
     remark: undefined,
     postIds: [],
-    roleIds: []
+    roleIds: [],
+    categoryOptions: form.value.categoryOptions,
+    primaryTagOptions: form.value.primaryTagOptions
   };
   proxy.resetForm("userRef");
 };
@@ -469,18 +497,23 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
 
-  getArticle(row.articleId).then(response => {
-    form.value = response;
-    open.value = true;
-    title.value = "修改文章";
-    form.password = "";
-  });
+  if (row && row.articleId) {
+    getArticle(row.articleId).then(response => {
+      form.value = { ...response.data, categoryOptions: form.value.categoryOptions,primaryTagOptions: form.value.primaryTagOptions }
+      console.log("form.value", form.value)
+      open.value = true
+      title.value = "修改文章"
+    }).catch(error => {
+      console.error("修改文章时出错：", error)
+      proxy.$modal.msgError("修改文章失败，请重试")
+    })
+  }
 };
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
+      if (form.value.articleId != undefined) {
         updateUser(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
@@ -497,8 +530,34 @@ function submitForm() {
   });
 };
 
-getDeptTree();
-getList();
+// 查询全部比赛名称
+function getCategoryOption() {
+  getCategoryOptions().then(res => {
+    const categoryNames = res.map(item => item.categoryName)
+    form.value.categoryOptions = categoryNames
+    console.log("form.value.categoryOptions", form.value.categoryOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+//查询全部比赛类型
+function getPrimaryTagOption() {
+  getPrimaryTagOptions().then(res => {
+    const primaryTags = res.map(item => item.tagName)
+    form.value.primaryTagOptions = primaryTags
+    console.log("form.value.primaryTagOptions", form.value.primaryTagOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  getCategoryOption()
+  getPrimaryTagOption()
+})
 </script>
 
 <style scoped>

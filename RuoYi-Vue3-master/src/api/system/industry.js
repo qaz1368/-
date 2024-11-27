@@ -48,5 +48,11 @@ export function updateIndustry(data) {
     data: data
   })
 }
-
+//查询数据库的全部行业名称
+export function getIndustryOptions() {
+  return request({
+    url: '/industries/getIndustryOptions',
+    method: 'get'
+  })
+}
 

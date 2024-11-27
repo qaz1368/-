@@ -42,3 +42,11 @@ export function updateType(data) {
     data: data
   })
 }
+
+//查询数据库的全部奖项名称
+export function getCategoryOptions() {
+  return request({
+    url: '/policy-categories/getCategoryOptions',
+    method: 'get'
+  })
+}

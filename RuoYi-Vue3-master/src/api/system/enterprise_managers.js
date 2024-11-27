@@ -43,3 +43,10 @@ export function getEnterprise_managers(manager_id) {
     method: 'get'
   })
 }
+//查询数据库的全部管理者
+export function getEnterpriseManagersOptions() {
+  return request({
+    url: '/enterprise-managers/getEnterpriseManagersOptions',
+    method: 'get'
+  })
+}

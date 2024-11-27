@@ -49,4 +49,12 @@ export function updateRegion(data) {
   })
 }
 
+//查询数据库的全部地域名称
+export function getRegionOptions() {
+  return request({
+    url: '/regions/getRegionOptions',
+    method: 'get'
+  })
+}
+
 

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询奖项列表
 export function listAward(query) {
   return request({
-    url: '/award-details/page',
+    url: '/award-details/getAwardDetailsPage',
     method: 'get',
     params: query
   })

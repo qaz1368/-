@@ -44,3 +44,10 @@ export function updatePark(data) {
     data: data
   })
 }
+//查询数据库的全部奖项名称
+export function getStudentEntrepreneurshipParkOptions() {
+    return request({
+        url: '/student-entrepreneurship-park/getStudentEntrepreneurshipParkOptions',
+        method: 'get'
+    })
+}
