@@ -20,9 +20,9 @@ export function passApplication(data) {
 }
 
 //拒绝申请
-export function rejectApplication(applicationId,data) {
+export function rejectApplication(data) {
   return request({
-    url: `/api/application/reject/${applicationId}`,
+    url: `/api/application//approve/reject`,
     method: 'post',
     data: data
   })
