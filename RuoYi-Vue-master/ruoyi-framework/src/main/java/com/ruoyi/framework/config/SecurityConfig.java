@@ -121,8 +121,10 @@ public class SecurityConfig
                             .antMatchers("/DP/getAwardTypeSummary").permitAll()
                             .antMatchers("/DP/getTotalAwardCount").permitAll()
                             .antMatchers("/DP/getTotalSubsidyAmount").permitAll()
+                            .antMatchers("/DP/getAwardDetailsPage").permitAll()
                             .antMatchers("/DP/positionsList").permitAll()
                             .antMatchers("/DP/ranking").permitAll()
+                            .antMatchers("/DP/withCoordinate").permitAll()
                             // 除上面外的所有请求全部需要鉴权认证
                             .anyRequest().authenticated();
                 })
