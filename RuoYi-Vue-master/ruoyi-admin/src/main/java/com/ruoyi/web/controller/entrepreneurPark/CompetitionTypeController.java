@@ -61,4 +61,15 @@ public class CompetitionTypeController {
     public List<CompetitionType> getAllCompetitionType() {
         return competitionTypeService.list();
     }
+
+    /**
+     * 根据id查询全部比赛类型
+     */
+    @ApiOperation("根据id查询全部比赛类型")
+    @GetMapping("/getCompetitionTypeById/{id}")
+    public CompetitionType getCompetitionTypeById(@PathVariable Integer id) {
+        return competitionTypeService.getById(id);
+    }
+
+
 }

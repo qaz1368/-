@@ -61,4 +61,6 @@ public class AwardDetail {
     @ApiModelProperty("记录更新时间")
     @TableField("updated_at")  // 映射到 'updated_at' 字段
     private Date updatedAt;
+
+
 }

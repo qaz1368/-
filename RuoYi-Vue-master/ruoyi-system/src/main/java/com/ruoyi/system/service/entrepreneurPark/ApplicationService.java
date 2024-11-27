@@ -2,8 +2,10 @@ package com.ruoyi.system.service.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.system.domain.DTO.ApplicationDTO;
+import com.ruoyi.system.domain.DTO.PassApplicationDTO;
 import com.ruoyi.system.domain.entity.Application;
 
 public interface ApplicationService extends IService<Application> {
@@ -17,7 +19,9 @@ public interface ApplicationService extends IService<Application> {
 
     Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser);
 
-    void approveApplication(Integer applicationId);
+    void approveApplication(PassApplicationDTO passApplicationDTO);
 
     void rejectApplication(Integer applicationId);
+
+
 }

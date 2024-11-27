@@ -114,17 +114,15 @@
           <el-table-column label="申请状态" align="center" key="status" prop="status" v-if="columns[5].visible" width="160" />
           <el-table-column label="创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[6].visible" width="160">
           </el-table-column>
-            <el-table-column label="企业描述" align="center" prop="enterpriseDescription" v-if="columns[7].visible" width="160"></el-table-column>
+          <el-table-column label="企业描述" align="center" prop="enterpriseDescription" v-if="columns[7].visible" width="160"></el-table-column>
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-
               <el-tooltip content="通过" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="passApplicationOperate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+                <el-button link type="primary" icon="CircleCheck" @click="openPassDialog(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
               </el-tooltip>
               <el-tooltip content="拒绝" placement="top" v-if="scope.row.userId !== 1">
                 <el-button link type="primary" icon="Key" @click="rejectApplicationOperate(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
               </el-tooltip>
-
             </template>
           </el-table-column>
         </el-table>
@@ -141,50 +139,46 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-  <el-form :model="form" :rules="rules" ref="userRef" label-width="100px" style="padding: 0 20px;">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-form-item label="姓名" prop="applicantName">
-          <el-input v-model="form.applicantName" placeholder="请输入申请人姓名" style="width: 100%;" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="手机号" prop="applicantPhone">
-          <el-input v-model="form.applicantPhone" placeholder="请输入申请人手机号" style="width: 100%;" />
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-
-      <el-col :span="12">
-        <el-form-item label="邮箱" prop="applicantEmail">
-          <el-input v-model="form.applicantEmail" placeholder="请输入申请人邮箱" style="width: 100%;" />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="创建时间" prop="createdAt">
-          <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择创建时间" style="width: 100%;" />
-        </el-form-item>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="20">
-      <el-col :span="24">
-        <el-form-item label="企业描述" prop="enterpriseDescription">
-          <el-input v-model="form.enterpriseDescription" type="textarea" placeholder="请输入企业描述" style="width: 100%;" />
-        </el-form-item>
-      </el-col>
-    </el-row>
-  </el-form>
-  <template #footer>
-    <div class="dialog-footer" style="text-align: right; padding-right: 20px;">
-      <el-button type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="cancel">取 消</el-button>
-    </div>
-  </template>
-</el-dialog>
-
-
+      <el-form :model="form" :rules="rules" ref="userRef" label-width="100px" style="padding: 0 20px;">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="姓名" prop="applicantName">
+              <el-input v-model="form.applicantName" placeholder="请输入申请人姓名" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="手机号" prop="applicantPhone">
+              <el-input v-model="form.applicantPhone" placeholder="请输入申请人手机号" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="applicantEmail">
+              <el-input v-model="form.applicantEmail" placeholder="请输入申请人邮箱" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="创建时间" prop="createdAt">
+              <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择创建时间" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="企业描述" prop="enterpriseDescription">
+              <el-input v-model="form.enterpriseDescription" type="textarea" placeholder="请输入企业描述" style="width: 100%;" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer" style="text-align: right; padding-right: 20px;">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -219,19 +213,37 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 通过申请对话框 -->
+    <el-dialog title="通过申请" v-model="passDialogVisible" width="30%">
+      <el-form :model="passForm" label-width="80px">
+        <el-form-item label="通过原因">
+          <el-input v-model="passForm.reason" type="textarea" :rows="4" placeholder="请输入通过原因"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="passDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="confirmPass">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="User">
+import { ref, reactive, toRefs, getCurrentInstance, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {listApplication, rejectApplication, passApplication, addApplication} from "@/api/application/application";
+import { listApplication, rejectApplication, passApplication, addApplication } from "@/api/application/application";
+
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
 
 const userList = ref([]);
-const ApplicationList=ref([])
+const ApplicationList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -246,6 +258,14 @@ const deptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
+
+// 新增：通过申请对话框相关数据
+const passDialogVisible = ref(false);
+const passForm = reactive({
+  applicationId: null,
+  reason: ''
+});
+
 /*** 用户导入参数 */
 const upload = reactive({
   // 是否显示弹出层（用户导入）
@@ -261,6 +281,7 @@ const upload = reactive({
   // 上传的地址
   url: import.meta.env.VITE_APP_BASE_API + "/system/user/importData"
 });
+
 // 列显隐信息
 const columns = ref([
   { key: 0, label: `用户编号`, visible: true },
@@ -284,45 +305,30 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-  applicantName: [
-    { required: true, message: "申请人姓名不能为空", trigger: "blur" },
-    { min: 2, max: 20, message: "申请人姓名长度必须介于 2 和 20 之间", trigger: "blur" }
-  ],
-  applicantPhone: [
-    { required: true, message: "申请人手机号不能为空", trigger: "blur" },
-    { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }
-  ],
-  applicantEmail: [
-    { required: true, message: "申请人邮箱不能为空", trigger: "blur" },
-    { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }
-  ],
-  createdAt: [
-    { required: true, message: "创建时间不能为空", trigger: "change" }
-  ],
-  enterpriseDescription: [
-    { required: true, message: "企业描述不能为空", trigger: "blur" },
-    { min: 10, max: 500, message: "企业描述长度必须介于 10 和 500 之间", trigger: "blur" }
-  ]
-}
+    applicantName: [
+      { required: true, message: "申请人姓名不能为空", trigger: "blur" },
+      { min: 2, max: 20, message: "申请人姓名长度必须介于 2 和 20 之间", trigger: "blur" }
+    ],
+    applicantPhone: [
+      { required: true, message: "申请人手机号不能为空", trigger: "blur" },
+      { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }
+    ],
+    applicantEmail: [
+      { required: true, message: "申请人邮箱不能为空", trigger: "blur" },
+      { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }
+    ],
+    createdAt: [
+      { required: true, message: "创建时间不能为空", trigger: "change" }
+    ],
+    enterpriseDescription: [
+      { required: true, message: "企业描述不能为空", trigger: "blur" },
+      { min: 10, max: 500, message: "企业描述长度必须介于 10 和 500 之间", trigger: "blur" }
+    ]
+  }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 通过条件过滤节点  */
-const filterNode = (value, data) => {
-  if (!value) return true;
-  return data.label.indexOf(value) !== -1;
-};
-/** 根据名称筛选部门树 */
-watch(deptName, val => {
-  proxy.$refs["deptTreeRef"].filter(val);
-});
-/** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then(response => {
-    deptOptions.value = response.data;
-  });
-};
 /** 查询申请列表 */
 function getList() {
   loading.value = true;
@@ -358,7 +364,7 @@ function getList() {
       if (item.status === 'approved') {
         item.status = '通过';
       }
-       if (item.status === 'rejected') {
+      if (item.status === 'rejected') {
         item.status = '拒绝';
       }
       return item;
@@ -367,219 +373,207 @@ function getList() {
     ApplicationList.value = updatedRecords;
     total.value = res.total;
   });
-};
+}
 
 /**
- * 通过申请表
+ * 打开通过申请对话框
  */
-function passApplicationOperate(row) {
+function openPassDialog(row) {
+  passForm.applicationId = parseInt(row.applicationId, 10);
+  passDialogVisible.value = true;
+}
 
-  // 将 row.id 从字符串转换为整数
-  const applicationId = parseInt(row.applicationId, 10);
+/**
+ * 确认通过申请
+ */
+function confirmPass() {
+  if (!passForm.reason.trim()) {
+    proxy.$modal.msgError("请输入通过原因");
+    return;
+  }
 
   proxy.$modal.confirm('确认通过该申请吗?').then(function () {
     // 调用通过申请的 API
-    return passApplication(applicationId);
+    return passApplication(passForm);
   }).then(() => {
     proxy.$modal.msgSuccess("通过成功");
+    passDialogVisible.value = false;
+    passForm.reason=""
     getList(); // 刷新列表
   }).catch((error) => {
     console.error("通过申请失败:", error);
-    proxy.$modal.msgError("通过申请失败，请重试!"); // 错误处理提示
+    proxy.$modal.msgError("通过申请失败，请重试!");
   });
 }
 
-
-
 /**
- * 操作-拒绝申请表
- */
-/**
- * 操作-拒绝申请表
+ * 拒绝申请操作
  */
 function rejectApplicationOperate(row) {
-  // 将 row.id 从字符串转换为整数
   const applicationId = parseInt(row.applicationId, 10);
-  console.log("row.applicationId",row.applicationId)
+  console.log("row.applicationId", row.applicationId);
   proxy.$modal.confirm('确认拒绝该申请吗?').then(function () {
-    // 调用拒绝申请的 API
     return rejectApplication(applicationId);
   }).then(() => {
     proxy.$modal.msgSuccess("拒绝成功");
-    getList(); // 刷新列表
+    getList();
   }).catch((error) => {
     console.error("拒绝申请失败:", error);
-    proxy.$modal.msgError("拒绝申请失败，请重试!"); // 错误处理提示
+    proxy.$modal.msgError("拒绝申请失败，请重试!");
   });
 }
 
-
-  /** 节点单击事件 */
-  function handleNodeClick(data) {
-    queryParams.value.deptId = data.id;
-    handleQuery();
-  };
-
-  /** 搜索按钮操作 */
-  function handleQuery() {
-    queryParams.value.pageNum = 1;
-    getList();
-  };
-
-  /** 重置按钮操作 */
-  function resetQuery() {
-    dateRange.value = [];
-    proxy.resetForm("queryRef");
-    queryParams.value.deptId = undefined;
-    proxy.$refs.tree.setCurrentKey(null);
-    handleQuery();
-  };
-
-  /** 导出按钮操作 */
-  function handleExport() {
-    proxy.download("system/user/export", {
-      ...queryParams.value,
-    }, `user_${new Date().getTime()}.xlsx`);
-  };
-
-  /** 用户状态修改  */
-  function handleStatusChange(row) {
-    let text = row.status === "0" ? "启用" : "停用";
-    proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-      return changeUserStatus(row.userId, row.status);
-    }).then(() => {
-      proxy.$modal.msgSuccess(text + "成功");
-    }).catch(function () {
-      row.status = row.status === "0" ? "1" : "0";
-    });
-  };
-
-  /** 更多操作 */
-  function handleCommand(command, row) {
-    switch (command) {
-      case "handleResetPwd":
-        handleResetPwd(row);
-        break;
-      case "handleAuthRole":
-        handleAuthRole(row);
-        break;
-      default:
-        break;
-    }
-  };
-
-  /** 重置密码按钮操作 */
-  function handleResetPwd(row) {
-    proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      closeOnClickModal: false,
-      inputPattern: /^.{5,20}$/,
-      inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
-    }).then(({value}) => {
-      resetUserPwd(row.userId, value).then(response => {
-        proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
-      });
-    }).catch(() => {
-    });
-  };
-
-  /** 选择条数  */
-  function handleSelectionChange(selection) {
-    ids.value = selection.map(item => item.userId);
-    single.value = selection.length != 1;
-    multiple.value = !selection.length;
-  };
-
-  /** 导入按钮操作 */
-  function handleImport() {
-    upload.title = "用户导入";
-    upload.open = true;
-  };
-
-  /** 下载模板操作 */
-  function importTemplate() {
-    proxy.download("system/user/importTemplate", {}, `user_template_${new Date().getTime()}.xlsx`);
-  };
-  /**文件上传中处理 */
-  const handleFileUploadProgress = (event, file, fileList) => {
-    upload.isUploading = true;
-  };
-  /** 文件上传成功处理 */
-  const handleFileSuccess = (response, file, fileList) => {
-    upload.open = false;
-    upload.isUploading = false;
-    proxy.$refs["uploadRef"].handleRemove(file);
-    proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", {dangerouslyUseHTMLString: true});
-    getList();
-  };
-
-  /** 提交上传文件 */
-  function submitFileForm() {
-    proxy.$refs["uploadRef"].submit();
-  };
-
-  /** 重置操作表单 */
-  function reset() {
-    form.value = {
-      userId: undefined,
-      deptId: undefined,
-      userName: undefined,
-      nickName: undefined,
-      password: undefined,
-      phonenumber: undefined,
-      email: undefined,
-      sex: undefined,
-      status: "0",
-      remark: undefined,
-      postIds: [],
-      roleIds: []
-    };
-    proxy.resetForm("userRef");
-  };
-
-  /** 取消按钮 */
-  function cancel() {
-    open.value = false;
-    reset();
-  };
-
-  /** 新增按钮操作 */
-  function handleAdd() {
-    reset();
-    getUser().then(response => {
-      postOptions.value = response.posts;
-      roleOptions.value = response.roles;
-      open.value = true;
-      title.value = "添加申请";
-      form.value.password = initPassword.value;
-    });
-  };
-
-  /** 提交按钮 */
-  function submitForm() {
-    proxy.$refs["userRef"].validate(valid => {
-      if (valid) {
-        if (form.value.userId != undefined) {
-          updateUser(form.value).then(response => {
-            proxy.$modal.msgSuccess("修改成功");
-            open.value = false;
-            getList();
-          });
-        } else {
-          addApplication(form.value).then(response => {
-            proxy.$modal.msgSuccess("新增成功");
-            open.value = false;
-            getList();
-          });
-        }
-      }
-    });
-  };
-
-  getDeptTree();
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1;
   getList();
+}
 
+/** 重置按钮操作 */
+function resetQuery() {
+  dateRange.value = [];
+  proxy.resetForm("queryRef");
+  queryParams.value.deptId = undefined;
+  handleQuery();
+}
+
+/** 新增按钮操作 */
+function handleAdd() {
+  reset();
+  getUser().then(response => {
+    postOptions.value = response.posts;
+    roleOptions.value = response.roles;
+    open.value = true;
+    title.value = "添加申请";
+    form.value.password = initPassword.value;
+  });
+}
+
+/** 修改按钮操作 */
+function handleUpdate(row) {
+  reset();
+  const userId = row.userId || ids.value[0];
+  getUser(userId).then(response => {
+    form.value = response.data;
+    postOptions.value = response.posts;
+    roleOptions.value = response.roles;
+    open.value = true;
+    title.value = "修改用户";
+    form.value.password = "";
+  });
+}
+
+/** 重置密码按钮操作 */
+function handleResetPwd(row) {
+  proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    closeOnClickModal: false,
+    inputPattern: /^.{5,20}$/,
+    inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
+  }).then(({ value }) => {
+    resetUserPwd(row.userId, value).then(response => {
+      proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
+    });
+  }).catch(() => {});
+}
+
+/** 提交按钮 */
+function submitForm() {
+  proxy.$refs["userRef"].validate(valid => {
+    if (valid) {
+      if (form.value.userId != undefined) {
+        updateUser(form.value).then(response => {
+          proxy.$modal.msgSuccess("修改成功");
+          open.value = false;
+          getList();
+        });
+      } else {
+        addApplication(form.value).then(response => {
+          proxy.$modal.msgSuccess("新增成功");
+          open.value = false;
+          getList();
+        });
+      }
+    }
+  });
+}
+
+/** 删除按钮操作 */
+function handleDelete(row) {
+  const userIds = row.userId || ids.value;
+  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function() {
+    return delUser(userIds);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+}
+
+/** 导出按钮操作 */
+function handleExport() {
+  proxy.download("system/user/export", {
+    ...queryParams.value
+  }, `user_${new Date().getTime()}.xlsx`);
+}
+
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "用户导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function importTemplate() {
+  proxy.download("system/user/importTemplate", {}, `user_template_${new Date().getTime()}.xlsx`);
+}
+
+/**文件上传中处理 */
+const handleFileUploadProgress = (event, file, fileList) => {
+  upload.isUploading = true;
+};
+
+/** 文件上传成功处理 */
+const handleFileSuccess = (response, file, fileList) => {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].handleRemove(file);
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+};
+
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
+}
+
+/** 重置操作表单 */
+function reset() {
+  form.value = {
+    userId: undefined,
+    deptId: undefined,
+    userName: undefined,
+    nickName: undefined,
+    password: undefined,
+    phonenumber: undefined,
+    email: undefined,
+    sex: undefined,
+    status: "0",
+    remark: undefined,
+    postIds: [],
+    roleIds: []
+  };
+  proxy.resetForm("userRef");
+}
+
+/** 取消按钮 */
+function cancel() {
+  open.value = false;
+  reset();
+}
+
+// 初始化
+getList();
 </script>
 
 <style scoped>
@@ -599,3 +593,4 @@ function rejectApplicationOperate(row) {
   padding: 0;
 }
 </style>
+

@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
-
+import UserApplication from "@/views/UserApplication/index.vue"
 /**
  * Note: 路由配置项
  *
@@ -24,6 +24,7 @@ import Layout from '@/layout'
   }
  */
 
+// 公共路由
 // 公共路由
 export const constantRoutes = [
   {
@@ -83,8 +84,10 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
+  },
+
 ]
+
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
@@ -171,5 +174,5 @@ const router = createRouter({
     }
   },
 });
-
+// router.replace('/login');
 export default router;

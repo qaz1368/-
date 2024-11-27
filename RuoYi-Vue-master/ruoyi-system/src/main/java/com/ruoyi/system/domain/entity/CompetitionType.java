@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +14,7 @@ import lombok.Data;
 public class CompetitionType {
 
     @ApiModelProperty("比赛类型ID")
-    @TableId("type_id")  // 映射到 'id' 字段，作为主键
+    @TableId(value = "type_id", type = IdType.AUTO)  // 映射到 'id' 字段，作为主键，并设置为自增
     private Integer id;
 
     @ApiModelProperty("比赛类型名称")

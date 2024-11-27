@@ -11,9 +11,9 @@ export function listApplication(query) {
 
 
 //通过申请
-export function passApplication(applicationId, data) {
+export function passApplication(data) {
   return request({
-    url: `/api/application/approve/${applicationId}`,
+    url: `/api/application/approve/pass`,
     method: 'post',
     data: data
   });

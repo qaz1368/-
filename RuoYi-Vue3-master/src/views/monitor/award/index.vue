@@ -551,7 +551,7 @@ function handleAdd() {
 // 修改按钮操作
 function handleUpdate(row) {
   reset()
-  console.log("row", row)
+
   if (row && row.awardId) {
     getAwardByAwardId(row.awardId).then(response => {
       form.value = { ...response,   competitionOptions: form.value.competitionOptions,

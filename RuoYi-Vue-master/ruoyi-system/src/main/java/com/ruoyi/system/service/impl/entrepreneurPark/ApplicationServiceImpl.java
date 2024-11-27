@@ -3,8 +3,11 @@ package com.ruoyi.system.service.impl.entrepreneurPark;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.utils.EmailUtil;
 import com.ruoyi.system.domain.DTO.ApplicationDTO;
+import com.ruoyi.system.domain.DTO.PassApplicationDTO;
 import com.ruoyi.system.domain.entity.*;
 import com.ruoyi.system.mapper.entrepreneurPark.*;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationService;
@@ -41,6 +44,9 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
 
     @Autowired
     private ApprovalMapper approvalMapper;
+
+    @Autowired
+    private EmailUtil emailUtil;
 
     @Override
     public Page<Application> getPage(int pageNum, int pageSize) {
@@ -154,8 +160,10 @@ public boolean save(ApplicationDTO applicationDTO) {
     }
 
 
-  // 通过申请
-    public void approveApplication(Integer applicationId) {
+    // 通过申请
+    public void approveApplication(PassApplicationDTO passApplicationDTO) {
+        Integer applicationId = passApplicationDTO.getApplicationId();
+        String reason = passApplicationDTO.getReason();
         Application application = applicationMapper.findApplicationById(applicationId);
         if (application != null && "pending".equals(application.getStatus())) {
             Integer processId = application.getProcessId();
@@ -174,36 +182,45 @@ public boolean save(ApplicationDTO applicationDTO) {
             // 比较两个流程步骤顺序
             if (currentStepOrder.equals(maxStepOrder)) {
                 // 更新 application 表的申请状态为 "approved"
-                applicationMapper.updateApplicationStatus(applicationId,processId, "approved", new Date());
+                applicationMapper.updateApplicationStatus(applicationId, processId, "approved", new Date());
 
                 // 修改 approval 表的审批状态为 '1'
                 updateApprovalStatus(applicationId, 1);
 
                 // 修改流程 id、流程顺序、审批部门 ID
                 updateApprovalDetails(applicationId, currentProcessStep);
-            } else {
-                 // 查找下一个流程步骤
 
-            QueryWrapper<ApprovalProcess> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("application_type_id", applicationTypeId)
+                // 发送通过通知邮件
+                String to = application.getApplicantEmail();
+                if (to == null || to.isEmpty()) {
+                    throw new RuntimeException("申请人邮箱地址为空");
+                }
+                String title = "申请已通过";
+
+                emailUtil.sendMessage(to, title, reason);
+            } else {
+                // 查找下一个流程步骤
+                QueryWrapper<ApprovalProcess> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("application_type_id", applicationTypeId)
                         .eq("step_order", currentStepOrder + 1);
 
                 ApprovalProcess nextProcessStep = approvalProcessService.getOne(queryWrapper);
                 if (nextProcessStep == null) {
-                throw new RuntimeException("无法找到下一个审批流程步骤");
+                    throw new RuntimeException("无法找到下一个审批流程步骤");
                 }
 
-            // 更新 application 表的申请状态为 "pending"
-            applicationMapper.updateApplicationStatus(applicationId, nextProcessStep.getProcessId(),"pending", new Date());
+                // 更新 application 表的申请状态为 "pending"
+                applicationMapper.updateApplicationStatus(applicationId, nextProcessStep.getProcessId(), "pending", new Date());
 
-            // 修改 approval 表的审批状态为 '2'
-            updateApprovalStatus(applicationId, 2);
+                // 修改 approval 表的审批状态为 '2'
+                updateApprovalStatus(applicationId, 2);
 
-            // 修改流程 id、流程顺序、审批部门 ID
-            updateApprovalDetails(applicationId, nextProcessStep);
+                // 修改流程 id、流程顺序、审批部门 ID
+                updateApprovalDetails(applicationId, nextProcessStep);
             }
         }
     }
+
 
     // 拒绝申请
     public void rejectApplication(Integer applicationId) {
@@ -225,8 +242,21 @@ public boolean save(ApplicationDTO applicationDTO) {
 
             // 修改流程 id、流程顺序、审批部门 ID
             updateApprovalDetails(applicationId, currentProcessStep);
+
+            // 发送拒绝通知邮件
+            String to = application.getApplicantEmail();
+
+            if (to == null || to.isEmpty()) {
+                throw new RuntimeException("申请人邮箱地址为空");
+            }
+            String title = "申请被拒绝";
+            String content = "您的申请已被拒绝。";
+            emailUtil.sendMessage(to, title, content);
         }
     }
+
+
+
 
     // 修改 approval 表的审批状态和其他相关信息
     private void updateApprovalStatus(Integer applicationId, int status) {
@@ -259,6 +289,8 @@ public boolean save(ApplicationDTO applicationDTO) {
             }
         }
     }
+
+
 
 
 }

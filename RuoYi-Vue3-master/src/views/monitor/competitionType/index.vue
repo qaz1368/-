@@ -153,7 +153,12 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {listCompetitionName} from "@/api/monitor/competitionName";
-import {addCompetitionType, delCompetitionType, listCompetitionType} from "@/api/monitor/competitionType";
+import {
+  addCompetitionType,
+  delCompetitionType,
+  getCompetitionTypeById,
+  listCompetitionType, updateCompetitionType
+} from "@/api/monitor/competitionType";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -379,13 +384,8 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const userId = row.userId || ids.value;
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    form.value.postIds = response.postIds;
-    form.value.roleIds = response.roleIds;
+  getCompetitionTypeById(row.id).then(response => {
+    form.value = response;
     open.value = true;
     title.value = "修改用户";
     form.password = "";
@@ -395,8 +395,8 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
+      if (form.value.id != undefined) {
+        updateCompetitionType(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

@@ -30,7 +30,7 @@ public interface AwardDetailService extends IService<AwardDetail> {
 
     List<AwardTypeVO> getAwardTypeSummary();
 
-    String getByAwardId(Integer awardId);
+
 
     List<Integer> getAwardDetailstypeId(Integer typeId);
 }

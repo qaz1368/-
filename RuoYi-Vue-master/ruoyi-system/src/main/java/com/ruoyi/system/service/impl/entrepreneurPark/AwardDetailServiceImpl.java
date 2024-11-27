@@ -243,10 +243,6 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         return awardTypeVOS;
     }
 
-    @Override
-    public String getByAwardId(Integer awardId) {
-        return null;
-    }
 
     @Override
     public List<Integer> getAwardDetailstypeId(Integer typeId) {

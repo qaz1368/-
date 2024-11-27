@@ -81,4 +81,10 @@ public class EnterpriseController {
         return enterpriseService.list();
     }
 
+    @ApiOperation("获取coordinate有值的企业列表")
+    @GetMapping("/withCoordinate")
+    public List<EnterpriseVO> getEnterprisesWithCoordinate() {
+        return enterpriseService.getEnterprisesWithCoordinate();
+    }
+
 }

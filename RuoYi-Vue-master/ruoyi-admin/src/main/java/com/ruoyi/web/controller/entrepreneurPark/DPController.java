@@ -34,6 +34,8 @@ public class DPController {
     private IndustryService industryService;
     @Autowired
     private StudentEntrepreneurshipParkService parkService;
+    @Autowired
+    private EnterpriseService enterpriseService;
 
     @ApiOperation("获取文章列表（分页）")
     @GetMapping("/articleList")
@@ -121,6 +123,12 @@ public class DPController {
     @GetMapping("/get/{parkId}")
     public StudentEntrepreneurshipPark get(@PathVariable Integer parkId) {
         return parkService.getById(parkId);
+    }
+
+    @ApiOperation("获取coordinate有值的企业列表")
+    @GetMapping("/withCoordinate")
+    public List<EnterpriseVO> getEnterprisesWithCoordinate() {
+        return enterpriseService.getEnterprisesWithCoordinate();
     }
 
 }

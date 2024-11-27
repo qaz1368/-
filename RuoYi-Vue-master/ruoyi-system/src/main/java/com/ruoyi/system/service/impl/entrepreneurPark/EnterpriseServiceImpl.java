@@ -301,4 +301,23 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
         return null;
     }
 
+    @Override
+    public List<EnterpriseVO> getEnterprisesWithCoordinate() {
+        QueryWrapper<Enterprise> queryWrapper = new QueryWrapper<>();
+        queryWrapper.isNotNull("coordinate").ne("coordinate", "");
+        List<Enterprise> enterprises = list(queryWrapper);
+
+        // 将Entity转换为VO
+        List<EnterpriseVO> enterpriseVOS = enterprises.stream()
+                .map(this::convertToVO)
+                .collect(Collectors.toList());
+
+        return enterpriseVOS;
+    }
+    private EnterpriseVO convertToVO(Enterprise enterprise) {
+        EnterpriseVO enterpriseVO = new EnterpriseVO();
+        BeanUtils.copyProperties(enterprise, enterpriseVO);
+        return enterpriseVO;
+    }
+
 }

@@ -6,6 +6,8 @@ import com.ruoyi.system.domain.DTO.EnterpriseDTO;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.vo.EnterpriseVO;
 
+import java.util.List;
+
 public interface EnterpriseService extends IService<Enterprise> {
 
     /**
@@ -21,4 +23,6 @@ public interface EnterpriseService extends IService<Enterprise> {
     boolean updateEnterprise(EnterpriseDTO enterpriseDTO);
 
     EnterpriseVO getCompanyId(Integer companyId);
+
+    List<EnterpriseVO> getEnterprisesWithCoordinate();
 }

@@ -1,9 +1,11 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.DTO.ApplicationDTO;
+import com.ruoyi.system.domain.DTO.PassApplicationDTO;
 import com.ruoyi.system.domain.entity.Application;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationService;
 import io.swagger.annotations.Api;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,10 +70,18 @@ public class ApplicationController {
     }
 
      // 通过申请
+//    @ApiOperation(value = "通过申请", notes = "根据ID列表通过申请")
+//    @PostMapping("/approve/{applicationId}")
+//    public String approveApplication(@PathVariable Integer applicationId) {
+//        applicationService.approveApplication(applicationId);
+//        return "申请已通过";
+//    }
+
+    // 通过申请
     @ApiOperation(value = "通过申请", notes = "根据ID列表通过申请")
-    @PostMapping("/approve/{applicationId}")
-    public String approveApplication(@PathVariable Integer applicationId) {
-        applicationService.approveApplication(applicationId);
+    @PostMapping("/approve/pass")
+    public String approveApplication(@RequestBody PassApplicationDTO passApplicationDTO) {
+        applicationService.approveApplication(passApplicationDTO);
         return "申请已通过";
     }
 
@@ -81,4 +92,7 @@ public class ApplicationController {
         applicationService.rejectApplication(applicationId);
         return "申请已拒绝";
     }
+
+
+
 }

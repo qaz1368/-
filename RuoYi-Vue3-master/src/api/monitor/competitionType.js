@@ -35,3 +35,20 @@ export function getCompetitionType() {
     method: 'get'
   })
 }
+
+//根据id查询全部的比赛类型
+export function getCompetitionTypeById(id) {
+  return request({
+    url: `/competition-types/getCompetitionTypeById/${id}`,
+    method: 'get',
+  })
+}
+
+//更新比赛类型
+export function updateCompetitionType(data) {
+  return request({
+    url: '/competition-types/update',
+    method: 'put',
+    data: data
+  })
+}
