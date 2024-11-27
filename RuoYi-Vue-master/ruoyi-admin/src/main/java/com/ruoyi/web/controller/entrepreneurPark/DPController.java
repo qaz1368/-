@@ -93,7 +93,7 @@ public class DPController {
 
     @ApiOperation("获取对应级别近4年获奖情况")
     @GetMapping("/getAwardDetailstypeId")
-    public List<Integer> getAwardDetailstypeId(
+    public AwardYearVO getAwardDetailstypeId(
             @ApiParam(value = "比赛类型") @RequestParam(required = false) Integer typeId
     ) {
         return awardDetailService.getAwardDetailstypeId(typeId);

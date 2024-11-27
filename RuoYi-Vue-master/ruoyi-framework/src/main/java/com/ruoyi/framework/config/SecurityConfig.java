@@ -115,8 +115,11 @@ public class SecurityConfig
                             .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
                             .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
                             .antMatchers("/api/application/add").permitAll()
-                            // 放行DP模块下的所有接口
+                            // 新增的路径，允许匿名访问
                             .antMatchers("/DP/**").permitAll()
+                            .antMatchers("/industries/getIndustryOptions").permitAll()
+                            .antMatchers("/application-type/getApplicationTypeOptions").permitAll()
+                            .antMatchers("/api/application/add").permitAll()
                             // 除上面外的所有请求全部需要鉴权认证
                             .anyRequest().authenticated();
                 })
@@ -129,7 +132,6 @@ public class SecurityConfig
                 .addFilterBefore(corsFilter, LogoutFilter.class)
                 .build();
     }
-
 
 
 

@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.domain.vo.AwardTypeVO;
+import com.ruoyi.system.domain.vo.AwardYearVO;
 import com.ruoyi.system.mapper.entrepreneurPark.AwardDetailMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.CompetitionNameMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.CompetitionTypeMapper;
@@ -245,7 +246,14 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
 
     @Override
-    public List<Integer> getAwardDetailstypeId(Integer typeId) {
+    public AwardYearVO getAwardDetailstypeId(Integer typeId) {
+        AwardYearVO awardYearVO = new AwardYearVO();
+        QueryWrapper<CompetitionType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type_id", typeId);
+        List<CompetitionType> competitionTypes = competitionTypeMapper.selectList(queryWrapper);
+        if(!competitionTypes.isEmpty()){
+            awardYearVO.setLevel(competitionTypes.get(0).getLevel());
+        }
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
         List<Integer> awardCounts = new ArrayList<>();
@@ -255,7 +263,8 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
             Long count = awardDetailMapper.countAwardsByTypeIdAndYear(typeId, startYear);
             awardCounts.add(count.intValue());
         }
+        awardYearVO.setYear(awardCounts);
 
-        return awardCounts;
+        return awardYearVO;
     }
 }

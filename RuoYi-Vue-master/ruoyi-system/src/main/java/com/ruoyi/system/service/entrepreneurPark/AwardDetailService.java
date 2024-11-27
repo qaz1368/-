@@ -6,6 +6,7 @@ import com.ruoyi.system.domain.DTO.AwardDetailDTO;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.domain.vo.AwardTypeVO;
+import com.ruoyi.system.domain.vo.AwardYearVO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,7 +31,5 @@ public interface AwardDetailService extends IService<AwardDetail> {
 
     List<AwardTypeVO> getAwardTypeSummary();
 
-
-
-    List<Integer> getAwardDetailstypeId(Integer typeId);
+    AwardYearVO getAwardDetailstypeId(Integer typeId);
 }

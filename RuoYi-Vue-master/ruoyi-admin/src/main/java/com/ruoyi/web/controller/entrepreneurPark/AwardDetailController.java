@@ -7,6 +7,7 @@ import com.ruoyi.system.domain.DTO.AwardDetailDTO;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.domain.vo.AwardTypeVO;
+import com.ruoyi.system.domain.vo.AwardYearVO;
 import com.ruoyi.system.service.entrepreneurPark.AwardDetailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -62,7 +63,7 @@ public class AwardDetailController {
 
     @ApiOperation("获取对应级别近4年获奖情况")
     @GetMapping("/getAwardDetailstypeId")
-    public List<Integer> getAwardDetailstypeId(
+    public AwardYearVO getAwardDetailstypeId(
             @ApiParam(value = "比赛类型") @RequestParam(required = false) Integer typeId
     ) {
         return awardDetailService.getAwardDetailstypeId(typeId);

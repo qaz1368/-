@@ -223,7 +223,9 @@ public boolean save(ApplicationDTO applicationDTO) {
 
 
     // 拒绝申请
-    public void rejectApplication(Integer applicationId) {
+    public void rejectApplication(PassApplicationDTO passApplicationDTO) {
+        Integer applicationId = passApplicationDTO.getApplicationId();
+        String reason = passApplicationDTO.getReason();
         Application application = applicationMapper.findApplicationById(applicationId);
         if (application != null && "pending".equals(application.getStatus())) {
             Integer processId = application.getProcessId();
@@ -250,8 +252,8 @@ public boolean save(ApplicationDTO applicationDTO) {
                 throw new RuntimeException("申请人邮箱地址为空");
             }
             String title = "申请被拒绝";
-            String content = "您的申请已被拒绝。";
-            emailUtil.sendMessage(to, title, content);
+
+            emailUtil.sendMessage(to, title, reason);
         }
     }
 

@@ -21,7 +21,7 @@ public interface ApplicationService extends IService<Application> {
 
     void approveApplication(PassApplicationDTO passApplicationDTO);
 
-    void rejectApplication(Integer applicationId);
+    void rejectApplication(PassApplicationDTO passApplicationDTO);
 
 
 }

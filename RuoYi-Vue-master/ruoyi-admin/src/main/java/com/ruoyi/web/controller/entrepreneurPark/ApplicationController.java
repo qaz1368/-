@@ -87,9 +87,9 @@ public class ApplicationController {
 
     // 拒绝申请
     @ApiOperation(value = "拒绝申请", notes = "根据ID列表拒绝申请")
-    @PostMapping("/reject/{applicationId}")
-    public String rejectApplication(@PathVariable Integer applicationId) {
-        applicationService.rejectApplication(applicationId);
+    @PostMapping("/approve/reject")
+    public String rejectApplication(@RequestBody PassApplicationDTO passApplicationDTO) {
+        applicationService.rejectApplication(passApplicationDTO);
         return "申请已拒绝";
     }
 

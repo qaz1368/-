@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.system.domain.entity.ApplicationType;
+import com.ruoyi.system.domain.entity.Industry;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,5 +55,14 @@ public class ApplicationTypeController {
     @GetMapping("/get/{applicationTypeId}")
     public ApplicationType getApplicationTypeById(@PathVariable("applicationTypeId") Integer applicationTypeId) {
         return applicationTypeService.getById(applicationTypeId);
+    }
+
+    /**
+     * 查询数据库全部申请类型
+     */
+    @ApiOperation("查询数据库全部申请类型")
+    @GetMapping("/getApplicationTypeOptions")
+    public List<ApplicationType> getApplicationTypeOptions() {
+        return applicationTypeService.list();
     }
 }
