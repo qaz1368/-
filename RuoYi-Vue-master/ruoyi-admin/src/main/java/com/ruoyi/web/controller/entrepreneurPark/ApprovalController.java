@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.DTO.ApprovalDTO;
 import com.ruoyi.system.domain.entity.Approval;
 import com.ruoyi.system.domain.vo.ApprovalVO;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalService;
@@ -32,8 +33,8 @@ public class ApprovalController {
 
     @ApiOperation(value = "新增审批", notes = "添加新的审批记录")
     @PostMapping("/add")
-    public boolean addApproval(@RequestBody Approval approval) {
-        return approvalService.save(approval);  // 使用 MyBatis-Plus 的 save 方法
+    public boolean addApproval(@RequestBody ApprovalDTO approvalDTO) {
+        return approvalService.addApproval(approvalDTO);  // 使用 MyBatis-Plus 的 save 方法
     }
 
     @ApiOperation(value = "更新审批", notes = "更新已有的审批记录")

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.system.domain.DTO.ApprovalDTO;
 import com.ruoyi.system.domain.entity.Application;
 import com.ruoyi.system.domain.entity.ApplicationType;
 import com.ruoyi.system.domain.entity.Approval;
@@ -14,12 +15,14 @@ import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.ApplicationMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.ApplicationTypeMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.ApprovalMapper;
+import com.ruoyi.system.mapper.entrepreneurPark.ApprovalProcessMapper;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalProcessService;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval> i
     private ApplicationTypeMapper applicationTypeMapper;
     @Autowired
     private SysDeptMapper sysDeptMapper;
+    @Autowired
+    private ApprovalProcessMapper approvalProcessMapper;
 
 
     @Override
@@ -154,6 +159,29 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval> i
 
     }
 
+    @Override
+    public boolean addApproval(ApprovalDTO approvalDTO) {
+        Approval approval = new Approval();
+        if (approvalDTO != null) {
+            BeanUtils.copyProperties(approvalDTO, approval);
+            approval.setCreatedAt(LocalDateTime.now());
+            approval.setUpdatedAt(LocalDateTime.now());
+            // 查询 approval_process 表，获取与审批类型和流程顺序匹配的记录
+            ApplicationType applicationType = applicationTypeMapper.selectByApplicationType(approvalDTO.getApplicationType());
+            // 查询 approval_process 表，获取与审批类型和流程顺序匹配的记录
+            ApprovalProcess approvalProcess = approvalProcessMapper.selectByTypeAndOrder(applicationType.getApplicationTypeId(), approvalDTO.getSequence());
+
+            if (approvalProcess != null) {
+                // 将 approval_process 信息设置到 approval 对象中
+                approval.setProcessId(approvalProcess.getProcessId());
+                approval.setDepartmentId(approvalProcess.getDepartmentId());
+                // 设置其他需要的字段
+            }
+        }
+
+        // 插入 approval 对象到 approval 表中
+        return this.save(approval);
+    }
 
 
 }
