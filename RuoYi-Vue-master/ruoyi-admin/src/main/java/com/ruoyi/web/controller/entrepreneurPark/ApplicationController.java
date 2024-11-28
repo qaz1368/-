@@ -7,6 +7,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.DTO.ApplicationDTO;
 import com.ruoyi.system.domain.DTO.PassApplicationDTO;
 import com.ruoyi.system.domain.entity.Application;
+import com.ruoyi.system.domain.entity.ApplicationType;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,7 +93,6 @@ public class ApplicationController {
         applicationService.rejectApplication(passApplicationDTO);
         return "申请已拒绝";
     }
-
 
 
 }

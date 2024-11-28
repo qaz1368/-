@@ -155,5 +155,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<delete id="deleteDeptById" parameterType="Long">
 		update sys_dept set del_flag = '2' where dept_id = #{deptId}
 	</delete>
-
+	<select id="getDeptByName" resultMap="SysDeptResult">
+		SELECT * FROM sys_dept WHERE dept_name = #{department}
+	</select>
 </mapper> 

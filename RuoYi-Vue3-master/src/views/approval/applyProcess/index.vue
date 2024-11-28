@@ -91,8 +91,15 @@
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="申请类型ID" prop="applicationTypeId">
-              <el-input v-model="form.applicationTypeId" placeholder="请输入申请类型ID" maxlength="50" />
+            <el-form-item label="申请类型" prop="applicationType">
+              <el-select v-model="form.applicationType" placeholder="请选择比赛类型">
+                <el-option
+                    v-for="option in form.applicationTypeOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -103,13 +110,27 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="部门ID" prop="departmentId">
-              <el-input v-model="form.departmentId" placeholder="请输入审批备注" maxlength="50" />
+            <el-form-item label="部门" prop="department">
+              <el-select v-model="form.department" placeholder="请选择比赛类型">
+                <el-option
+                    v-for="option in form.departmentOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色ID" prop="roleId">
-              <el-input v-model="form.roleId" placeholder="请输入角色ID" maxlength="50" />
+            <el-form-item label="角色" prop="role">
+              <el-select v-model="form.role" placeholder="请选择比赛类型">
+                <el-option
+                    v-for="option in form.roleOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -170,11 +191,14 @@ import {
   delApply, getApply
 } from "../../../api/approval/apply";
 import {
-  addApprovalProcess, deleteApprovalProcess,
+  addApprovalProcess, deleteApprovalProcess, getApplicationTypeOptions,
   getApprovalProcessById,
-  getApprovalProcessPage,
+  getApprovalProcessPage, optionselect1, selectDeptList,
   updateApprovalProcess
 } from "../../../api/approval/applyProcess";
+import {getAwardByAwardId} from "../../../api/monitor/award";
+import {getEnterpriseOptions} from "../../../api/system/enterprise";
+import {onMounted} from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -234,6 +258,9 @@ const data = reactive({
     roleId: null,
     createdAt: null,
     updatedAt: null,
+    applicationTypeOptions: [],
+    departmentOptions: [],
+    roleOptions: [],
   },
   queryParams: {
     pageNum: 1,
@@ -419,6 +446,9 @@ function reset() {
     roleId: null,
     createdAt: null,
     updatedAt: null,
+    applicationTypeOptions: form.value.applicationTypeOptions,
+    departmentOptions: form.value.departmentOptions,
+    roleOptions: form.value.roleOptions,
   };
   proxy.resetForm("userRef");
 };
@@ -443,14 +473,19 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
 
-  getApprovalProcessById(row.processId).then(response => {
-    // 将 approvalStatus 的值转换为中文
-    response.approvalStatus = approvalStatusMap[response.approvalStatus] || '未知状态';
-
-    form.value = response;
-    open.value = true;
-    title.value = "修改审批流程";
-  });
+  if (row && row.processId) {
+    getApprovalProcessById(row.processId).then(response => {
+      form.value = { ...response,      applicationTypeOptions: form.value.applicationTypeOptions,
+        departmentOptions: form.value.departmentOptions,
+        roleOptions: form.value.roleOptions,}
+      console.log("form.value", form.value)
+      open.value = true
+      title.value = "修改审批流程"
+    }).catch(error => {
+      console.error("修改审批流程时出错：", error)
+      proxy.$modal.msgError("修改审批流程失败，请重试")
+    })
+  }
 };
 /** 提交按钮 */
 function submitForm() {
@@ -473,8 +508,42 @@ function submitForm() {
   });
 };
 
-getDeptTree();
-getList();
+function getApplicationTypeOptions1() {
+  getApplicationTypeOptions().then(res => {
+    const applicationNames = res.map(item => item.applicationName)
+    form.value.applicationTypeOptions = applicationNames
+    console.log("form.value.applicationTypeOptions", form.value.applicationTypeOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+function selectDeptList1() {
+  selectDeptList().then(res => {
+    const deptNames = res.map(item => item.deptName)
+    form.value.departmentOptions = deptNames
+    console.log("form.value.departmentOptions", form.value.departmentOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+function optionselect() {
+  optionselect1().then(res => {
+    const roleNames = res.map(item => item.roleName)
+    form.value.roleOptions = roleNames
+    console.log("form.value.roleOptions", form.value.roleOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  selectDeptList1()
+  optionselect()
+  getApplicationTypeOptions1()
+})
 </script>
 
 <style scoped>

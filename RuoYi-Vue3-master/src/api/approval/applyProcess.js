@@ -43,3 +43,30 @@ export function updateApprovalProcess(data) {
   })
 }
 
+//查询数据库的全部部门信息
+export function selectDeptList() {
+  return request({
+    url: '/system/dept/list1',
+    method: 'get'
+  })
+}
+
+//查询数据库的角色信息
+export function optionselect1() {
+  return request({
+    url: '/system/role/optionselect1',
+    method: 'get'
+  })
+}
+
+//查询数据库的申请类型
+export function getApplicationTypeOptions() {
+  return request({
+    url: '/application-type/getApplicationTypeOptions',
+    method: 'get'
+  })
+}
+
+
+
+

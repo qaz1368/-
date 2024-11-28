@@ -148,5 +148,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			#{roleId}
         </foreach> 
  	</delete>
- 	
+
+	<select id="getRoleByName" resultMap="SysRoleResult">
+		SELECT * FROM sys_role WHERE role_name = #{roleName}
+	</select>
 </mapper> 
