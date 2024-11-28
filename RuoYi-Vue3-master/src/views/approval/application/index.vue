@@ -138,6 +138,7 @@
       </el-col>
     </el-row>
     <!-- 添加或修改用户配置对话框 -->
+    <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="userRef" label-width="100px">
         <el-row>
@@ -159,14 +160,29 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="申请状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                    v-for="dict in sys_normal_disable"
-                    :key="dict.value"
-                    :label="dict.value"
-                >{{ dict.label }}</el-radio>
-              </el-radio-group>
+            <el-form-item label="行业类型" prop="industryType">
+              <el-select v-model="form.industryName" placeholder="请选择行业类型">
+                <el-option
+                    v-for="item in state.industryOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="申请类型" prop="applicationType">
+              <el-select v-model="form.applicationType" placeholder="请选择申请类型">
+                <el-option
+                    v-for="item in stateType.typeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -253,6 +269,8 @@ import { ref, reactive, onMounted, getCurrentInstance } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { parseTime, addDateRange } from '@/utils/ruoyi'
 import { listApplication, addApplication, passApplication, rejectApplication } from '@/api/application/application'
+import {getIndustryOptions} from "@/api/system/industry";
+import {getApplicationTypeOptions} from "@/api/approval/applyProcess";
 
 // 获取应用实例
 const { proxy } = getCurrentInstance()
@@ -520,8 +538,47 @@ function updateApplicationStatus() {
   })
 }
 
+// 创建响应式对象
+const state = reactive({
+  industryOptions: [],
+  selectedIndustry: ''
+});
+
+// 获取行业选项
+function GetIndustryOptions() {
+  getIndustryOptions().then(response => {
+    // 假设 response 是一个包含多个对象的数组，每个对象都有一个 value 和 label 属性
+    state.industryOptions = response.map(item => ({
+      value: item.industryName,
+      label: item.industryName
+    }));
+  });
+}
+
+
+// 创建响应式对象
+const stateType = reactive({
+  typeOptions: [],
+  selectedType: ''
+});
+
+// 获取申请类型选项
+function GetApplicationTypeOptions() {
+  getApplicationTypeOptions().then(response => {
+    // 假设 response 是一个包含多个对象的数组，每个对象都有一个 value 和 label 属性
+    stateType.typeOptions = response.map(item => ({
+      value: item.applicationName,
+      label: item.applicationName
+    }));
+  });
+}
+
 onMounted(() => {
   getList()
+  //查询行业类型
+  GetIndustryOptions()
+  //查询申请类型
+  GetApplicationTypeOptions()
 })
 </script>
 

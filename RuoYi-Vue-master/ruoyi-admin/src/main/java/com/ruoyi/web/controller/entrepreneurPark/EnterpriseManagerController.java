@@ -7,6 +7,7 @@ import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
 import com.ruoyi.system.service.entrepreneurPark.EnterpriseManagerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,13 +45,17 @@ public class EnterpriseManagerController {
         return managerService.deleteBatch(managerIds);
     }
 
-     @ApiOperation("分页查询企业管理者")
-       @GetMapping("/page")
-       public IPage<EnterpriseManagersVO> page(
-               @RequestParam(value = "page", defaultValue = "1") int page,
-               @RequestParam(value = "size", defaultValue = "10") int size) {
-           return managerService.getManagersPage(page, size);
-       }
+    @ApiOperation("分页查询企业管理者")
+    @GetMapping("/page")
+    public IPage<EnterpriseManagersVO> page(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @ApiParam(value = "查询生源地") @RequestParam(required = false) String birthplace,
+            @ApiParam(value = "查询姓名") @RequestParam(required = false) String name
+    ) {
+        return managerService.getManagersPage(page, size, birthplace, name);
+    }
+
 
     /**
      * 根据manager_id查询企业管理者信息

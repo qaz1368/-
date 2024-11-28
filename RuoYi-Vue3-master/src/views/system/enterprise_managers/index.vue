@@ -13,10 +13,10 @@
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="学历" prop="educationLevel">
+          <el-form-item label="生源地" prop="birthplace">
             <el-input
-                v-model="queryParams.educationLevel"
-                placeholder="请输入学历"
+                v-model="queryParams.birthplace"
+                placeholder="请输入生源地"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"

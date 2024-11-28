@@ -1,9 +1,13 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.DTO.ApplicationDTO;
 import com.ruoyi.system.domain.DTO.PassApplicationDTO;
 import com.ruoyi.system.domain.entity.Application;
@@ -15,8 +19,10 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Slf4j
@@ -70,13 +76,6 @@ public class ApplicationController {
         return applicationService.removeByIds(ids);
     }
 
-     // 通过申请
-//    @ApiOperation(value = "通过申请", notes = "根据ID列表通过申请")
-//    @PostMapping("/approve/{applicationId}")
-//    public String approveApplication(@PathVariable Integer applicationId) {
-//        applicationService.approveApplication(applicationId);
-//        return "申请已通过";
-//    }
 
     // 通过申请
     @ApiOperation(value = "通过申请", notes = "根据ID列表通过申请")
@@ -94,5 +93,15 @@ public class ApplicationController {
         return "申请已拒绝";
     }
 
+
+
+//    @ApiOperation("邮箱")
+//    @PostMapping("/export")
+//    public void export(HttpServletResponse response,Application application)
+//    {
+//        List<Application> list = applicationService.listByIds()
+//        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+//        util.exportExcel(response, list, "用户数据");
+//    }
 
 }

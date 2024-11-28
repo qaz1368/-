@@ -48,23 +48,40 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
     }
 
     @Override
-    public IPage<EnterpriseManagersVO> getManagersPage(int page, int size) {
+    public IPage<EnterpriseManagersVO> getManagersPage(int page,int  size,String birthplace,String name) {
         // 创建分页请求
         Page<EnterpriseManagers> pageRequest = new Page<>(page, size);
+
+        // 构建查询条件
+        QueryWrapper<EnterpriseManagers> queryWrapper = new QueryWrapper<>();
+        if (birthplace != null && !birthplace.isEmpty()) {
+            queryWrapper.like("birthplace", birthplace);
+        }
+        if (name != null && !name.isEmpty()) {
+            queryWrapper.like("name", name);
+        }
+
         // 执行分页查询
-        IPage<EnterpriseManagers> managersPage = page(pageRequest);
+        IPage<EnterpriseManagers> managersPage = page(pageRequest, queryWrapper);
+
+        // 转换为 VO 对象
         IPage<EnterpriseManagersVO> resultPage = new Page<>();
         List<EnterpriseManagersVO> records = new ArrayList<>();
-        for(EnterpriseManagers manager : managersPage.getRecords()) {
+        for (EnterpriseManagers manager : managersPage.getRecords()) {
             EnterpriseManagersVO vo = new EnterpriseManagersVO();
             // 根据企业 ID 查询企业名称
             Enterprise enterprise = enterpriseMapper.selectById(manager.getCompanyId());
             String enterpriseName = enterprise != null ? enterprise.getCompanyName() : null;
             BeanUtils.copyProperties(manager, vo);
             vo.setCompany(enterpriseName);
-             records.add(vo);
+            records.add(vo);
         }
         resultPage.setRecords(records);
+        resultPage.setTotal(managersPage.getTotal());
+        resultPage.setSize(managersPage.getSize());
+        resultPage.setCurrent(managersPage.getCurrent());
+
         return resultPage;
     }
+
 }

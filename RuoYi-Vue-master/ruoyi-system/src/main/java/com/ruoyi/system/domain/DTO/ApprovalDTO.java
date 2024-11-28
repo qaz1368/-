@@ -11,7 +11,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("approval")  // 指定映射的数据库表
 @ApiModel(description = "审批记录")
 public class ApprovalDTO {
 
@@ -20,6 +19,12 @@ public class ApprovalDTO {
 
     @ApiModelProperty("申请ID，关联 application 表")
     private Integer applicationId;  // 申请ID
+
+    @ApiModelProperty("申请类型")
+    private String applicationType;
+
+    @ApiModelProperty("申请人姓名")
+    private String applicantName;
 
     @ApiModelProperty("流程ID，关联 approval_process 表")
     private Integer processId;  // 流程ID

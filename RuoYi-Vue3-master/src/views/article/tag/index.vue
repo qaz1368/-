@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <!--用户数据-->
       <el-col :span="24">
-        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+        <el-form  @submit.prevent="handleQuery" :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="标签名称" prop="tagName">
             <el-input
                 v-model="queryParams.tagName"

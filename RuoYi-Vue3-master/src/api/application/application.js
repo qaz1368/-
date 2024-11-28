@@ -36,3 +36,18 @@ export function addApplication(data) {
     data: data
   })
 }
+
+//获得申请类型
+export function getIndustryOptions() {
+  return request({
+    url: '/industries/getIndustryOptions',
+    method: 'get'
+  })
+}
+
+export function getApplicationTypeOptions() {
+  return request({
+    url: '/application-type/getApplicationTypeOptions',
+    method: 'get'
+  })
+}
