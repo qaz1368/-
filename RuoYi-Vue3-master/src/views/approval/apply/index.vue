@@ -107,11 +107,12 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="审批记录ID" align="center" key="approvalId" prop="approvalId" v-if="columns[0].visible" />
-          <el-table-column label="申请ID" align="center" key="applicationId" prop="applicationId" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="申请类型" align="center" key="applicationType" prop="applicationType" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程ID" align="center" key="processId" prop="processId" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程顺序" align="center" key="sequence" prop="sequence" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="审批状态" align="center" key="approvalStatus" prop="approvalStatus" v-if="columns[4].visible" width="120" />
-          <el-table-column label="审批部门" align="center" key="departmentId" prop="departmentId" v-if="columns[4].visible" width="120" />
+          <el-table-column label="审批部门" align="center" key="department" prop="department" v-if="columns[4].visible" width="120" />
           <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
             <template #default="scope">
               <span>{{ parseTime(scope.row.approvalDate) }}</span>
@@ -153,6 +154,25 @@
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="申请Id" prop="applicationId">
+              <el-input v-model="form.applicationId" placeholder="请输入申请Id" maxlength="50" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="申请类型" prop="applicationType">
+              <el-select v-model="form.applicationType" placeholder="请选择申请类型">
+                <el-option
+                    v-for="option in form.applicationTypeOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="流程顺序" prop="sequence">
@@ -236,6 +256,8 @@ import {
   updateApply,
   delApply, getApply
 } from "../../../api/approval/apply";
+import {getApplicationTypeOptions, getApprovalProcessById} from "../../../api/approval/applyProcess";
+import {onMounted} from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -295,6 +317,11 @@ const data = reactive({
     comments: null,
     createdAt: null,
     updatedAt: null,
+    applicationType: null,
+    applicantName: null,
+    department: null,
+    applicantNameOptions:[],
+    applicationTypeOptions: [],
   },
   queryParams: {
     pageNum: 1,
@@ -480,7 +507,11 @@ function reset() {
     comments: null,
     createdAt: null,
     updatedAt: null,
-
+    applicationType: null,
+    applicantName: null,
+    department: null,
+    applicantNameOptions: form.value.applicantNameOptions,
+    applicationTypeOptions: form.value.applicationTypeOptions,
   };
   proxy.resetForm("userRef");
 };
@@ -504,15 +535,18 @@ function handleAdd() {
 
 function handleUpdate(row) {
   reset();
-
-  getApply(row.approvalId).then(response => {
-    // 将 approvalStatus 的值转换为中文
-    response.approvalStatus = approvalStatusMap[response.approvalStatus] || '未知状态';
-
-    form.value = response;
-    open.value = true;
-    title.value = "修改审批信息";
-  });
+  if (row && row.approvalId) {
+    getApply(row.approvalId).then(response => {
+      form.value = { ...response,
+        applicationTypeOptions: form.value.applicationTypeOptions,}
+      console.log("form.value", form.value)
+      open.value = true
+      title.value = "修改审批信息"
+    }).catch(error => {
+      console.error("修改审批信息时出错：", error)
+      proxy.$modal.msgError("修改审批信息失败，请重试")
+    })
+  }
 };
 /** 提交按钮 */
 function submitForm() {
@@ -535,8 +569,22 @@ function submitForm() {
   });
 };
 
-getDeptTree();
-getList();
+
+function getApplicationTypeOptions1() {
+  getApplicationTypeOptions().then(res => {
+    const applicationNames = res.map(item => item.applicationName)
+    form.value.applicationTypeOptions = applicationNames
+    console.log("form.value.applicationTypeOptions", form.value.applicationTypeOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  getApplicationTypeOptions1()
+})
 </script>
 
 <style scoped>
