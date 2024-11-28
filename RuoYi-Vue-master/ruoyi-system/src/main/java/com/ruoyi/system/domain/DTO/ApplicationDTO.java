@@ -11,7 +11,6 @@ import lombok.Data;
 public class ApplicationDTO {
 
     @ApiModelProperty("申请人姓名")
-    @TableField("applicant_name")
     private String applicantName;
 
     @ApiModelProperty("申请人电话号码")
