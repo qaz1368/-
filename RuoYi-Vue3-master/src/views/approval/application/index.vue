@@ -104,25 +104,26 @@
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="ApplicationList" @selection-change="handleSelectionChange" class="full-width-table">
+        <el-table v-loading="loading" :data="ApplicationList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="applicationId" prop="applicationId" v-if="columns[0].visible" />
-          <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true"  width="160" />
+          <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="申请人手机号" align="center" key="applicantPhone" prop="applicantPhone" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="申请人邮箱" align="center" key="applicantEmail" prop="applicantEmail" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="申请日期" align="center" key="applicationDate" prop="applicationDate" v-if="columns[4].visible" width="160" />
-          <el-table-column label="申请状态" align="center" key="status" prop="status" v-if="columns[5].visible" width="160" />
-          <el-table-column label="创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[6].visible" width="160">
+          <el-table-column label="申请日期" align="center" key="applicationDate" prop="applicationDate" v-if="columns[4].visible" width="180">
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.applicationDate) }}</span>
+            </template>
           </el-table-column>
-          <el-table-column label="企业描述" align="center" prop="enterpriseDescription" v-if="columns[7].visible" width="160"></el-table-column>
+          <el-table-column label="申请状态" align="center" key="status" prop="status" v-if="columns[5].visible" />
+          <el-table-column label="创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[6].visible" width="180">
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.createdAt) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-tooltip content="通过" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="openPassDialog(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="拒绝" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="openRejectDialog(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
+              <el-button link type="primary" icon="View" @click="openViewDialog(scope.row)" v-hasPermi="['system:user:view']">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -136,44 +137,49 @@
         />
       </el-col>
     </el-row>
-
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="userRef" label-width="100px" style="padding: 0 20px;">
-        <el-row :gutter="20">
+      <el-form :model="form" :rules="rules" ref="userRef" label-width="100px">
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="姓名" prop="applicantName">
-              <el-input v-model="form.applicantName" placeholder="请输入申请人姓名" style="width: 100%;" />
+            <el-form-item label="申请人姓名" prop="applicantName">
+              <el-input v-model="form.applicantName" placeholder="请输入申请人姓名" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="手机号" prop="applicantPhone">
-              <el-input v-model="form.applicantPhone" placeholder="请输入申请人手机号" style="width: 100%;" />
+            <el-form-item label="手机号码" prop="applicantPhone">
+              <el-input v-model="form.applicantPhone" placeholder="请输入手机号码" maxlength="11" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row>
           <el-col :span="12">
             <el-form-item label="邮箱" prop="applicantEmail">
-              <el-input v-model="form.applicantEmail" placeholder="请输入申请人邮箱" style="width: 100%;" />
+              <el-input v-model="form.applicantEmail" placeholder="请输入邮箱" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="创建时间" prop="createdAt">
-              <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择创建时间" style="width: 100%;" />
+            <el-form-item label="申请状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                    v-for="dict in sys_normal_disable"
+                    :key="dict.value"
+                    :label="dict.value"
+                >{{ dict.label }}</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row>
           <el-col :span="24">
-            <el-form-item label="企业描述" prop="enterpriseDescription">
-              <el-input v-model="form.enterpriseDescription" type="textarea" placeholder="请输入企业描述" style="width: 100%;" />
+            <el-form-item label="企业描述">
+              <el-input v-model="form.enterpriseDescription" type="textarea" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <template #footer>
-        <div class="dialog-footer" style="text-align: right; padding-right: 20px;">
+        <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
@@ -195,7 +201,9 @@
           drag
       >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__text">
+          将文件拖到此处，或<em>点击上传</em>
+        </div>
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
@@ -214,97 +222,89 @@
       </template>
     </el-dialog>
 
-    <!-- 通过申请对话框 -->
-    <el-dialog title="通过申请" v-model="passDialogVisible" width="30%">
-      <el-form :model="passForm" label-width="80px">
-        <el-form-item label="通过原因">
-          <el-input v-model="passForm.reason" type="textarea" :rows="4" placeholder="请输入通过原因"></el-input>
+    <!-- 查看申请对话框 -->
+    <el-dialog title="查看申请" v-model="viewDialogVisible" width="30%">
+      <el-form :model="viewForm" label-width="100px">
+        <el-form-item label="申请状态">
+          <el-radio-group v-model="viewForm.status">
+            <el-radio label="通过">通过</el-radio>
+            <el-radio label="拒绝">拒绝</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="企业描述">
+          <el-input v-model="viewForm.enterpriseDescription" type="textarea" :rows="3" readonly></el-input>
+        </el-form-item>
+        <el-form-item label="原因" v-if="viewForm.status">
+          <el-input v-model="viewForm.reason" type="textarea" :rows="4" :placeholder="viewForm.status === '通过' ? '请输入通过原因' : '请输入拒绝原因'"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="passDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="confirmPass" :loading="passLoading">确 定</el-button>
-        </span>
-      </template>
-    </el-dialog>
-
-    <!--拒绝申请对话框-->
-    <el-dialog title="拒绝申请" v-model="rejectDialogVisible" width="30%">
-      <el-form :model="rejectForm" label-width="80px">
-        <el-form-item label="拒绝原因">
-          <el-input v-model="rejectForm.reason" type="textarea" :rows="4" placeholder="请输入拒绝原因"></el-input>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="rejectDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="rejectApplicationOperate">确 定</el-button>
+          <el-button @click="viewDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="updateApplicationStatus" :loading="updateLoading">确 定</el-button>
         </span>
       </template>
     </el-dialog>
   </div>
 </template>
 
-<script setup name="User">
-import { ref, reactive, toRefs, getCurrentInstance, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { getToken } from "@/utils/auth";
-import { changeUserStatus, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import { listApplication, rejectApplication, passApplication, addApplication } from "@/api/application/application";
+<script setup>
+import { ref, reactive, onMounted, getCurrentInstance } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { parseTime, addDateRange } from '@/utils/ruoyi'
+import { listApplication, addApplication, passApplication, rejectApplication } from '@/api/application/application'
 
-const router = useRouter();
-const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
-import { ElLoading } from 'element-plus'; // 引入 ElLoading
+// 获取应用实例
+const { proxy } = getCurrentInstance()
 
-const userList = ref([]);
-const ApplicationList = ref([]);
-const open = ref(false);
-const loading = ref(true);
-const showSearch = ref(true);
-const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
-const total = ref(0);
-const title = ref("");
-const dateRange = ref([]);
-const deptName = ref("");
-const deptOptions = ref(undefined);
-const initPassword = ref(undefined);
-const postOptions = ref([]);
-const roleOptions = ref([]);
-const passLoading = ref(false);
-// 新增：通过申请对话框相关数据
-const passDialogVisible = ref(false);
-const passForm = reactive({
-  applicationId: null,
-  reason: ''
-});
+const ApplicationList = ref([])
+const loading = ref(true)
+const showSearch = ref(true)
+const ids = ref([])
+const single = ref(true)
+const multiple = ref(true)
+const total = ref(0)
+const title = ref("")
+const open = ref(false)
+const viewDialogVisible = ref(false)
+const updateLoading = ref(false)
+const dateRange = ref([])
 
-const rejectDialogVisible = ref(false);
-const rejectForm = reactive({
-  applicationId: null,
-  reason: ''
-});
+const data = reactive({
+  form: {},
+  queryParams: {
+    pageNum: 1,
+    pageSize: 10,
+    applicant_name: undefined,
+    applicant_phone: undefined,
+    status: undefined
+  },
+  rules: {
+    applicantName: [
+      { required: true, message: "申请人姓名不能为空", trigger: "blur" }
+    ],
+    applicantPhone: [
+      { required: true, message: "手机号码不能为空", trigger: "blur" },
+      { pattern: /^1[3-9]\d{9}$/, message: "请输入正确的手机号码", trigger: "blur" }
+    ],
+    applicantEmail: [
+      { required: true, message: "邮箱地址不能为空", trigger: "blur" },
+      { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }
+    ],
+    status: [
+      { required: true, message: "状态不能为空", trigger: "change" }
+    ]
+  }
+})
 
-/*** 用户导入参数 */
-const upload = reactive({
-  // 是否显示弹出层（用户导入）
-  open: false,
-  // 弹出层标题（用户导入）
-  title: "",
-  // 是否禁用上传
-  isUploading: false,
-  // 是否更新已经存在的用户数据
-  updateSupport: 0,
-  // 设置上传的请求头部
-  headers: { Authorization: "Bearer " + getToken() },
-  // 上传的地址
-  url: import.meta.env.VITE_APP_BASE_API + "/system/user/importData"
-});
+const { queryParams, form, rules } = toRefs(data)
 
-// 列显隐信息
+// 直接在组件中定义字典数据
+const sys_normal_disable = ref([
+  { value: "0", label: "正常" },
+  { value: "1", label: "停用" }
+])
+
 const columns = ref([
   { key: 0, label: `用户编号`, visible: true },
   { key: 1, label: `申请人姓名`, visible: true },
@@ -312,339 +312,221 @@ const columns = ref([
   { key: 3, label: `申请人邮箱`, visible: true },
   { key: 4, label: `申请日期`, visible: true },
   { key: 5, label: `申请状态`, visible: true },
-  { key: 6, label: `申请日期`, visible: true },
-  { key: 7, label: `企业描述`, visible: true }
-]);
+  { key: 6, label: `创建时间`, visible: true }
+])
 
-const data = reactive({
-  form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    userName: undefined,
-    phonenumber: undefined,
-    status: undefined,
-    deptId: undefined
-  },
-  rules: {
-    applicantName: [
-      { required: true, message: "申请人姓名不能为空", trigger: "blur" },
-      { min: 2, max: 20, message: "申请人姓名长度必须介于 2 和 20 之间", trigger: "blur" }
-    ],
-    applicantPhone: [
-      { required: true, message: "申请人手机号不能为空", trigger: "blur" },
-      { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }
-    ],
-    applicantEmail: [
-      { required: true, message: "申请人邮箱不能为空", trigger: "blur" },
-      { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }
-    ],
-    createdAt: [
-      { required: true, message: "创建时间不能为空", trigger: "change" }
-    ],
-    enterpriseDescription: [
-      { required: true, message: "企业描述不能为空", trigger: "blur" },
-      { min: 10, max: 500, message: "企业描述长度必须介于 10 和 500 之间", trigger: "blur" }
-    ]
-  }
-});
 
-const { queryParams, form, rules } = toRefs(data);
 
-/** 查询申请列表 */
+const viewForm = reactive({
+  applicationId: null,
+  status: '',
+  enterpriseDescription: '',
+  reason: ''
+})
+
+const upload = reactive({
+  open: false,
+  title: "",
+  isUploading: false,
+  updateSupport: 0,
+  headers: { Authorization: "Bearer " + getToken() },
+  url: import.meta.env.VITE_APP_BASE_API + "/system/user/importData"
+})
+
+// 模拟 getToken 函数
+function getToken() {
+  // 这里应该是从你的认证系统获取token的逻辑
+  // 为了示例，我们返回一个假的token
+  return "fake-token-12345"
+}
+
+// 定义状态映射表
+const statusMap = {
+  pending: '待审批',
+  approved: '已批准',
+  rejected: '已拒绝',
+};
+
+
+// 查询应用列表
 function getList() {
   loading.value = true;
-  listApplication(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listApplication(addDateRange(queryParams.value, dateRange.value)).then(response => {
+    // 处理数据，将状态值转换为中文
+    const processedRecords = response.records.map(record => ({
+      ...record,
+      status: statusMap[record.status] || record.status, // 如果没有匹配的中文值，保留原值
+    }));
+    ApplicationList.value = processedRecords;
+    total.value = response.total;
     loading.value = false;
-    console.log("res", res);
-
-    // 定义一个函数来转换日期时间格式
-    function formatDateTime(dateTimeString) {
-      if (!dateTimeString) return '';
-      const dateTime = new Date(dateTimeString);
-      const year = dateTime.getFullYear();
-      const month = String(dateTime.getMonth() + 1).padStart(2, '0');
-      const day = String(dateTime.getDate()).padStart(2, '0');
-      const hours = String(dateTime.getHours()).padStart(2, '0');
-      const minutes = String(dateTime.getMinutes()).padStart(2, '0');
-      const seconds = String(dateTime.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-
-    // 遍历 res.records 并转换 applicationDate 和 createdAt
-    const updatedRecords = res.records.map(item => {
-      if (item.applicationDate) {
-        item.applicationDate = formatDateTime(item.applicationDate);
-      }
-      if (item.createdAt) {
-        item.createdAt = formatDateTime(item.createdAt);
-      }
-      // 修改 status 为 "pending" 的项
-      if (item.status === 'pending') {
-        item.status = '待定';
-      }
-      if (item.status === 'approved') {
-        item.status = '通过';
-      }
-      if (item.status === 'rejected') {
-        item.status = '拒绝';
-      }
-      return item;
-    });
-
-    ApplicationList.value = updatedRecords;
-    total.value = res.total;
   });
 }
 
-/**
- * 打开通过申请对话框
- */
-function openPassDialog(row) {
-  passForm.applicationId = parseInt(row.applicationId, 10);
-  passDialogVisible.value = true;
+// 取消按钮
+function cancel() {
+  open.value = false
+  reset()
 }
 
-/**
- * 打开拒绝申请对话框
- */
-function openRejectDialog(row) {
-  rejectForm.applicationId = parseInt(row.applicationId, 10);
-  rejectDialogVisible.value = true;
-}
-
-/**
- * 确认通过申请
- */
-/**
- * 确认通过申请
- */
-function confirmPass() {
-  if (!passForm.reason.trim()) {
-    proxy.$modal.msgError("请输入通过原因");
-    return;
+// 表单重置
+function reset() {
+  form.value = {
+    applicationId: undefined,
+    applicantName: undefined,
+    applicantPhone: undefined,
+    applicantEmail: undefined,
+    status: "0",
+    enterpriseDescription: undefined
   }
-
-  passLoading.value = true;
-  const loadingInstance = ElLoading.service({
-    lock: true,
-    text: '处理中...',
-    background: 'rgba(0, 0, 0, 0.7)',
-  });
-
-  proxy.$modal.confirm('确认通过该申请吗?').then(function () {
-    // 调用通过申请的 API
-    return passApplication(passForm);
-  }).then(() => {
-    proxy.$modal.msgSuccess("通过成功");
-    passDialogVisible.value = false;
-    passForm.reason = "";
-    getList(); // 刷新列表
-  }).catch((error) => {
-    console.error("通过申请失败:", error);
-    proxy.$modal.msgError("通过申请失败，请重试!");
-  }).finally(() => {
-    passLoading.value = false;
-    console.log("结束了吗")
-    loadingInstance.close();
-  });
+  proxy.resetForm("userRef")
 }
 
-/**
- * 拒绝申请操作
- */
-/**
- * 拒绝申请操作
- */
-function rejectApplicationOperate(row) {
-  if (!rejectForm.reason.trim()) {
-    proxy.$modal.msgError("请输入拒绝原因");
-    return;
-  }
-
-  proxy.$modal.confirm('确认拒绝该申请吗?').then(function () {
-    // 调用拒绝申请的 API
-    return rejectApplication(rejectForm);
-  }).then(() => {
-    proxy.$modal.msgSuccess("拒绝成功");
-    rejectDialogVisible.value = false;
-    rejectForm.reason = "";
-    getList(); // 刷新列表
-  }).catch((error) => {
-    console.error("拒绝申请失败:", error);
-    proxy.$modal.msgError("拒绝申请失败，请重试!");
-  });
-}
-
-
-/** 搜索按钮操作 */
+// 搜索按钮操作
 function handleQuery() {
-  queryParams.value.pageNum = 1;
-  getList();
+  queryParams.value.pageNum = 1
+  getList()
 }
 
-/** 重置按钮操作 */
+// 重置按钮操作
 function resetQuery() {
-  dateRange.value = [];
-  proxy.resetForm("queryRef");
-  queryParams.value.deptId = undefined;
-  handleQuery();
+  dateRange.value = []
+  proxy.resetForm("queryRef")
+  handleQuery()
 }
 
-/** 新增按钮操作 */
+// 多选框选中数据
+function handleSelectionChange(selection) {
+  ids.value = selection.map(item => item.applicationId)
+  single.value = selection.length !== 1
+  multiple.value = !selection.length
+}
+
+// 新增按钮操作
 function handleAdd() {
-  reset();
-  getUser().then(response => {
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    open.value = true;
-    title.value = "添加申请";
-    form.value.password = initPassword.value;
-  });
+  reset()
+  open.value = true
+  title.value = "添加申请"
 }
 
-/** 修改按钮操作 */
+// 修改按钮操作
 function handleUpdate(row) {
-  reset();
-  const userId = row.userId || ids.value[0];
-  getUser(userId).then(response => {
-    form.value = response.data;
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    open.value = true;
-    title.value = "修改用户";
-    form.value.password = "";
-  });
+  reset()
+  const applicationId = row.applicationId || ids.value[0]
+  getApplication(applicationId).then(response => {
+    form.value = response.data
+    open.value = true
+    title.value = "修改申请"
+  })
 }
 
-/** 重置密码按钮操作 */
-function handleResetPwd(row) {
-  proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    closeOnClickModal: false,
-    inputPattern: /^.{5,20}$/,
-    inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
-  }).then(({ value }) => {
-    resetUserPwd(row.userId, value).then(response => {
-      proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
-    });
-  }).catch(() => {});
-}
-
-/** 提交按钮 */
+// 提交按钮
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.userId != undefined) {
-        updateUser(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
+      if (form.value.applicationId != undefined) {
+        updateApplication(form.value).then(response => {
+          ElMessage.success("修改成功")
+          open.value = false
+          getList()
+        })
       } else {
         addApplication(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
+          ElMessage.success("新增成功")
+          open.value = false
+          getList()
+        })
       }
     }
-  });
+  })
 }
 
-/** 删除按钮操作 */
+// 删除按钮操作
 function handleDelete(row) {
-  const userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function() {
-    return delUser(userIds);
+  const applicationIds = row.applicationId || ids.value
+  ElMessageBox.confirm('是否确认删除申请编号为"' + applicationIds + '"的数据项？').then(function() {
+    return delApplication(applicationIds)
   }).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
+    getList()
+    ElMessage.success("删除成功")
+  }).catch(() => {})
 }
 
-/** 导出按钮操作 */
+// 导出按钮操作
 function handleExport() {
-  proxy.download("system/user/export", {
+  proxy.download('system/application/export', {
     ...queryParams.value
-  }, `user_${new Date().getTime()}.xlsx`);
+  }, `application_${new Date().getTime()}.xlsx`)
 }
 
-/** 导入按钮操作 */
 function handleImport() {
-  upload.title = "用户导入";
-  upload.open = true;
+  upload.title = "申请导入"
+  upload.open = true
 }
 
-/** 下载模板操作 */
 function importTemplate() {
-  proxy.download("system/user/importTemplate", {}, `user_template_${new Date().getTime()}.xlsx`);
+  proxy.download("system/application/importTemplate", {}, `application_template_${new Date().getTime()}.xlsx`)
 }
 
-/**文件上传中处理 */
-const handleFileUploadProgress = (event, file, fileList) => {
-  upload.isUploading = true;
-};
+function handleFileUploadProgress(event, file, fileList) {
+  upload.isUploading = true
+}
 
-/** 文件上传成功处理 */
-const handleFileSuccess = (response, file, fileList) => {
-  upload.open = false;
-  upload.isUploading = false;
-  proxy.$refs["uploadRef"].handleRemove(file);
-  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
-  getList();
-};
+function handleFileSuccess(response, file, fileList) {
+  upload.open = false
+  upload.isUploading = false
+  proxy.$refs["uploadRef"].handleRemove(file)
+  ElMessage.success("导入成功")
+  getList()
+}
 
-/** 提交上传文件 */
 function submitFileForm() {
-  proxy.$refs["uploadRef"].submit();
+  proxy.$refs["uploadRef"].submit()
 }
 
-/** 重置操作表单 */
-function reset() {
-  form.value = {
-    userId: undefined,
-    deptId: undefined,
-    userName: undefined,
-    nickName: undefined,
-    password: undefined,
-    phonenumber: undefined,
-    email: undefined,
-    sex: undefined,
-    status: "0",
-    remark: undefined,
-    postIds: [],
-    roleIds: []
-  };
-  proxy.resetForm("userRef");
+function openViewDialog(row) {
+  viewForm.applicationId = row.applicationId
+  viewForm.status = row.status
+  viewForm.enterpriseDescription = row.enterpriseDescription
+  viewForm.reason = ''
+  viewDialogVisible.value = true
 }
 
-/** 取消按钮 */
-function cancel() {
-  open.value = false;
-  reset();
+function updateApplicationStatus() {
+  if (!viewForm.status) {
+    ElMessage.error("请选择申请状态")
+    return
+  }
+  if (!viewForm.reason.trim()) {
+    ElMessage.error(`请输入${viewForm.status}原因`)
+    return
+  }
+
+  updateLoading.value = true
+  const action = viewForm.status === '通过' ? passApplication : rejectApplication
+  const actionName = viewForm.status === '通过' ? '通过' : '拒绝'
+
+  ElMessageBox.confirm(`确认${actionName}该申请吗?`).then(function() {
+    return action(viewForm)
+  }).then(() => {
+    ElMessage.success(`${actionName}成功`)
+    viewDialogVisible.value = false
+    getList()
+  }).catch((error) => {
+    console.error(`${actionName}申请失败:`, error)
+    ElMessage.error(`${actionName}申请失败，请重试!`)
+  }).finally(() => {
+    updateLoading.value = false
+  })
 }
 
-// 初始化
-getList();
+onMounted(() => {
+  getList()
+})
 </script>
 
 <style scoped>
 .app-container {
-  width: 100%;
   padding: 20px;
-  box-sizing: border-box;
-}
-
-.full-width-table {
-  width: 100%;
-}
-
-/* If you want to remove any default padding/margin */
-.el-table {
-  margin: 0;
-  padding: 0;
 }
 </style>
-

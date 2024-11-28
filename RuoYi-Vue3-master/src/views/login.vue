@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <el-button @click="ToApplication" type="primary" class="application-button">跳转到申请界面</el-button>
+
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">若依后台管理系统</h3>
       <el-form-item prop="username">

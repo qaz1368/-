@@ -7,6 +7,7 @@ import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.vo.EnterpriseVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EnterpriseService extends IService<Enterprise> {
 
@@ -25,4 +26,12 @@ public interface EnterpriseService extends IService<Enterprise> {
     EnterpriseVO getCompanyId(Integer companyId);
 
     List<EnterpriseVO> getEnterprisesWithCoordinate();
+
+    Map<String, Integer> getEnterpriseCountByPark();
+
+    /**
+     * 获取每个公司状态及其对应的企业数量
+     * @return Map<公司状态, 企业数量>
+     */
+    Map<String, Integer> getEnterpriseCountByCompanyStatus();
 }

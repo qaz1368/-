@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +41,7 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
 
     @Autowired
     private AwardDetailService awardDetailService;
+
 
     @Override
     public Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String regionName, String industryName, String companyStatus) {
@@ -314,6 +313,34 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
 
         return enterpriseVOS;
     }
+
+    @Override
+    public Map<String, Integer> getEnterpriseCountByPark() {
+        List<Enterprise> enterprises = (List<Enterprise>) list();
+        Map<String, Integer> parkCounts = new HashMap<>();
+
+        for (Enterprise enterprise : enterprises) {
+            Integer parkNameId = enterprise.getIncubatorId();
+            String parkName = studentEntrepreneurshipParkMapper.selectById(parkNameId).getParkName();
+            parkCounts.put(parkName, parkCounts.getOrDefault(parkName, 0) + 1);
+        }
+
+        return parkCounts;
+    }
+
+    @Override
+    public Map<String, Integer> getEnterpriseCountByCompanyStatus() {
+        List<Enterprise> enterprises = this.list();
+        Map<String, Integer> statusCounts = new HashMap<>();
+
+        for (Enterprise enterprise : enterprises) {
+            String companyStatus = enterprise.getCompanyStatus();
+            statusCounts.put(companyStatus, statusCounts.getOrDefault(companyStatus, 0) + 1);
+        }
+
+        return statusCounts;
+    }
+
     private EnterpriseVO convertToVO(Enterprise enterprise) {
         EnterpriseVO enterpriseVO = new EnterpriseVO();
         BeanUtils.copyProperties(enterprise, enterpriseVO);

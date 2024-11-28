@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "企业信息管理")
 @RestController
@@ -85,6 +86,17 @@ public class EnterpriseController {
     @GetMapping("/withCoordinate")
     public List<EnterpriseVO> getEnterprisesWithCoordinate() {
         return enterpriseService.getEnterprisesWithCoordinate();
+    }
+
+    @GetMapping("/enterprise-count-by-park")
+    public Map<String, Integer> getEnterpriseCountByPark() {
+        return enterpriseService.getEnterpriseCountByPark();
+    }
+
+    @ApiOperation("获取每个公司状态及其对应的企业数量")
+    @GetMapping("/enterprise-count-by-status")
+    public Map<String, Integer> getEnterpriseCountByCompanyStatus() {
+        return enterpriseService.getEnterpriseCountByCompanyStatus();
     }
 
 }
