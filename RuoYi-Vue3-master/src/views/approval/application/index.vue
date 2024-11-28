@@ -234,8 +234,8 @@
         <el-form-item label="企业描述">
           <el-input v-model="viewForm.enterpriseDescription" type="textarea" :rows="3" readonly></el-input>
         </el-form-item>
-        <el-form-item label="原因" v-if="viewForm.status">
-          <el-input v-model="viewForm.reason" type="textarea" :rows="4" :placeholder="viewForm.status === '通过' ? '请输入通过原因' : '请输入拒绝原因'"></el-input>
+        <el-form-item label="审核意见" v-if="viewForm.status">
+          <el-input v-model="viewForm.reason" type="textarea" :rows="4" :placeholder="viewForm.status === '通过' ? '请输入审核意见' : '请输入审核意见'"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
