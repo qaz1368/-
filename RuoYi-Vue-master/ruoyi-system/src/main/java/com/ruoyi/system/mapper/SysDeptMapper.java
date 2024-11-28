@@ -121,4 +121,6 @@ public interface SysDeptMapper extends BaseMapper<SysDept>
     public int deleteDeptById(Long deptId);
 
     SysDept getDeptByName(String department);
+
+    SysDept selectByIds(Long id);
 }

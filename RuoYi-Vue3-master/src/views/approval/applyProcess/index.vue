@@ -92,7 +92,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="申请类型" prop="applicationType">
-              <el-select v-model="form.applicationType" placeholder="请选择比赛类型">
+              <el-select v-model="form.applicationType" placeholder="请选择申请类型">
                 <el-option
                     v-for="option in form.applicationTypeOptions"
                     :key="option"
@@ -111,21 +111,9 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="部门" prop="department">
-              <el-select v-model="form.department" placeholder="请选择比赛类型">
+              <el-select v-model="form.department" placeholder="请选择部门">
                 <el-option
                     v-for="option in form.departmentOptions"
-                    :key="option"
-                    :label="option"
-                    :value="option"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色" prop="role">
-              <el-select v-model="form.role" placeholder="请选择比赛类型">
-                <el-option
-                    v-for="option in form.roleOptions"
                     :key="option"
                     :label="option"
                     :value="option"

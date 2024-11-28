@@ -1,14 +1,19 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.system.domain.SysRoleDept;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 角色与部门关联表 数据层
  * 
  * @author ruoyi
  */
-public interface SysRoleDeptMapper
+@Mapper
+public interface SysRoleDeptMapper extends BaseMapper<SysRoleDept>
 {
     /**
      * 通过角色ID删除角色和部门关联
@@ -41,4 +46,7 @@ public interface SysRoleDeptMapper
      * @return 结果
      */
     public int batchRoleDept(List<SysRoleDept> roleDeptList);
+
+    List<SysRoleDept> selectRoleDeptByDeptId(@Param("deptId") Long deptId);
+
 }
