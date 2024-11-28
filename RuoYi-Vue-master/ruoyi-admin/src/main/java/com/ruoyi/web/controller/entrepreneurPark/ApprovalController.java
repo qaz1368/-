@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.entity.Approval;
+import com.ruoyi.system.domain.vo.ApprovalVO;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,7 +24,7 @@ public class ApprovalController {
 
     @ApiOperation(value = "获取审批分页数据", notes = "根据页码和每页数据量获取审批分页数据")
     @GetMapping("/list")
-    public Page<Approval> getApprovalPage(
+    public Page<ApprovalVO> getApprovalPage(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
             @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
         return approvalService.getApprovalPage(pageNum, pageSize);
@@ -65,7 +66,7 @@ public class ApprovalController {
 
     @ApiOperation(value = "获取审批记录申请分页数据", notes = "根据页码和每页数据量获取部门管理员申请分页数据")
     @GetMapping("/list1")
-    public Page<Approval> getApplicationPage1(
+    public Page<ApprovalVO> getApplicationPage1(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
             @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
         LoginUser loginUser = SecurityUtils.getLoginUser();

@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.system.domain.DTO.ApprovalProcessDTO;
+import com.ruoyi.system.domain.SysRoleDept;
 import com.ruoyi.system.domain.entity.ApplicationType;
 import com.ruoyi.system.domain.entity.ApprovalProcess;
 import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.vo.ApprovalProcessVO;
 import com.ruoyi.system.mapper.SysDeptMapper;
+import com.ruoyi.system.mapper.SysRoleDeptMapper;
 import com.ruoyi.system.mapper.SysRoleMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.ApprovalProcessMapper;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalProcessService;
@@ -36,6 +38,8 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
     private SysDeptMapper sysDeptMapper;
     @Autowired
     private SysRoleMapper sysRoleMapper;
+    @Autowired
+    private SysRoleDeptMapper sysRoleDeptMapper;
 
     @Override
     public Page<ApprovalProcessVO> getApprovalProcessPage(int pageNum, int pageSize) {
@@ -88,18 +92,26 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
                 approvalProcess.setApplicationTypeId(applicationType.getApplicationTypeId());
             }
 
-            if (approvalProcessDTO.getRole() != null){
-                SysRole sysRole = sysRoleMapper.getRoleByName(approvalProcessDTO.getRole());
-                if (sysRole != null) {
-                    approvalProcess.setRoleId(Math.toIntExact(sysRole.getRoleId()));
-                }
-            }
 
             if (approvalProcessDTO.getDepartment() != null){
                 SysDept sysDept = sysDeptMapper.getDeptByName(approvalProcessDTO.getDepartment());
                 if (sysDept != null) {
-                    approvalProcess.setDepartmentId(Math.toIntExact(sysDept.getDeptId()));;
+                    approvalProcess.setDepartmentId(Math.toIntExact(sysDept.getDeptId()));
+
+                        // 通过 deptId 查找 sys_role_dept 表中的 role_id
+                        List<SysRoleDept> roleDepts = sysRoleDeptMapper.selectRoleDeptByDeptId(sysDept.getDeptId());
+
+                        if (!roleDepts.isEmpty()) {
+                            Long roleId = roleDepts.get(0).getRoleId();
+
+                            // 通过 role_id 查找 sys_role 表中的 role_name
+                            SysRole sysRole = sysRoleMapper.selectRoleById(roleId);
+                            if (sysRole != null) {
+                                approvalProcess.setRoleId(Math.toIntExact(sysRole.getRoleId()));
+                            }
+                        }
                 }
+
             }
             return save(approvalProcess);
         }
@@ -120,18 +132,25 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
                 approvalProcess.setApplicationTypeId(applicationType.getApplicationTypeId());
             }
 
-            if (approvalProcessDTO.getRole() != null){
-                SysRole sysRole = sysRoleMapper.getRoleByName(approvalProcessDTO.getRole());
-                if (sysRole != null) {
-                    approvalProcess.setRoleId(Math.toIntExact(sysRole.getRoleId()));
-                }
-            }
-
             if (approvalProcessDTO.getDepartment() != null){
                 SysDept sysDept = sysDeptMapper.getDeptByName(approvalProcessDTO.getDepartment());
                 if (sysDept != null) {
-                    approvalProcess.setDepartmentId(Math.toIntExact(sysDept.getDeptId()));;
+                    approvalProcess.setDepartmentId(Math.toIntExact(sysDept.getDeptId()));
+
+                    // 通过 deptId 查找 sys_role_dept 表中的 role_id
+                    List<SysRoleDept> roleDepts = sysRoleDeptMapper.selectRoleDeptByDeptId(sysDept.getDeptId());
+
+                    if (!roleDepts.isEmpty()) {
+                        Long roleId = roleDepts.get(0).getRoleId();
+
+                        // 通过 role_id 查找 sys_role 表中的 role_name
+                        SysRole sysRole = sysRoleMapper.selectRoleById(roleId);
+                        if (sysRole != null) {
+                            approvalProcess.setRoleId(Math.toIntExact(sysRole.getRoleId()));
+                        }
+                    }
                 }
+
             }
             return updateById(approvalProcess);
         }
