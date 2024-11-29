@@ -71,7 +71,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="管理者ID" align="center" key="managerId" prop="managerId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible" >
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="姓名" align="center" key="name" prop="name" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="性别" align="center" key="gender" prop="gender" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="身份证号" align="center" key="idCard" prop="idCard" v-if="columns[3].visible" :show-overflow-tooltip="true" />

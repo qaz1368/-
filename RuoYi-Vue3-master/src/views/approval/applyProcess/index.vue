@@ -49,7 +49,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="流程ID" align="center" key="processId" prop="processId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible">
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="申请类型" align="center" key="applicationType" prop="applicationType" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程步骤顺序" align="center" key="stepOrder" prop="stepOrder" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="部门" align="center" key="department" prop="department" v-if="columns[3].visible" :show-overflow-tooltip="true" />

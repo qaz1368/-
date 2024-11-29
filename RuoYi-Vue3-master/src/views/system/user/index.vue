@@ -328,11 +328,11 @@ const deptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
-/*** 用户导入参数 */
+/*** 企业管理者参数 */
 const upload = reactive({
-  // 是否显示弹出层（用户导入）
+  // 是否显示弹出层（企业管理者导入）
   open: false,
-  // 弹出层标题（用户导入）
+  // 弹出层标题（企业管理者管理）
   title: "",
   // 是否禁用上传
   isUploading: false,
@@ -484,7 +484,7 @@ function handleSelectionChange(selection) {
 };
 /** 导入按钮操作 */
 function handleImport() {
-  upload.title = "用户导入";
+  upload.title = "企业管理者导入";
   upload.open = true;
 };
 /** 下载模板操作 */

@@ -106,7 +106,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="审批记录ID" align="center" key="approvalId" prop="approvalId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible">
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="申请类型" align="center" key="applicationType" prop="applicationType" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程ID" align="center" key="processId" prop="processId" v-if="columns[2].visible" :show-overflow-tooltip="true" />

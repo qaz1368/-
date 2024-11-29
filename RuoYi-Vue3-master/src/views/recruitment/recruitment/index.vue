@@ -62,7 +62,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="企业岗位关联唯一标识符" align="center" key="enterpriseJobId" prop="enterpriseJobId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible">
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="企业" align="center" key="enterprise" prop="enterprise" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="岗位" align="center" key="position" prop="position" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="岗位类型" align="center" key="positionType" prop="positionType" v-if="columns[3].visible" :show-overflow-tooltip="true" />

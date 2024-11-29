@@ -105,7 +105,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="奖项ID" align="center" key="awardId" prop="awardId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible" >
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="年份" align="center" key="year" prop="year" v-if="columns[1].visible" />
           <el-table-column label="比赛类型" align="center" key="type" prop="type" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="获奖企业" align="center" key="enterprise" prop="enterprise" v-if="columns[2].visible" />

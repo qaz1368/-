@@ -50,7 +50,11 @@
 
         <el-table v-loading="loading" :data="parkList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="创业园ID" align="center" key="parkId" prop="parkId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" key="parkId" prop="parkId" v-if="columns[0].visible">
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="创业园名称" align="center" key="parkName" prop="parkName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="入驻地址" align="center" key="address" prop="address" v-if="columns[3].visible" :show-overflow-tooltip="true" />

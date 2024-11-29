@@ -62,7 +62,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="比赛类型ID" align="center" key="id" prop="id" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center"  v-if="columns[0].visible" >
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="比赛类型" align="center" key="level" prop="level" v-if="columns[1].visible" :show-overflow-tooltip="true" />
 
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">

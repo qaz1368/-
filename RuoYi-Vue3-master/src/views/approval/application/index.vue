@@ -106,7 +106,11 @@
 
         <el-table v-loading="loading" :data="ApplicationList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="applicationId" prop="applicationId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center"  v-if="columns[0].visible" >
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="申请人手机号" align="center" key="applicantPhone" prop="applicantPhone" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="申请人邮箱" align="center" key="applicantEmail" prop="applicantEmail" v-if="columns[3].visible" :show-overflow-tooltip="true" />
@@ -344,7 +348,7 @@ const upload = reactive({
   isUploading: false,
   updateSupport: 0,
   headers: { Authorization: "Bearer " + getToken() },
-  url: import.meta.env.VITE_APP_BASE_API + "/api/application/importData"
+  url:  "http://localhost:8091/api/application/importData"
 })
 
 // 模拟 getToken 函数
@@ -473,7 +477,7 @@ function handleExport() {
 }
 
 function handleImport() {
-  upload.title = "申请导入"
+  upload.title = "申请数据导入"
   upload.open = true
 }
 

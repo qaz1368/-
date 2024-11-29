@@ -49,7 +49,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="行业ID" align="center" key="industryId" prop="industryId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible" >
+              <template #default="scope">
+                {{scope.$index+1}}
+              </template>
+          </el-table-column>
           <el-table-column label="行业名称" align="center" key="industryName" prop="industryName" v-if="columns[1].visible"  />
           <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
             <template #default="scope">

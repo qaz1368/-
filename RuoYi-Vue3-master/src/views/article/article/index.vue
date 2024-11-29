@@ -71,7 +71,11 @@
 
         <el-table v-loading="loading" :data="articleList" @selection-change="handleSelectionChange" class="full-width-table">
             <el-table-column type="selection" width="50" align="center" />
-            <el-table-column label="文章ID" align="center" key="articleId" prop="articleId" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible">
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
             <el-table-column label="分类" align="center" key="category" prop="category"  :show-overflow-tooltip="true" />
             <el-table-column label="标签" align="center" key="primaryTag" prop="primaryTag"  :show-overflow-tooltip="true" />
             <el-table-column label="文章标题" align="center" key="title" prop="title"  :show-overflow-tooltip="true" />

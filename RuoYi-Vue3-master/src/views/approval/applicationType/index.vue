@@ -49,7 +49,11 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="申请类型ID" align="center" key="applicationTypeId" prop="applicationTypeId" v-if="columns[0].visible" />
+          <el-table-column label="序号" align="center" v-if="columns[0].visible">
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
+          </el-table-column>
           <el-table-column label="申请类型" align="center" key="applicationName" prop="applicationName" v-if="columns[1].visible"  />
           <el-table-column label="申请类型描述" align="center" key="description" prop="description" v-if="columns[0].visible" />
           <el-table-column label="创建时间" align="center" prop="createdAt"  v-if="columns[2].visible" width="300">
