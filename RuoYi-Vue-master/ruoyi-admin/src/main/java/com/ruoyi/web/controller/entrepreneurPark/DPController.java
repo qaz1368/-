@@ -107,7 +107,7 @@ public class DPController {
             @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @ApiParam(value = "岗位类型") @RequestParam(required = false) String positionType
     ) {
-        return jobEnterprisePositionService.getJobEnterprisePositionsPage(pageNum, pageSize,positionType);
+        return jobEnterprisePositionService.getJobEnterprisePositionsPage1(pageNum, pageSize,positionType);
     }
 
 

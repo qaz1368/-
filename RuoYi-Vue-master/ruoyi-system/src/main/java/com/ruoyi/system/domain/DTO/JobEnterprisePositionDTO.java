@@ -39,8 +39,8 @@ public class JobEnterprisePositionDTO {
     @ApiModelProperty(value = "岗位描述")
     private String jobDescription;
 
-    @ApiModelProperty(value = "是否启用", example = "true")
-    private Boolean isActive;
+    @ApiModelProperty(value = "是否启用", example = "1")
+    private Integer isActive;
 
     @ApiModelProperty(value = "记录创建时间", example = "2024-11-22T12:00:00")
     private LocalDateTime createdAt;
