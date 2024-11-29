@@ -138,7 +138,6 @@
       </el-col>
     </el-row>
     <!-- 添加或修改用户配置对话框 -->
-    <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="userRef" label-width="100px">
         <el-row>
@@ -172,19 +171,18 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="申请类型" prop="applicationType">
-              <el-select v-model="form.applicationType" placeholder="请选择申请类型">
-                <el-option
-                    v-for="item in stateType.typeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
+        <el-row> <el-col :span="12">
+          <el-form-item label="申请类型" prop="applicationType">
+            <el-select v-model="form.applicationType" placeholder="请选择申请类型">
+              <el-option
+                  v-for="item in stateType.typeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
@@ -333,8 +331,6 @@ const columns = ref([
   { key: 6, label: `创建时间`, visible: true }
 ])
 
-
-
 const viewForm = reactive({
   applicationId: null,
   status: '',
@@ -348,7 +344,7 @@ const upload = reactive({
   isUploading: false,
   updateSupport: 0,
   headers: { Authorization: "Bearer " + getToken() },
-  url: import.meta.env.VITE_APP_BASE_API + "/system/user/importData"
+  url: import.meta.env.VITE_APP_BASE_API + "api/application/importData"
 })
 
 // 模拟 getToken 函数
@@ -364,7 +360,6 @@ const statusMap = {
   approved: '已批准',
   rejected: '已拒绝',
 };
-
 
 // 查询应用列表
 function getList() {
@@ -472,7 +467,7 @@ function handleDelete(row) {
 
 // 导出按钮操作
 function handleExport() {
-  proxy.download('system/application/export', {
+  proxy.download('api/application/export', {
     ...queryParams.value
   }, `application_${new Date().getTime()}.xlsx`)
 }
@@ -555,7 +550,6 @@ function GetIndustryOptions() {
   });
 }
 
-
 // 创建响应式对象
 const stateType = reactive({
   typeOptions: [],
@@ -587,3 +581,4 @@ onMounted(() => {
   padding: 20px;
 }
 </style>
+

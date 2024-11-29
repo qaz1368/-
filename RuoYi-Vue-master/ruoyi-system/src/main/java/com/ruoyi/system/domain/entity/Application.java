@@ -1,6 +1,5 @@
 package com.ruoyi.system.domain.entity;
 
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -58,7 +57,7 @@ public class Application {
 
     @TableField("status")
     @ApiModelProperty("申请状态")
-    @Excel(name = "申请状态", type = Excel.Type.EXPORT)
+    @Excel(name = "申请状态", type = Excel.Type.EXPORT,readConverterExp = "pending=待审核,rejected=已批准,approved=已拒绝")
     private String status;
 
     @TableField("created_at")
@@ -75,4 +74,12 @@ public class Application {
     @ApiModelProperty("企业介绍")
     @Excel(name = "企业介绍", type = Excel.Type.EXPORT)
     private String enterpriseDescription;
+
+    // Getter方法：用于转换status字段
+    public String getStatus() {
+        if ("pending".equals(this.status)) {
+            return "待审核";  // 当status为pending时，返回中文"待审核"
+        }
+        return this.status;  // 其他状态值返回原值
+    }
 }
