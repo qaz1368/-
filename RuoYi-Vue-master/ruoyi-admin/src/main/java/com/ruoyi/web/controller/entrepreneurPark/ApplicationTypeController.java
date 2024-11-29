@@ -8,6 +8,7 @@ import com.ruoyi.system.domain.entity.Industry;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,8 +51,10 @@ public class ApplicationTypeController {
     @GetMapping("/page")
     public IPage<ApplicationType> page(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return applicationTypeService.getApplicationTypePage(page, size);
+            @RequestParam(defaultValue = "10") int size,
+              @ApiParam(value = "申请类型名称") @RequestParam(required = false) String applicationName
+    ) {
+        return applicationTypeService.getApplicationTypePage(page, size, applicationName);
     }
 
     @ApiOperation("通过ID获取申请类型信息")

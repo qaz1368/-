@@ -2,13 +2,14 @@ package com.ruoyi.system.service.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.system.domain.DTO.CompetitionTypeDTO;
 import com.ruoyi.system.domain.entity.CompetitionType;
 
 import java.util.List;
 
 public interface CompetitionTypeService extends IService<CompetitionType> {
 
-    boolean saveCompetitionType(CompetitionType competitionType);  // 新增比赛类型
+    boolean saveCompetitionType(CompetitionTypeDTO competitionTypeDTO);  // 新增比赛类型
 
     boolean updateCompetitionType(CompetitionType competitionType); // 更新比赛类型信息
 

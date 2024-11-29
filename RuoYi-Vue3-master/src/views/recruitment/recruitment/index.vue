@@ -5,13 +5,19 @@
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="岗位类型" prop="positionType">
-            <el-input
+            <el-select
                 v-model="queryParams.positionType"
                 placeholder="请输入岗位类型"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
+            >
+              <el-option
+                  v-for="option in form.positionOptions"
+                  :key="option"
+                  :label="option"
+                  :value="option"
+              />
+              </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>

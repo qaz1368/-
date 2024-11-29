@@ -28,7 +28,8 @@ public class ApprovalProcessController {
     @GetMapping("/list")
     public Page<ApprovalProcessVO> getApprovalProcessPage(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
-            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
+            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize
+    ) {
         return approvalProcessService.getApprovalProcessPage(pageNum, pageSize);
     }
 

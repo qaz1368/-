@@ -23,6 +23,8 @@ public interface AwardDetailService extends IService<AwardDetail> {
 
     Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer year, Integer typeId);  // 分页查询获奖情况列表
 
+    Page<AwardDetailVO> getAwardDetailsPage1(int page, int size, Integer year, String type);  // 分页查询获奖情况列表
+
     List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId);
 
     long getTotalAwardCount();

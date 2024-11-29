@@ -179,6 +179,54 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
     }
 
     @Override
+    public Page<AwardDetailVO> getAwardDetailsPage1(int page, int size, Integer year, String type) {
+        Page<AwardDetail> pageRequest = new Page<>(page, size);
+        QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
+        if (year != null) {
+            queryWrapper.eq("year", year);
+        }
+        if (type != null) {
+            QueryWrapper<CompetitionType> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("level", type);
+            CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper1);
+            queryWrapper.eq("type_id", competitionType.getId());
+        }
+
+        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, queryWrapper).getRecords();
+
+        List<AwardDetailVO> awardDetailVOS = new ArrayList<>();
+        for (AwardDetail awardDetail : awardDetails) {
+            AwardDetailVO awardDetailVO = new AwardDetailVO();
+            awardDetailVO.setAwardId(awardDetail.getAwardId());
+
+            // 查询企业名
+            Enterprise enterprise = enterpriseMapper.selectById(awardDetail.getEnterpriseId());
+            if (enterprise != null) {
+                awardDetailVO.setEnterprise(enterprise.getCompanyName());
+            }
+
+            // 查询比赛名
+            CompetitionName competitionNames = competitionNameMapper.selectById(awardDetail.getCompetitionId());
+            if (competitionNames != null) {
+                awardDetailVO.setCompetition(competitionNames.getCompetitionName());
+            }
+
+            // 查询级别
+            CompetitionType competitionTypes = competitionTypeMapper.selectById(awardDetail.getTypeId());
+            if (competitionTypes != null) {
+                awardDetailVO.setType(competitionTypes.getLevel());
+            }
+            BeanUtils.copyProperties(awardDetail, awardDetailVO);
+            awardDetailVOS.add(awardDetailVO);
+        }
+
+        Page<AwardDetailVO> pageResponse = Page.of(page, size);
+        pageResponse.setRecords(awardDetailVOS);
+        return pageResponse;
+
+    }
+
+    @Override
     public List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId) {
         QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
         if (enterpriseId != null) {

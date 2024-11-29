@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.CompetitionTypeDTO;
 import com.ruoyi.system.domain.entity.CompetitionName;
 import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.mapper.entrepreneurPark.CompetitionTypeMapper;
@@ -20,8 +21,10 @@ public class CompetitionTypeServiceImpl extends ServiceImpl<CompetitionTypeMappe
     private CompetitionTypeMapper competitionTypeMapper;
 
     @Override
-    public boolean saveCompetitionType(CompetitionType competitionType) {
-        return save(competitionType);  // 使用 MyBatis-Plus 提供的保存方法
+    public boolean saveCompetitionType(CompetitionTypeDTO competitionTypeDTO) {
+        CompetitionType competitionType = new CompetitionType();
+        competitionType.setLevel(competitionTypeDTO.getLevel());
+        return save(competitionType);
     }
 
     @Override

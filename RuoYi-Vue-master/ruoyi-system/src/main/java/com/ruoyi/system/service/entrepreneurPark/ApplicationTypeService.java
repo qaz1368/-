@@ -16,5 +16,5 @@ public interface ApplicationTypeService extends IService<ApplicationType> {
 
     boolean deleteBatch(List<Integer> applicationTypeIds);  // 批量删除
 
-    IPage<ApplicationType> getApplicationTypePage(int page, int size);  // 分页查询申请类型列表
+    IPage<ApplicationType> getApplicationTypePage(int page, int size, String applicationName);  // 分页查询申请类型列表
 }
