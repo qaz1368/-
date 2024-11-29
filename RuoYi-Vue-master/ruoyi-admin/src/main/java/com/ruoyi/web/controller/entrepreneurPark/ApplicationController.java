@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -21,9 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
+import static com.ruoyi.common.core.domain.AjaxResult.success;
 
 @Slf4j
 @Api(tags = "申请管理")
@@ -95,13 +99,24 @@ public class ApplicationController {
 
 
 
-//    @ApiOperation("邮箱")
-//    @PostMapping("/export")
-//    public void export(HttpServletResponse response,Application application)
-//    {
-//        List<Application> list = applicationService.listByIds()
-//        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
-//        util.exportExcel(response, list, "用户数据");
-//    }
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<Application> list = applicationService.lambdaQuery().select().list();
+        ExcelUtil<Application> util = new ExcelUtil<Application>(Application.class);
+        util.exportExcel(response, list, "申请表数据");
+    }
+
+
+    @ApiOperation("excel导入")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<Application> util = new ExcelUtil<Application>(Application.class);
+        List<Application> applications = util.importExcel(file.getInputStream());
+        String message = String.valueOf(applicationService.saveBatch(applications));
+        return success(message);
+    }
 
 }

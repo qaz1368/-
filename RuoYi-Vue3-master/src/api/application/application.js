@@ -51,3 +51,12 @@ export function getApplicationTypeOptions() {
     method: 'get'
   })
 }
+
+//excel导出数据
+export function exportApplication(query) {
+  return request({
+    url: '/api/application/export',
+    method: 'get',
+    params: query
+  })
+}
