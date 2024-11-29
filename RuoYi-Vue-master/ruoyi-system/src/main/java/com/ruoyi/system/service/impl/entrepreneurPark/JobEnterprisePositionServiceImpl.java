@@ -51,6 +51,50 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
         for (JobEnterprisePosition jobEnterprisePosition : jobEnterprisePositions) {
             JobEnterprisePositionVO jobEnterprisePositionVO = new JobEnterprisePositionVO();
             BeanUtils.copyProperties(jobEnterprisePosition, jobEnterprisePositionVO);
+            // 查询企业名
+            Enterprise enterprise = enterpriseMapper.selectById(jobEnterprisePosition.getEnterpriseId());
+            if (enterprise != null) {
+                jobEnterprisePositionVO.setEnterprise(enterprise.getCompanyName());
+            }else{
+                jobEnterprisePositionVO.setEnterprise("");
+            }
+
+            // 查询比赛名
+            JobPosition jobPosition = jobPositionMapper.selectById(jobEnterprisePosition.getPositionId());
+            if (jobPosition != null) {
+                jobEnterprisePositionVO.setPosition(jobPosition.getPositionName());
+            }else {
+                jobEnterprisePositionVO.setPosition("");
+            }
+
+            JobEnterprisePositionVOS.add(jobEnterprisePositionVO);
+        }
+
+        Page<JobEnterprisePositionVO> pageResponse = Page.of(pageNum, pageSize);
+        pageResponse.setRecords(JobEnterprisePositionVOS);
+        return pageResponse;
+
+    }
+    @Override
+    public Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage1(int pageNum, int pageSize,String positionType) {
+        Page<JobEnterprisePosition> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<JobEnterprisePosition> queryWrapper = new QueryWrapper<>();
+
+        // 通过 positionType 进行模糊查询
+        if (positionType != null && !positionType.isEmpty()) {
+            queryWrapper.like("position_type", positionType);
+        }
+
+        Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, queryWrapper);
+        List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords();
+
+        List<JobEnterprisePositionVO> JobEnterprisePositionVOS = new ArrayList<>();
+        for (JobEnterprisePosition jobEnterprisePosition : jobEnterprisePositions) {
+            if(jobEnterprisePosition.getIsActive() == 0){
+                continue;
+            }
+            JobEnterprisePositionVO jobEnterprisePositionVO = new JobEnterprisePositionVO();
+            BeanUtils.copyProperties(jobEnterprisePosition, jobEnterprisePositionVO);
 
             // 查询企业名
             Enterprise enterprise = enterpriseMapper.selectById(jobEnterprisePosition.getEnterpriseId());
@@ -76,7 +120,6 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
         return pageResponse;
 
     }
-
     @Override
     public boolean removeBatchByIds(List<Integer> enterpriseJobIds) {
         return this.removeByIds(enterpriseJobIds);

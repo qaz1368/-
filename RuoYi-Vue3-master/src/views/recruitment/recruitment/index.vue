@@ -177,14 +177,19 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="岗位描述" prop="jobDescription">
               <el-input v-model="form.jobDescription" placeholder="请输入岗位描述" type="textarea" />
             </el-form-item>
           </el-col>
+
+        </el-row>
+        <el-row>
+
           <el-col :span="12">
             <el-form-item label="是否启用" prop="isActive">
-              <el-switch v-model="form.isActive" active-text="启用" inactive-text="禁用" />
+              <el-switch v-model="form.isActive" active-text="启用" inactive-text="禁用"   active-value="1"
+                         inactive-value="0"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -351,7 +356,7 @@ function getList() {
     // 处理 isActive 字段
     const processedRecords = res.records.map(item => ({
       ...item,
-      isActive: item.isActive ? '启用' : '未启用',
+      isActive: item.isActive === 1 ? '启用' : '未启用',
       jobStatus: {
         'Open': '开放中',
         'Closed': '已关闭',
@@ -518,13 +523,14 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  console.log("row", row)
+
   if (row && row.enterpriseJobId) {
     getRecruitment(row.enterpriseJobId).then(response => {
       form.value = { ...response, enterpriseOptions: form.value.enterpriseOptions,positionOptions: form.value.positionOptions }
-      console.log("form.value", form.value)
       open.value = true
       title.value = "修改招聘信息"
+      form.value.isActive=form.value.isActive.toString()
+      console.log("rowsssssssssss", form.value.isActive)
     }).catch(error => {
       console.error("修改招聘信息时出错：", error)
       proxy.$modal.msgError("修改招聘信息失败，请重试")
@@ -554,6 +560,7 @@ function submitForm() {
 
 function getJobPositionOption() {
   getJobPositionOptions().then(res => {
+
     const positionNames = res.map(item => item.positionName)
     form.value.positionOptions = positionNames
     console.log("form.value.positionOptions", form.value.positionOptions)

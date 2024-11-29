@@ -12,6 +12,8 @@ public interface JobEnterprisePositionService extends IService<JobEnterprisePosi
 
     // 分页查询
     Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage(int pageNum, int pageSize,String positionType);
+    // 分页查询
+    Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage1(int pageNum, int pageSize,String positionType);
 
     // 批量删除
     boolean removeBatchByIds(List<Integer> enterpriseJobIds);

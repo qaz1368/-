@@ -58,9 +58,9 @@ public class JobEnterprisePosition {
     private String jobDescription;
 
     @TableField("is_active")
-    @ApiModelProperty(value = "是否启用", example = "true")
-    @Excel(name = "是否启用", type = Excel.Type.EXPORT,readConverterExp = "true=是,false=否")
-    private Boolean isActive;
+    @ApiModelProperty(value = "是否启用", example = "1")
+    @Excel(name = "是否启用", type = Excel.Type.EXPORT,readConverterExp = "1=是,0=否")
+    private Integer isActive;
 
     @TableField("created_at")
     @ApiModelProperty(value = "记录创建时间", example = "2024-11-22T12:00:00")

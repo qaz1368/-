@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
 import UserApplication from "@/views/UserApplication/index.vue"
+
 /**
  * Note: 路由配置项
  *
@@ -16,15 +17,14 @@ import UserApplication from "@/views/UserApplication/index.vue"
  * roles: ['admin', 'common']       // 访问路由的角色权限
  * permissions: ['a:a:a', 'b:b:b']  // 访问路由的菜单权限
  * meta : {
-    noCache: true                   // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-    title: 'title'                  // 设置该路由在侧边栏和面包屑中展示的名字
-    icon: 'svg-name'                // 设置该路由的图标，对应路径src/assets/icons/svg
-    breadcrumb: false               // 如果设置为false，则不会在breadcrumb面包屑中显示
-    activeMenu: '/system/user'      // 当路由设置了该属性，则会高亮相对应的侧边栏。
-  }
+ noCache: true                   // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+ title: 'title'                  // 设置该路由在侧边栏和面包屑中展示的名字
+ icon: 'svg-name'                // 设置该路由的图标，对应路径src/assets/icons/svg
+ breadcrumb: false               // 如果设置为false，则不会在breadcrumb面包屑中显示
+ activeMenu: '/system/user'      // 当路由设置了该属性，则会高亮相对应的侧边栏。
+ }
  */
 
-// 公共路由
 // 公共路由
 export const constantRoutes = [
   {
@@ -85,9 +85,7 @@ export const constantRoutes = [
       }
     ]
   },
-
 ]
-
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
@@ -174,5 +172,5 @@ const router = createRouter({
     }
   },
 });
-// router.replace('/login');
+
 export default router;
