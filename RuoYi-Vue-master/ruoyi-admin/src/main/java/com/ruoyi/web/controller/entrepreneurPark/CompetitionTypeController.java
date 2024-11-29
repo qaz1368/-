@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.entity.CompetitionName;
 import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.service.entrepreneurPark.CompetitionTypeService;
 import io.swagger.annotations.Api;
@@ -9,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "比赛类型管理接口")
@@ -72,4 +75,12 @@ public class CompetitionTypeController {
     }
 
 
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<CompetitionType> list = competitionTypeService.lambdaQuery().select().list();
+        ExcelUtil<CompetitionType> util = new ExcelUtil<CompetitionType>(CompetitionType.class);
+        util.exportExcel(response, list, "比赛名称管理数据");
+    }
 }

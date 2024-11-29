@@ -1,8 +1,10 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.DTO.JobEnterprisePositionDTO;
 import com.ruoyi.system.domain.entity.JobEnterprisePosition;
+import com.ruoyi.system.domain.entity.JobPosition;
 import com.ruoyi.system.domain.vo.JobEnterprisePositionVO;
 import com.ruoyi.system.service.entrepreneurPark.JobEnterprisePositionService;
 import io.swagger.annotations.Api;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -67,5 +70,14 @@ public class JobEnterprisePositionController {
     public JobEnterprisePositionVO getJobEnterprisePositionById(
             @ApiParam(value = "招聘信息ID", required = true) @PathVariable Integer enterpriseJobId) {
         return jobEnterprisePositionService.getJobEnterprisePositionById(enterpriseJobId);
+    }
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<JobEnterprisePosition> list = jobEnterprisePositionService.lambdaQuery().select().list();
+        ExcelUtil<JobEnterprisePosition> util = new ExcelUtil<JobEnterprisePosition>(JobEnterprisePosition.class);
+        util.exportExcel(response, list, "岗位管理数据");
     }
 }

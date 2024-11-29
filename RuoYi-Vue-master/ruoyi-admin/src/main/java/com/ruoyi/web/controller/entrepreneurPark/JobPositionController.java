@@ -1,7 +1,9 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.entity.JobPosition;
+import com.ruoyi.system.domain.entity.PolicyArticle;
 import com.ruoyi.system.domain.entity.PolicyTag;
 import com.ruoyi.system.service.entrepreneurPark.JobPositionService;
 import io.swagger.annotations.Api;
@@ -10,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -75,5 +78,14 @@ public class JobPositionController {
     @GetMapping("/getJobPositionOptions")
     public List<JobPosition> getJobPositionOptions() {
         return jobPositionService.list();
+    }
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<JobPosition> list = jobPositionService.lambdaQuery().select().list();
+        ExcelUtil<JobPosition> util = new ExcelUtil<JobPosition>(JobPosition.class);
+        util.exportExcel(response, list, "岗位管理数据");
     }
 }

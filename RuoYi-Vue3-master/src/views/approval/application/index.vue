@@ -344,7 +344,7 @@ const upload = reactive({
   isUploading: false,
   updateSupport: 0,
   headers: { Authorization: "Bearer " + getToken() },
-  url: import.meta.env.VITE_APP_BASE_API + "api/application/importData"
+  url: import.meta.env.VITE_APP_BASE_API + "/api/application/importData"
 })
 
 // 模拟 getToken 函数
@@ -478,7 +478,7 @@ function handleImport() {
 }
 
 function importTemplate() {
-  proxy.download("system/application/importTemplate", {}, `application_template_${new Date().getTime()}.xlsx`)
+  proxy.download("api/application/importTemplate", {}, `application_template_${new Date().getTime()}.xlsx`)
 }
 
 function handleFileUploadProgress(event, file, fileList) {

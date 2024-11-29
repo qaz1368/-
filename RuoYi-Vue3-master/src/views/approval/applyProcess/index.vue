@@ -342,9 +342,9 @@ function handleDelete(row) {
 };
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/user/export", {
+  proxy.download("/api/approval-process/export", {
     ...queryParams.value,
-  },`user_${new Date().getTime()}.xlsx`);
+  },`approval-process_${new Date().getTime()}.xlsx`);
 };
 /** 用户状态修改  */
 function handleStatusChange(row) {

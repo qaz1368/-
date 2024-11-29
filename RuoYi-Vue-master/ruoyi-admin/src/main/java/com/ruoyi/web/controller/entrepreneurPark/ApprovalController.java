@@ -3,7 +3,9 @@ package com.ruoyi.web.controller.entrepreneurPark;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.DTO.ApprovalDTO;
+import com.ruoyi.system.domain.entity.Application;
 import com.ruoyi.system.domain.entity.Approval;
 import com.ruoyi.system.domain.vo.ApprovalVO;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalService;
@@ -13,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "审批管理")
@@ -73,4 +76,14 @@ public class ApprovalController {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         return approvalService.getPage1(pageNum, pageSize, loginUser);
     }
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<Approval> list = approvalService.lambdaQuery().select().list();
+        ExcelUtil<Approval> util = new ExcelUtil<Approval>(Approval.class);
+        util.exportExcel(response, list, "审批表数据");
+    }
+
 }

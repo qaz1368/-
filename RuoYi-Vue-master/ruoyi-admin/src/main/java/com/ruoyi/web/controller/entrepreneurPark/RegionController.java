@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.entity.Application;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.Region;
 import com.ruoyi.system.service.entrepreneurPark.RegionService;
@@ -10,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -66,5 +69,15 @@ public class RegionController {
     public List<Region> getRegionOptions() {
         return regionService.list();
     }
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<Region> list = regionService.lambdaQuery().select().list();
+        ExcelUtil<Region> util = new ExcelUtil<Region>(Region.class);
+        util.exportExcel(response, list, "地域表数据");
+    }
+
 
 }

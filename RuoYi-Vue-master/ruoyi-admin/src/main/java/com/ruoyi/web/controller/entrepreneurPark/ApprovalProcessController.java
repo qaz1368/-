@@ -1,7 +1,9 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.DTO.ApprovalProcessDTO;
+import com.ruoyi.system.domain.entity.Approval;
 import com.ruoyi.system.domain.entity.ApprovalProcess;
 import com.ruoyi.system.domain.vo.ApprovalProcessVO;
 import com.ruoyi.system.service.entrepreneurPark.ApprovalProcessService;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "审批流程管理")
@@ -58,6 +61,13 @@ public class ApprovalProcessController {
         return approvalProcessService.getApprovalProcessById(processId);
     }
 
-
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<ApprovalProcess> list = approvalProcessService.lambdaQuery().select().list();
+        ExcelUtil<ApprovalProcess> util = new ExcelUtil<ApprovalProcess>(ApprovalProcess.class);
+        util.exportExcel(response, list, "审批流程数据");
+    }
 
 }

@@ -1,8 +1,10 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.DTO.PolicyArticleDTO;
 import com.ruoyi.system.domain.entity.PolicyArticle;
+import com.ruoyi.system.domain.entity.PolicyTag;
 import com.ruoyi.system.domain.vo.PolicyArticleVO;
 import com.ruoyi.system.service.entrepreneurPark.PolicyArticleService;
 import io.swagger.annotations.Api;
@@ -13,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Slf4j
@@ -67,5 +70,14 @@ public class PolicyArticleController {
     public boolean deletePolicyArticles(
             @ApiParam(value = "文章ID列表", required = true) @RequestBody List<Integer> ids) {
         return policyArticleService.removeByIds(ids);
+    }
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<PolicyArticle> list = policyArticleService.lambdaQuery().select().list();
+        ExcelUtil<PolicyArticle> util = new ExcelUtil<PolicyArticle>(PolicyArticle.class);
+        util.exportExcel(response, list, "文章数据");
     }
 }

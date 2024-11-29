@@ -3,7 +3,9 @@ package com.ruoyi.web.controller.entrepreneurPark;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.DTO.AwardDetailDTO;
+import com.ruoyi.system.domain.entity.Application;
 import com.ruoyi.system.domain.entity.AwardDetail;
 import com.ruoyi.system.domain.vo.AwardDetailVO;
 import com.ruoyi.system.domain.vo.AwardTypeVO;
@@ -15,6 +17,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -122,5 +125,15 @@ public class AwardDetailController {
         } catch (Exception e) {
             return AjaxResult.error("获取不同类型获奖情况汇总失败，请稍后再试");
         }
+    }
+
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<AwardDetail> list = awardDetailService.lambdaQuery().select().list();
+        ExcelUtil<AwardDetail> util = new ExcelUtil<AwardDetail>(AwardDetail.class);
+        util.exportExcel(response, list, "奖项管理数据");
     }
 }

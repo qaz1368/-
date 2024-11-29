@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.ruoyi.common.core.domain.AjaxResult.success;
@@ -117,6 +120,24 @@ public class ApplicationController {
         List<Application> applications = util.importExcel(file.getInputStream());
         String message = String.valueOf(applicationService.saveBatch(applications));
         return success(message);
+    }
+
+
+    /**
+     * 下载模版
+     * @param response
+     * @throws IOException
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) throws IOException
+    {
+        ExcelUtil<Application> util = new ExcelUtil<Application>(Application.class);
+        List<Application> list = new ArrayList<>();
+        // Add a dummy record with column headers
+        Application dummyApplication = new Application();
+
+        list.add(dummyApplication);
+        util.exportExcel(response, list, "申请数据");
     }
 
 }

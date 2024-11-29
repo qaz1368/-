@@ -453,9 +453,9 @@ function handleDelete(row) {
 };
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/user/export", {
+  proxy.download("/enterprise-managers/export", {
     ...queryParams.value,
-  },`user_${new Date().getTime()}.xlsx`);
+  },`enterprise-managers_${new Date().getTime()}.xlsx`);
 };
 /** 用户状态修改  */
 function handleStatusChange(row) {

@@ -428,7 +428,7 @@ function handleDelete(row) {
 
 // 导出按钮操作
 function handleExport() {
-  proxy.download("system/user/export", {
+  proxy.download("/award-details/export", {
     ...queryParams.value,
   }, `user_${new Date().getTime()}.xlsx`)
 }

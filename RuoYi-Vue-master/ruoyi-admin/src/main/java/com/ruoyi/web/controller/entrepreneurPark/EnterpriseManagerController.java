@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.EnterpriseManagers;
 import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
@@ -11,6 +13,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "企业管理者管理接口")
@@ -73,6 +76,16 @@ public class EnterpriseManagerController {
     @GetMapping("/getEnterpriseManagersOptions")
     public List<EnterpriseManagers> getEnterpriseManagersOptions() {
         return managerService.list();
+    }
+
+
+    @ApiOperation("excel导出")
+    @PostMapping("/export")
+    public void export(HttpServletResponse response) {
+        // 查询表里全部数据
+        List<EnterpriseManagers> list = managerService.lambdaQuery().select().list();
+        ExcelUtil<EnterpriseManagers> util = new ExcelUtil<EnterpriseManagers>(EnterpriseManagers.class);
+        util.exportExcel(response, list, "企业管理者数据");
     }
 
 }

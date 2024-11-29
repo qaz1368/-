@@ -3,6 +3,7 @@ package com.ruoyi.system.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.annotation.Excel;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,9 +15,11 @@ public class CompetitionName {
 
     @ApiModelProperty("比赛ID")
     @TableId("competition_id")  // 映射到 'competition_id' 字段，作为主键
+    @Excel(name = "比赛ID", type = Excel.Type.EXPORT)
     private Integer competitionId;
 
     @ApiModelProperty("比赛名称")
     @TableField("competition_name")  // 映射到 'competition_name' 字段
+    @Excel(name = "比赛名称", type = Excel.Type.EXPORT)
     private String competitionName;
 }

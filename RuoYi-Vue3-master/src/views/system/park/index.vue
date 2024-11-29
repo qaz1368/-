@@ -388,9 +388,9 @@ function handleDelete(row) {
 };
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/user/export", {
+  proxy.download("/student-entrepreneurship-park/export", {
     ...queryParams.value,
-  },`user_${new Date().getTime()}.xlsx`);
+  },`student-entrepreneurship-park_${new Date().getTime()}.xlsx`);
 };
 /** 用户状态修改  */
 function handleStatusChange(row) {
