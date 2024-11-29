@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -37,8 +38,12 @@ public class ApplicationTypeServiceImpl extends ServiceImpl<ApplicationTypeMappe
     }
 
     @Override
-    public IPage<ApplicationType> getApplicationTypePage(int page, int size) {
+    public IPage<ApplicationType> getApplicationTypePage(int page, int size, String applicationName) {
         Page<ApplicationType> pageRequest = new Page<>(page, size);
-        return page(pageRequest);  // MyBatis-Plus 提供的分页查询方法
+        QueryWrapper<ApplicationType> queryWrapper = new QueryWrapper<>();
+        if(applicationName != null){
+            queryWrapper.like("application_name", applicationName);
+        }
+        return page(pageRequest, queryWrapper);
     }
 }

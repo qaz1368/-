@@ -45,17 +45,23 @@ public class ApplicationController {
     @GetMapping("/list")
     public Page<Application> getApplicationPage(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
-            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
-        return applicationService.getPage(pageNum, pageSize);
+            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize,
+            @ApiParam(value = "申请人名") @RequestParam(required = false) String applicantName,
+            @ApiParam(value = "手机号") @RequestParam(required = false) String applicantPhone
+    ) {
+        return applicationService.getPage(pageNum, pageSize, applicantName, applicantPhone);
     }
 
     @ApiOperation(value = "获取部门管理员申请分页数据", notes = "根据页码和每页数据量获取部门管理员申请分页数据")
     @GetMapping("/list1")
     public Page<Application> getApplicationPage1(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
-            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize) {
+            @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize,
+            @ApiParam(value = "申请人名") @RequestParam(required = false) String applicantName,
+            @ApiParam(value = "手机号") @RequestParam(required = false) String applicantPhone
+    ) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
-        return applicationService.getPage1(pageNum, pageSize, loginUser);
+        return applicationService.getPage1(pageNum, pageSize, loginUser, applicantName, applicantPhone);
     }
 
     @ApiOperation(value = "新增申请", notes = "添加新的申请记录")

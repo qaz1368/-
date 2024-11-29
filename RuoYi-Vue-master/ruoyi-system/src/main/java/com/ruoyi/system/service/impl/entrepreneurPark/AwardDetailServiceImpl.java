@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, AwardDetail> implements AwardDetailService {
@@ -135,13 +137,63 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
     @Override
     public Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer year, Integer typeId) {
+        // 创建分页请求对象
+        Page<AwardDetail> pageList = new Page<>(page, size);
+
+        Page<AwardDetail> awardDetailPage = lambdaQuery()
+                .select(AwardDetail::getAwardId, AwardDetail::getYear, AwardDetail::getTypeId, AwardDetail::getEnterpriseId, AwardDetail::getCompetitionId, AwardDetail::getSubsidyAmount)
+                .eq(year != null, AwardDetail::getYear, year)
+                .eq(typeId != null, AwardDetail::getTypeId, typeId)
+                .page(pageList);
+
+        // 转换为 AwardDetailVO 列表
+        List<AwardDetailVO> awardDetailVOS = awardDetailPage.getRecords().stream().map(awardDetail -> {
+            AwardDetailVO awardDetailVO = new AwardDetailVO();
+            BeanUtils.copyProperties(awardDetail, awardDetailVO);
+
+            // 查询企业名
+            Enterprise enterprise = enterpriseMapper.selectById(awardDetail.getEnterpriseId());
+            if (enterprise != null) {
+                awardDetailVO.setEnterprise(enterprise.getCompanyName());
+            }
+
+            // 查询比赛名
+            CompetitionName competitionNames = competitionNameMapper.selectById(awardDetail.getCompetitionId());
+            if (competitionNames != null) {
+                awardDetailVO.setCompetition(competitionNames.getCompetitionName());
+            }
+
+            // 查询级别
+            CompetitionType competitionTypes = competitionTypeMapper.selectById(awardDetail.getTypeId());
+            if (competitionTypes != null) {
+                awardDetailVO.setType(competitionTypes.getLevel());
+            }
+
+            return awardDetailVO;
+        }).collect(Collectors.toList());
+
+        // 创建 Page<AwardDetailVO> 对象，将原分页信息传递到 VO 中
+        Page<AwardDetailVO> pageResponse = new Page<>(page, size, awardDetailPage.getTotal());
+        pageResponse.setRecords(awardDetailVOS);
+
+        return pageResponse;
+    }
+
+
+
+
+    @Override
+    public Page<AwardDetailVO> getAwardDetailsPage1(int page, int size, Integer year, String type) {
         Page<AwardDetail> pageRequest = new Page<>(page, size);
         QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
         if (year != null) {
             queryWrapper.eq("year", year);
         }
-        if (typeId != null) {
-            queryWrapper.eq("type_id", typeId);
+        if (type != null) {
+            QueryWrapper<CompetitionType> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("level", type);
+            CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper1);
+            queryWrapper.eq("type_id", competitionType.getId());
         }
 
         List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, queryWrapper).getRecords();
@@ -177,6 +229,9 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         return pageResponse;
 
     }
+
+
+
 
     @Override
     public List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId) {

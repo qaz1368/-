@@ -39,10 +39,6 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
         Page<JobEnterprisePosition> page = new Page<>(pageNum, pageSize);
         QueryWrapper<JobEnterprisePosition> queryWrapper = new QueryWrapper<>();
 
-        // 通过 positionType 进行模糊查询
-        if (positionType != null && !positionType.isEmpty()) {
-            queryWrapper.like("position_type", positionType);
-        }
 
         Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, queryWrapper);
         List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords();
@@ -59,9 +55,14 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
                 jobEnterprisePositionVO.setEnterprise("");
             }
 
-            // 查询比赛名
+            // 查询
             JobPosition jobPosition = jobPositionMapper.selectById(jobEnterprisePosition.getPositionId());
             if (jobPosition != null) {
+                if(positionType != null){
+                    if(!jobPosition.getPositionName().equals(positionType)){
+                        continue;
+                    }
+                }
                 jobEnterprisePositionVO.setPosition(jobPosition.getPositionName());
             }else {
                 jobEnterprisePositionVO.setPosition("");
@@ -79,11 +80,6 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
     public Page<JobEnterprisePositionVO> getJobEnterprisePositionsPage1(int pageNum, int pageSize,String positionType) {
         Page<JobEnterprisePosition> page = new Page<>(pageNum, pageSize);
         QueryWrapper<JobEnterprisePosition> queryWrapper = new QueryWrapper<>();
-
-        // 通过 positionType 进行模糊查询
-        if (positionType != null && !positionType.isEmpty()) {
-            queryWrapper.like("position_type", positionType);
-        }
 
         Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, queryWrapper);
         List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords();
@@ -107,6 +103,11 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
             // 查询比赛名
             JobPosition jobPosition = jobPositionMapper.selectById(jobEnterprisePosition.getPositionId());
             if (jobPosition != null) {
+                if(positionType != null){
+                    if(!jobPosition.getPositionName().equals(positionType)){
+                        continue;
+                    }
+                }
                 jobEnterprisePositionVO.setPosition(jobPosition.getPositionName());
             }else {
                 jobEnterprisePositionVO.setPosition("");

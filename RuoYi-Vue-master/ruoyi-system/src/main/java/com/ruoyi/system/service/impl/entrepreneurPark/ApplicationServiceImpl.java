@@ -49,20 +49,33 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     private EmailUtil emailUtil;
 
     @Override
-    public Page<Application> getPage(int pageNum, int pageSize) {
+    public Page<Application> getPage(int pageNum, int pageSize, String applicantName, String applicantPhone) {
         // 创建分页对象
         Page<Application> page = new Page<>(pageNum, pageSize);
-        return applicationMapper.selectPage(page, null);  // 查询所有记录
+        QueryWrapper<Application> queryWrapper = new QueryWrapper<>();
+        if (applicantName != null && !applicantName.isEmpty()) {
+            queryWrapper.like("applicant_name", applicantName);
+        }
+        if (applicantPhone != null && !applicantPhone.isEmpty()) {
+            queryWrapper.like("applicant_phone", applicantPhone);
+        }
+        return applicationMapper.selectPage(page, queryWrapper);
     }
 
    @Override
-public Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser) {
+public Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser, String applicantName, String applicantPhone) {
     Page<Application> page = new Page<>(pageNum, pageSize);
     Long deptId = loginUser.getDeptId();
 
     // 构造查询条件
     QueryWrapper<ApprovalProcess> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("department_id", deptId);
+       if (applicantName != null && !applicantName.isEmpty()) {
+           queryWrapper.like("applicant_name", applicantName);
+       }
+       if (applicantPhone != null && !applicantPhone.isEmpty()) {
+           queryWrapper.like("applicant_phone", applicantPhone);
+       }
 
     // 执行查询
     List<ApprovalProcess> approvalProcesses = approvalProcessService.list(queryWrapper);

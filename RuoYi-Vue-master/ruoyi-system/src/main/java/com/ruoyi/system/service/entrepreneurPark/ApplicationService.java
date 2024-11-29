@@ -13,11 +13,11 @@ public interface ApplicationService extends IService<Application> {
 
 
     // 分页查询
-    Page<Application> getPage(int pageNum, int pageSize);
+    Page<Application> getPage(int pageNum, int pageSize, String applicantName, String applicantPhone);
 
     boolean save(ApplicationDTO applicationDTO);
 
-    Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser);
+    Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser, String applicantName, String applicantPhone);
 
     void approveApplication(PassApplicationDTO passApplicationDTO);
 

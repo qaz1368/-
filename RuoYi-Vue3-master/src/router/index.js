@@ -1,7 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
-import UserApplication from "@/views/UserApplication/index.vue"
 
 /**
  * Note: 路由配置项

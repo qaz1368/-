@@ -13,14 +13,20 @@
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="生源地" prop="birthplace">
-            <el-input
-                v-model="queryParams.birthplace"
-                placeholder="请输入生源地"
+          <el-form-item label="企业" prop="enterprise">
+            <el-select
+                v-model="queryParams.enterprise"
+                placeholder="请输入企业"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
+            >
+            <el-option
+                v-for="option in form.enterpriseOptions"
+                :key="option"
+                :label="option"
+                :value="option"
             />
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -267,6 +273,7 @@ import {
 } from "@/api/system/enterprise_managers";
 import {getCurrentInstance, reactive, ref} from "vue";
 import {toRefs} from "@vueuse/core";
+import {getEnterpriseOptions} from "../../../api/system/enterprise";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -346,6 +353,8 @@ const data = reactive({
     hireDate: null,
     createdAt: null,
     updatedAt: null,
+    enterprise: '',
+    enterpriseOptions: [],
   },
   queryParams: {
     pageNum: 1,
@@ -555,6 +564,8 @@ function reset() {
     hireDate: null,
     createdAt: null,
     updatedAt: null,
+    enterprise: null,
+    enterpriseOptions: form.value.enterpriseOptions,
   };
   proxy.resetForm("userRef");
 };
@@ -606,9 +617,18 @@ function submitForm() {
     }
   });
 };
-
+function getEnterpriseOption() {
+  getEnterpriseOptions().then(res => {
+    const companyNames = res.map(item => item.companyName)
+    form.value.enterpriseOptions = companyNames
+    console.log("form.value.enterpriseOptions", form.value.enterpriseOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
 getDeptTree();
 getList();
+getEnterpriseOption()
 </script>
 
 <style scoped>

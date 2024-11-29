@@ -17,5 +17,5 @@ public interface EnterpriseManagerService extends IService<EnterpriseManagers> {
 
     boolean deleteBatch(List<Integer> managerIds);    // 批量删除
 
-    IPage<EnterpriseManagersVO> getManagersPage(int page,int  size,String birthplace,String name);  // 分页查询管理者列表
+    IPage<EnterpriseManagersVO> getManagersPage(int page,int  size,String enterpriseNam,String name);  // 分页查询管理者列表
 }

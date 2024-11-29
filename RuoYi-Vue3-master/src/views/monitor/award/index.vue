@@ -3,48 +3,29 @@
     <el-row :gutter="20">
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
+          <el-form-item label="年份" prop="year">
             <el-input
-                v-model="queryParams.userName"
-                placeholder="请输入用户名称"
+                v-model="queryParams.year"
+                placeholder="请输入年份"
                 clearable
                 style="width: 240px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input
-                v-model="queryParams.phonenumber"
-                placeholder="请输入手机号码"
-                clearable
-                style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
+          <el-form-item label="比赛类型" prop="type">
             <el-select
-                v-model="queryParams.status"
-                placeholder="用户状态"
+                v-model="queryParams.type"
+                placeholder="请输入比赛类型"
                 clearable
                 style="width: 240px"
             >
-              <el-option
-                  v-for="dict in sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-              />
+            <el-option
+                v-for="option in form.competitionTypeOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
             </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
-            <el-date-picker
-                v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
-                range-separator="-"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -61,16 +42,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -103,7 +74,7 @@
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
+        <el-table v-loading="loading" :data="awardList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" v-if="columns[0].visible" >
             <template #default="scope">
@@ -282,7 +253,7 @@ const deptOptions = ref(undefined)
 const initPassword = ref(undefined)
 const postOptions = ref([])
 const roleOptions = ref([])
-
+const awardList = ref([])
 // 用户导入参数
 const upload = reactive({
   open: false,
@@ -322,8 +293,8 @@ const data = reactive({
     pageNum: 1,
     pageSize: 10,
     userName: undefined,
-    phonenumber: undefined,
-    status: undefined,
+    year: undefined,
+    type: undefined,
     deptId: undefined
   },
   rules: {
@@ -372,19 +343,22 @@ function getDeptTree() {
 }
 
 // 查询用户列表
-function getList() {
+const getList = () => {
   loading.value = true
-  listAward(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-    loading.value = false
-    const records = res.records.map(item => ({
+  listAward(queryParams).then(res => {
+    awardList.value = res.records.map(item => ({
       ...item,
       createdAt: formatDate(item.createdAt),
       updatedAt: formatDate(item.updatedAt)
     }))
-    userList.value = records
     total.value = res.total
+    loading.value = false
+  }).catch(error => {
+    console.error('获取奖项列表失败:', error)
+    loading.value = false
   })
 }
+
 
 // 日期格式化函数
 function formatDate(isoString) {
@@ -408,6 +382,7 @@ function handleNodeClick(data) {
 // 搜索按钮操作
 function handleQuery() {
   queryParams.value.pageNum = 1
+  queryParams.value.pageSize=10
   getList()
 }
 

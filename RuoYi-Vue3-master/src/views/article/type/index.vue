@@ -5,13 +5,19 @@
       <el-col :span="24">
         <el-form @submit.prevent="handleQuery" :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="分类名称" prop="categoryName">
-            <el-input
+            <el-select
                 v-model="queryParams.categoryName"
                 placeholder="请输入分类名称"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
+            >
+              <el-option
+                  v-for="option in form.categoryOptions"
+                  :key="option"
+                  :label="option"
+                  :value="option"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -28,16 +34,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -188,6 +184,7 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addType, delType, getType, listType, updateType} from "@/api/article/type";
+import {getCategoryOptions} from "../../../api/article/type";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -235,14 +232,17 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    categoryName: "",
+    categoryOptions: [],
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
     userName: undefined,
     phonenumber: undefined,
     status: undefined,
-    deptId: undefined
+    categoryName: undefined
   },
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
@@ -293,7 +293,7 @@ function handleQuery() {
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
-  queryParams.value.deptId = undefined;
+  queryParams.value.categoryName = undefined;
   proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
 };
@@ -402,7 +402,7 @@ function reset() {
     status: "0",
     remark: undefined,
     postIds: [],
-    roleIds: []
+    categoryOptions: form.value.categoryOptions,
   };
   proxy.resetForm("userRef");
 };
@@ -455,8 +455,19 @@ function submitForm() {
   });
 };
 
+function getCategoryOption() {
+  getCategoryOptions().then(res => {
+    const categoryNames = res.map(item => item.categoryName)
+    form.value.categoryOptions = categoryNames
+    console.log("form.value.categoryOptions", form.value.categoryOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
 getDeptTree();
 getList();
+getCategoryOption();
 </script>
 
 <style scoped>

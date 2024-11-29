@@ -5,22 +5,34 @@
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="分类" prop="category">
-            <el-input
+            <el-select
                 v-model="queryParams.category"
-                placeholder="请输入分类"
+                placeholder="请输入分类名称"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
+            >
+              <el-option
+                  v-for="option in form.categoryOptions"
+                  :key="option"
+                  :label="option"
+                  :value="option"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="标签" prop="primaryTag">
-            <el-input
+            <el-select
                 v-model="queryParams.primaryTag"
-                placeholder="请输入标签"
+                placeholder="请输入标签名称"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
+            >
+              <el-option
+                  v-for="option in form.primaryTagOptions"
+                  :key="option"
+                  :label="option"
+                  :value="option"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>

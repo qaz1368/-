@@ -53,10 +53,11 @@ public class EnterpriseManagerController {
     public IPage<EnterpriseManagersVO> page(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
-            @ApiParam(value = "查询生源地") @RequestParam(required = false) String birthplace,
+            @ApiParam(value = "查询企业") @RequestParam(required = false) String enterprise,
             @ApiParam(value = "查询姓名") @RequestParam(required = false) String name
+
     ) {
-        return managerService.getManagersPage(page, size, birthplace, name);
+        return managerService.getManagersPage(page, size, enterprise, name);
     }
 
 

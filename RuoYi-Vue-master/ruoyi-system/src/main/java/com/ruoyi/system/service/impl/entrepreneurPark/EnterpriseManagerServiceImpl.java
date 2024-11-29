@@ -48,14 +48,17 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
     }
 
     @Override
-    public IPage<EnterpriseManagersVO> getManagersPage(int page,int  size,String birthplace,String name) {
+    public IPage<EnterpriseManagersVO> getManagersPage(int page,int  size,String enterpriseNam,String name) {
         // 创建分页请求
         Page<EnterpriseManagers> pageRequest = new Page<>(page, size);
 
         // 构建查询条件
         QueryWrapper<EnterpriseManagers> queryWrapper = new QueryWrapper<>();
-        if (birthplace != null && !birthplace.isEmpty()) {
-            queryWrapper.like("birthplace", birthplace);
+        if (enterpriseNam != null && !enterpriseNam.isEmpty()) {
+            QueryWrapper<Enterprise> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("company_name", enterpriseNam);
+            Enterprise enterpriseEntity = enterpriseMapper.selectOne(queryWrapper1);
+            queryWrapper.eq("company_id", enterpriseEntity.getCompanyId());
         }
         if (name != null && !name.isEmpty()) {
             queryWrapper.like("name", name);

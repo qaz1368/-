@@ -5,36 +5,48 @@
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="地域" prop="region">
-            <el-input
+            <el-select
                 v-model="queryParams.region"
                 placeholder="请输入企业地域"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
+            >
+            <el-option
+                v-for="option in form.regionOptions"
+                :key="option"
+                :label="option"
+                :value="option"
             />
+            </el-select>
           </el-form-item>
           <el-form-item label="所属行业" prop="industry">
-            <el-input
+            <el-select
                 v-model="queryParams.industry"
                 placeholder="请输入所属行业"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
+            >
+            <el-option
+                v-for="option in form.industryOptions"
+                :key="option"
+                :label="option"
+                :value="option"
             />
+            </el-select>
           </el-form-item>
           <el-form-item label="企业状态" prop="companyStatus">
             <el-select
                 v-model="queryParams.companyStatus"
-                placeholder="请输入企业状态"
+                placeholder="请选择企业状态"
                 clearable
                 style="width: 240px"
             >
               <el-option
-                  v-for="dict in sys_normal_disable"
+                  v-for="dict in companyStatusOptions"
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
-              />
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>

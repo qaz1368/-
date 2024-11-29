@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.DTO.CompetitionTypeDTO;
 import com.ruoyi.system.domain.entity.CompetitionName;
 import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.service.entrepreneurPark.CompetitionTypeService;
@@ -24,8 +25,8 @@ public class CompetitionTypeController {
 
     @ApiOperation("新增比赛类型")
     @PostMapping("/add")
-    public boolean add(@RequestBody CompetitionType competitionType) {
-        return competitionTypeService.saveCompetitionType(competitionType);
+    public boolean add(@RequestBody CompetitionTypeDTO competitionTypeDTO) {
+        return competitionTypeService.saveCompetitionType(competitionTypeDTO);
     }
 
     @ApiOperation("更新比赛类型")

@@ -5,13 +5,19 @@
       <el-col :span="24">
         <el-form  @submit.prevent="handleQuery" :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="标签名称" prop="tagName">
-            <el-input
+            <el-select
                 v-model="queryParams.tagName"
                 placeholder="请输入标签名称"
                 clearable
                 style="width: 240px"
-                @keyup.enter="handleQuery"
-            />
+            >
+              <el-option
+                  v-for="option in form.primaryTagOptions"
+                  :key="option"
+                  :label="option"
+                  :value="option"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -28,16 +34,6 @@
                 @click="handleAdd"
                 v-hasPermi="['system:user:add']"
             >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="success"
-                plain
-                icon="Edit"
-                :disabled="single"
-                @click="handleUpdate"
-                v-hasPermi="['system:user:edit']"
-            >修改</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -172,6 +168,8 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addPost, delPost, getTag, listTag, updateTag} from "@/api/article/tag";
+import {getPrimaryTagOptions} from "../../../api/article/tag";
+import {onMounted} from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -219,7 +217,9 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    primaryTagOptions: []
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -385,7 +385,8 @@ function reset() {
     status: "0",
     remark: undefined,
     postIds: [],
-    roleIds: []
+    roleIds: [],
+    primaryTagOptions: form.value.primaryTagOptions
   };
   proxy.resetForm("userRef");
 };
@@ -438,8 +439,21 @@ function submitForm() {
   });
 };
 
-getDeptTree();
-getList();
+function getPrimaryTagOption() {
+  getPrimaryTagOptions().then(res => {
+    const primaryTags = res.map(item => item.tagName)
+    form.value.primaryTagOptions = primaryTags
+    console.log("form.value.primaryTagOptions", form.value.primaryTagOptions)
+  }).catch(error => {
+    console.error(error)
+  })
+}
+
+onMounted(() => {
+  getDeptTree()
+  getList()
+  getPrimaryTagOption()
+})
 </script>
 
 <style scoped>
