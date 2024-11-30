@@ -43,9 +43,20 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
 
     @Override
     public Page<ApprovalProcessVO> getApprovalProcessPage(int pageNum, int pageSize) {
-        // 构建分页对象
-        Page<ApprovalProcess> page = new Page<>(pageNum, pageSize);
-        Page<ApprovalProcess> approvalProcessPage = approvalProcessMapper.selectPage(page, null);  // 查询所有记录
+        // 计算分页的起始位置
+        int offset = (pageNum - 1) * pageSize;
+
+        // 查询数据
+        List<ApprovalProcess> list = approvalProcessMapper.selectPage(offset, pageSize);
+
+        // 查询总记录数
+        int total = approvalProcessMapper.count();
+
+        // 创建 Page 对象
+        Page<ApprovalProcess> approvalProcessPage = new Page<>(pageNum, pageSize);
+        approvalProcessPage.setRecords(list);
+        approvalProcessPage.setTotal(total);
+
 
         List<ApprovalProcess> approvalProcesses = approvalProcessPage.getRecords();
 

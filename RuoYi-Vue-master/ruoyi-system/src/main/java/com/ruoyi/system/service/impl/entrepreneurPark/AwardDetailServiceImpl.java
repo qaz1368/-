@@ -135,16 +135,19 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
     @Override
     public Page<AwardDetailVO> getAwardDetailsPage(int page, int size, Integer year, Integer typeId) {
-        Page<AwardDetail> pageRequest = new Page<>(page, size);
-        QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
-        if (year != null) {
-            queryWrapper.eq("year", year);
-        }
-        if (typeId != null) {
-            queryWrapper.eq("type_id", typeId);
-        }
+        // 计算分页的起始位置
+        int offset = (page - 1) * size;
 
-        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, queryWrapper).getRecords();
+        // 查询数据
+        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(offset, size, year, typeId);
+
+        // 查询总记录数
+        int total = awardDetailMapper.count(year, typeId);
+
+        // 创建 Page 对象
+        Page<AwardDetail> pageResult = new Page<>(page, size);
+        pageResult.setRecords(awardDetails);
+        pageResult.setTotal(total);
 
         List<AwardDetailVO> awardDetailVOS = new ArrayList<>();
         for (AwardDetail awardDetail : awardDetails) {
@@ -180,19 +183,29 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
     @Override
     public Page<AwardDetailVO> getAwardDetailsPage1(int page, int size, Integer year, String type) {
-        Page<AwardDetail> pageRequest = new Page<>(page, size);
-        QueryWrapper<AwardDetail> queryWrapper = new QueryWrapper<>();
-        if (year != null) {
-            queryWrapper.eq("year", year);
-        }
+        int typeId = 0;
         if (type != null) {
             QueryWrapper<CompetitionType> queryWrapper1 = new QueryWrapper<>();
             queryWrapper1.eq("level", type);
             CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper1);
-            queryWrapper.eq("type_id", competitionType.getId());
+            if (competitionType != null) {
+                typeId = competitionType.getId();
+            }
         }
 
-        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(pageRequest, queryWrapper).getRecords();
+        // 计算分页的起始位置
+        int offset = (page - 1) * size;
+
+        // 查询数据
+        List<AwardDetail> awardDetails = awardDetailMapper.selectPage(offset, size, year, typeId);
+
+        // 查询总记录数
+        int total = awardDetailMapper.count(year, typeId);
+
+        // 创建 Page 对象
+        Page<AwardDetail> pageResult = new Page<>(page, size);
+        pageResult.setRecords(awardDetails);
+        pageResult.setTotal(total);
 
         List<AwardDetailVO> awardDetailVOS = new ArrayList<>();
         for (AwardDetail awardDetail : awardDetails) {

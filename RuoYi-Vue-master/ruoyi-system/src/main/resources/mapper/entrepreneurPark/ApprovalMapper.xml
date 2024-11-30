@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.entrepreneurPark.ApprovalMapper">
+    <select id="selectPage" resultType="com.ruoyi.system.domain.entity.Approval">
+        SELECT * FROM approval
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM approval
+    </select>
+    <select id="selectPageByProcessIds" resultType="com.ruoyi.system.domain.entity.Approval">
+        SELECT * FROM approval
+        WHERE process_id IN
+        <foreach item="item" index="index" collection="processIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByProcessIds" resultType="int">
+        SELECT COUNT(*) FROM approval
+        WHERE process_id IN
+        <foreach item="item" index="index" collection="processIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

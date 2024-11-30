@@ -29,4 +29,6 @@ public interface AwardDetailMapper extends BaseMapper<AwardDetail> {
 
     @Select("SELECT COUNT(*) FROM award_details WHERE type_id = #{typeId} AND year >= #{startYear}")
     Long countAwardsByTypeIdAndYear(@Param("typeId") Integer typeId, @Param("startYear") Integer startYear);
+    List<AwardDetail> selectPage(@Param("offset") int offset, @Param("limit") int limit, @Param("year") Integer year, @Param("typeId") Integer typeId);
+    int count(@Param("year") Integer year, @Param("typeId") Integer typeId);
 }

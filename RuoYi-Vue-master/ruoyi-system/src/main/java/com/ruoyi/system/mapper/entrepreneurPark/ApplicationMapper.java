@@ -1,8 +1,11 @@
 package com.ruoyi.system.mapper.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.system.domain.entity.Application;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.jdbc.SQL;
 
 import java.util.Date;
 import java.util.List;
@@ -22,4 +25,9 @@ public interface ApplicationMapper extends BaseMapper<Application> {
 
     @Select("SELECT * FROM application WHERE status = 'pending'")
     List<Application> findPendingApplications();
+
+    List<Application> selectPage(@Param("applicantName") String applicantName, @Param("applicantPhone") String applicantPhone);
+
+    IPage<Application> selectPage1(IPage<Application> page, @Param("processIds") List processIds, @Param("applicantName") String applicantName, @Param("applicantPhone") String applicantPhone);
+
 }

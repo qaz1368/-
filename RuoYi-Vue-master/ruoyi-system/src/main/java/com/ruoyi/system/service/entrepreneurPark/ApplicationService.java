@@ -8,12 +8,14 @@ import com.ruoyi.system.domain.DTO.ApplicationDTO;
 import com.ruoyi.system.domain.DTO.PassApplicationDTO;
 import com.ruoyi.system.domain.entity.Application;
 
+import java.util.List;
+
 public interface ApplicationService extends IService<Application> {
 
 
 
     // 分页查询
-    Page<Application> getPage(int pageNum, int pageSize, String applicantName, String applicantPhone);
+    List<Application> getPage(int pageNum, int pageSize, String applicantName, String applicantPhone);
 
     boolean save(ApplicationDTO applicationDTO);
 

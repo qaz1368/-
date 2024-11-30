@@ -3,6 +3,7 @@ package com.ruoyi.system.service.impl.entrepreneurPark;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.EmailUtil;
@@ -49,17 +50,10 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     private EmailUtil emailUtil;
 
     @Override
-    public Page<Application> getPage(int pageNum, int pageSize, String applicantName, String applicantPhone) {
-        // 创建分页对象
-        Page<Application> page = new Page<>(pageNum, pageSize);
-        QueryWrapper<Application> queryWrapper = new QueryWrapper<>();
-        if (applicantName != null && !applicantName.isEmpty()) {
-            queryWrapper.like("applicant_name", applicantName);
-        }
-        if (applicantPhone != null && !applicantPhone.isEmpty()) {
-            queryWrapper.like("applicant_phone", applicantPhone);
-        }
-        return applicationMapper.selectPage(page, queryWrapper);
+    public List<Application> getPage(int pageNum, int pageSize, String applicantName, String applicantPhone) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Application> result = applicationMapper.selectPage(applicantName, applicantPhone);
+        return result;
     }
 
    @Override
@@ -70,12 +64,6 @@ public Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser
     // 构造查询条件
     QueryWrapper<ApprovalProcess> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("department_id", deptId);
-       if (applicantName != null && !applicantName.isEmpty()) {
-           queryWrapper.like("applicant_name", applicantName);
-       }
-       if (applicantPhone != null && !applicantPhone.isEmpty()) {
-           queryWrapper.like("applicant_phone", applicantPhone);
-       }
 
     // 执行查询
     List<ApprovalProcess> approvalProcesses = approvalProcessService.list(queryWrapper);
@@ -89,15 +77,10 @@ public Page<Application> getPage1(int pageNum, int pageSize, LoginUser loginUser
         // 如果 processIds 为空，直接返回一个空的分页结果
         return new Page<>();
     }
-
-    // 构建查询条件
-    QueryWrapper<Application> queryWrapper1 = new QueryWrapper<>();
-    queryWrapper1.in("process_id", processIds);
-
-    Page<Application> resultPage = applicationMapper.selectPage(page, queryWrapper1);
-
-    // 返回分页结果
+    PageHelper.startPage(pageNum, pageSize);
+    Page<Application> resultPage = (Page<Application>) applicationMapper.selectPage1(page,processIds, applicantName, applicantPhone);
     return resultPage;
+
 }
 
 public boolean save(ApplicationDTO applicationDTO) {
