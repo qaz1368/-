@@ -36,8 +36,7 @@ public class EnterpriseController {
             @ApiParam(value = "企业状态（初创、成长、成熟、关闭）") @RequestParam(required = false) String companyStatus
     ) {
 
-        Page<Enterprise> pageRequest = new Page<>(page, size);
-        return enterpriseService.getEnterprisePage(pageRequest, region, industry, companyStatus);
+        return enterpriseService.getEnterprisePage(page,size, region, industry, companyStatus);
     }
 
     @ApiOperation("新增企业信息")

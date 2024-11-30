@@ -63,14 +63,14 @@
           <el-table-column label="创业项目数量" align="center" key="projectCount" prop="projectCount" v-if="columns[4].visible" width="120" />
           <el-table-column label="培训学员数量" align="center" key="traineeCount" prop="traineeCount" v-if="columns[4].visible" width="120" />
           <el-table-column label="带动就业人数数量" align="center" key="employmentCount" prop="employmentCount" v-if="columns[4].visible" width="120" />
-          <el-table-column label="政府补贴金额" align="center" key="governmentSubsidy" prop="governmentSubsidy" v-if="columns[4].visible" width="120" />
+          <el-table-column label="政府补贴金额(万)" align="center" key="governmentSubsidy" prop="governmentSubsidy" v-if="columns[4].visible" width="120" />
           <el-table-column label="入驻日期" align="center" key="entryDate" prop="entryDate" v-if="columns[1].visible" width="160">
             <template #default="scope">
               <span>{{ parseTime(scope.row.entryDate) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="资金支持金额" align="center" key="financialSupport" prop="financialSupport" v-if="columns[1].visible" width="120" />
-          <el-table-column label="投入经费" align="center" key="investmentAmount" prop="investmentAmount" v-if="columns[1].visible" width="120" />
+          <el-table-column label="资金支持金额(万)" align="center" key="financialSupport" prop="financialSupport" v-if="columns[1].visible" width="120" />
+          <el-table-column label="投入经费(万)" align="center" key="investmentAmount" prop="investmentAmount" v-if="columns[1].visible" width="120" />
           <el-table-column label="整体面积" align="center" key="totalArea" prop="totalArea" v-if="columns[1].visible" width="120" />
           <el-table-column label="创建时间" align="center" prop="createdAt" v-if="columns[1].visible" width="160">
             <template #default="scope">

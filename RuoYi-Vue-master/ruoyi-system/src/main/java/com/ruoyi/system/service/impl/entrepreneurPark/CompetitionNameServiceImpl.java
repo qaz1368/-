@@ -40,16 +40,16 @@ public class CompetitionNameServiceImpl extends ServiceImpl<CompetitionNameMappe
 
     @Override
     public IPage<CompetitionName> getCompetitionNamesPage(int page, int size,String competitionName) {
-        Page<CompetitionName> pageRequest = new Page<>(page, size);
+        // 计算分页起始位置
+        int start = (page - 1) * size;
 
-        QueryWrapper<CompetitionName> queryWrapper = new QueryWrapper<>();
+        // 调用 MyBatis 的分页查询方法
+        List<CompetitionName> competitionNames = competitionNameMapper.selectCompetitionNamesByPage(start, size, competitionName);
 
-        // 通过 competitionName 进行模糊查询
-        if (competitionName != null && !competitionName.isEmpty()) {
-            queryWrapper.like("competition_name", competitionName);
-        }
-        // 按 id 升序排序
-        queryWrapper.orderByAsc("competition_id");
-        return competitionNameMapper.selectPage(pageRequest, queryWrapper);
+        // 手动封装成 IPage 对象
+        IPage<CompetitionName> pageResult = new Page<>(page, size);
+        pageResult.setRecords(competitionNames);
+
+        return pageResult;
     }
 }
