@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.DTO.PolicyArticleDTO;
+import com.ruoyi.system.domain.entity.JobPosition;
 import com.ruoyi.system.domain.entity.PolicyArticle;
 import com.ruoyi.system.domain.entity.PolicyCategory;
 import com.ruoyi.system.domain.entity.PolicyTag;
@@ -191,7 +192,14 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
         Page<PolicyArticle> policyArticlePage = new Page<>(page, size);
 
        Page<PolicyArticle> resultPage = policyArticleMapper.selectPage(policyArticlePage, articleQueryWrapper);
-       List<PolicyArticle> records = resultPage.getRecords();
+
+        // 定义起始位置和每页大小
+        int start = (page - 1) * size; // 起始位置
+
+        List<PolicyArticle> records = resultPage.getRecords().stream()
+                .skip(start)
+                .limit(size)
+                .collect(Collectors.toList());
 
         List<PolicyArticleVO> policyArticleVOList = new ArrayList<>();
         for (PolicyArticle policyArticle : records) {

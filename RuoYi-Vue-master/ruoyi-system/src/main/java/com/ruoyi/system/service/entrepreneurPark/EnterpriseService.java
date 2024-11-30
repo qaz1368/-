@@ -17,7 +17,7 @@ public interface EnterpriseService extends IService<Enterprise> {
      * @param page 分页对象
      * @return 分页后的企业信息
      */
-    Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String regionName, String industryName, String companyStatus);
+    Page<EnterpriseVO> getEnterprisePage(int page,int  size, String regionName, String industryName, String companyStatus);
 
     boolean addEnterprise(EnterpriseDTO enterpriseDTO);
 

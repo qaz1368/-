@@ -50,10 +50,9 @@ public class StudentEntrepreneurshipParkController {
 
     @ApiOperation("分页查询创业园")
     @GetMapping("/page")
-    public IPage<StudentEntrepreneurshipPark> page(@RequestParam(value = "page", defaultValue = "1") int page,
+    public IPage<StudentEntrepreneurshipPark> studentEntrepreneurshipParkPage(@RequestParam(value = "page", defaultValue = "1") int page,
                @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page<StudentEntrepreneurshipPark> pageRequest = new Page<>(page, size);
-        return parkService.page(pageRequest);
+        return parkService.studentEntrepreneurshipParkPage(page, size);
     }
 
     /**

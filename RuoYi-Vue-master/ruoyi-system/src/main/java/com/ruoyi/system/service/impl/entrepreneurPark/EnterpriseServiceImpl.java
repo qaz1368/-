@@ -44,7 +44,7 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
 
 
     @Override
-    public Page<EnterpriseVO> getEnterprisePage(Page<Enterprise> page, String regionName, String industryName, String companyStatus) {
+    public Page<EnterpriseVO> getEnterprisePage(int page,int  size, String regionName, String industryName, String companyStatus) {
         QueryWrapper<Enterprise> queryWrapper = new QueryWrapper<>();
         if (industryName != null && !industryName.isEmpty()) {
             // 通过 industry 模糊查询获取对应的 id
@@ -77,9 +77,17 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
         queryWrapper.orderByAsc("annual_revenue");
 
 
-        IPage<Enterprise> enterprisePage = enterpriseMapper.selectPage(page, queryWrapper);
+        Page<Enterprise> pageRequest = new Page<>(page, size);
+        // 执行分页查询
+        IPage<Enterprise> enterprisePage = enterpriseMapper.selectPage(pageRequest, queryWrapper);
 
-        List<Enterprise> enterprisePages = enterprisePage.getRecords();
+        // 定义起始位置和每页大小
+        int start = (page - 1) * size; // 起始位置
+
+        List<Enterprise> enterprisePages = enterprisePage.getRecords().stream()
+                .skip(start)
+                .limit(size)
+                .collect(Collectors.toList());
 
 
         List<EnterpriseVO> enterpriseVOS = new ArrayList<>();
@@ -148,7 +156,7 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
             enterpriseVOS.add(enterpriseVO);
         }
 
-        Page<EnterpriseVO> pageResponse = Page.of(page.getPages(),page.getSize());
+        Page<EnterpriseVO> pageResponse = Page.of(pageRequest.getPages(),pageRequest.getSize());
         pageResponse.setRecords(enterpriseVOS);
         return pageResponse;
 

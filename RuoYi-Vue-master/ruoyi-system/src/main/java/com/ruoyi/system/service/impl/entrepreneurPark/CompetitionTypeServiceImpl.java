@@ -44,15 +44,17 @@ public class CompetitionTypeServiceImpl extends ServiceImpl<CompetitionTypeMappe
 
     @Override
     public IPage<CompetitionType> getCompetitionTypesPage(int page, int size,String level) {
-        Page<CompetitionType> pageRequest = new Page<>(page, size);
+        // 计算分页起始位置
+        int start = (page - 1) * size;
 
-        QueryWrapper<CompetitionType> queryWrapper = new QueryWrapper<>();
+        // 调用 MyBatis 的分页查询方法
+        List<CompetitionType> competitionTypes = competitionTypeMapper.selectCompetitionTypesByPage(start, size, level);
 
-        // 通过 competitionName 进行模糊查询
-        if (level != null && !level.isEmpty()) {
-            queryWrapper.like("level", level);
-        }
+        // 手动封装成 IPage 对象
+        IPage<CompetitionType> pageResult = new Page<>(page, size);
+        pageResult.setRecords(competitionTypes);
 
-        return competitionTypeMapper.selectPage(pageRequest, queryWrapper);
+        return pageResult;
+
     }
 }

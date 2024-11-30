@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerMapper, EnterpriseManagers>
@@ -65,12 +66,21 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
         }
 
         // 执行分页查询
-        IPage<EnterpriseManagers> managersPage = page(pageRequest, queryWrapper);
+        IPage<EnterpriseManagers> managersPageList = page(pageRequest, queryWrapper);
+
+        // 定义起始位置和每页大小
+        int start = (page - 1) * size; // 起始位置
+
+        // 提取部分数据，类似于分页查询
+        List<EnterpriseManagers> managersPage = managersPageList.getRecords().stream()
+                .skip(start)
+                .limit(size)
+                .collect(Collectors.toList());
 
         // 转换为 VO 对象
         IPage<EnterpriseManagersVO> resultPage = new Page<>();
         List<EnterpriseManagersVO> records = new ArrayList<>();
-        for (EnterpriseManagers manager : managersPage.getRecords()) {
+        for (EnterpriseManagers manager : managersPage) {
             EnterpriseManagersVO vo = new EnterpriseManagersVO();
             // 根据企业 ID 查询企业名称
             Enterprise enterprise = enterpriseMapper.selectById(manager.getCompanyId());
@@ -80,9 +90,9 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
             records.add(vo);
         }
         resultPage.setRecords(records);
-        resultPage.setTotal(managersPage.getTotal());
-        resultPage.setSize(managersPage.getSize());
-        resultPage.setCurrent(managersPage.getCurrent());
+        resultPage.setTotal(managersPageList.getTotal());
+        resultPage.setSize(managersPageList.getSize());
+        resultPage.setCurrent(managersPageList.getCurrent());
 
         return resultPage;
     }
