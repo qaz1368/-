@@ -50,7 +50,7 @@ public class CompetitionTypeController {
     @ApiOperation("分页查询比赛类型")
     @GetMapping("/page")
     public IPage<CompetitionType> page(
-               @RequestParam(value = "page", defaultValue = "1") int page,
+               @RequestParam(value = "pageNum", defaultValue = "1") int page,
                @RequestParam(value = "size", defaultValue = "10") int size,
     @ApiParam(value = "比赛类型名称") @RequestParam(required = false) String level
     ) {

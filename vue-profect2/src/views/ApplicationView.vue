@@ -3,19 +3,19 @@
     <div class="enterprise-form-wrapper">
       <h2>企业申请表</h2>
       <form @submit.prevent="submitForm" class="enterprise-form">
-        <div class="form-group">
-          <label for="name">姓名</label>
-          <input type="text" id="name" v-model="formData.applicantName" required>
-        </div>
-
-        <div class="form-group">
-          <label for="phone">电话</label>
-          <input type="tel" id="phone" v-model="formData.applicantPhone" required>
-        </div>
-
-        <div class="form-group">
-          <label for="email">邮箱</label>
-          <input type="email" id="email" v-model="formData.applicantEmail" required>
+        <div class="form-group-row">
+          <div class="form-group">
+            <label for="name">姓名</label>
+            <input type="text" id="name" v-model="formData.applicantName" required class="narrow-input">
+          </div>
+          <div class="form-group">
+            <label for="phone">电话</label>
+            <input type="tel" id="phone" v-model="formData.applicantPhone" required class="narrow-input">
+          </div>
+          <div class="form-group">
+            <label for="email">邮箱</label>
+            <input type="email" id="email" v-model="formData.applicantEmail" required class="narrow-input">
+          </div>
         </div>
 
         <div class="form-group">
@@ -40,7 +40,7 @@
 
         <div class="form-group">
           <label>企业介绍</label>
-          <textarea id="enterpriseDescription" v-model="formData.enterpriseDescription" rows="4" required></textarea>
+          <textarea id="enterpriseDescription" v-model="formData.enterpriseDescription" rows="8" required></textarea>
         </div>
 
         <button type="submit" class="submit-button">提交申请</button>
@@ -52,6 +52,8 @@
     </div>
   </div>
 </template>
+
+
 
 
 <script>
@@ -146,7 +148,7 @@ export default {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 500px;
+  max-width: 800px; /* 修改为更大的值 */
 }
 
 h2 {
@@ -163,9 +165,15 @@ h2 {
   gap: 1.5rem;
 }
 
+.form-group-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
+  flex: 1; /* 使每个 form-group 占据相等的空间 */
 }
 
 label {
@@ -224,5 +232,13 @@ textarea {
   .enterprise-form-wrapper {
     padding: 1.5rem;
   }
+
+  .form-group-row {
+    flex-direction: column; /* 在小屏幕上堆叠显示 */
+  }
+}
+
+.narrow-input {
+  width: 100%; /* 使输入框占满整个 form-group 的宽度 */
 }
 </style>

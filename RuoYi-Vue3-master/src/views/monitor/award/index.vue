@@ -86,7 +86,7 @@
           <el-table-column label="获奖企业" align="center" key="enterprise" prop="enterprise" v-if="columns[2].visible" />
           <el-table-column label="比赛" align="center" key="competition" prop="competition" v-if="columns[2].visible" />
           <el-table-column label="比赛等级" align="center" key="level" prop="level" v-if="columns[2].visible" />
-          <el-table-column label="补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
+          <el-table-column label="补助金额(万)" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[3].visible" />
           <el-table-column label="补助或奖项的描述" align="center" key="description" prop="description" v-if="columns[4].visible" :show-overflow-tooltip="true" />
           <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" />
           <el-table-column label="记录更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[2].visible" />
@@ -141,7 +141,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="补助金额" prop="subsidyAmount">
+            <el-form-item label="补助金额(万)" prop="subsidyAmount">
               <el-input v-model="form.subsidyAmount" placeholder="请输入补助金额" />
             </el-form-item>
           </el-col>
@@ -344,8 +344,9 @@ function getDeptTree() {
 
 // 查询用户列表
 const getList = () => {
+
   loading.value = true
-  listAward(queryParams).then(res => {
+  listAward(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     awardList.value = res.records.map(item => ({
       ...item,
       createdAt: formatDate(item.createdAt),

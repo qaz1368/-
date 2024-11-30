@@ -26,7 +26,7 @@ public class PolicyCategoryController {
     @ApiOperation("获取政策分类列表（分页）")
     @GetMapping("/list")
     public Page<PolicyCategory> getPolicyCategories(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(value = "pageNum",defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @ApiParam(value = "分类名称") @RequestParam(required = false) String categoryName
     ) {

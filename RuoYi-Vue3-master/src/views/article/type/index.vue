@@ -125,14 +125,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
 
-          <el-col :span="12">
-            <el-form-item label="创建时间" prop="createdAt">
-              <el-date-picker v-model="form.createdAt" type="datetime" placeholder="选择日期时间" />
-            </el-form-item>
-          </el-col>
-        </el-row>
 
       </el-form>
       <template #footer>

@@ -4,6 +4,7 @@
       <!--用户数据-->
       <el-col :span="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+          <!-- 这里可以添加搜索表单项 -->
         </el-form>
 
         <el-row :gutter="10" class="mb8">
@@ -50,9 +51,9 @@
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="full-width-table">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" v-if="columns[0].visible" >
-              <template #default="scope">
-                {{scope.$index+1}}
-              </template>
+            <template #default="scope">
+              {{scope.$index+1}}
+            </template>
           </el-table-column>
           <el-table-column label="行业名称" align="center" key="industryName" prop="industryName" v-if="columns[1].visible"  />
           <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
@@ -66,7 +67,6 @@
             </template>
           </el-table-column>
         </el-table>
-
 
         <pagination
             v-show="total > 0"
@@ -96,7 +96,6 @@
         </div>
       </template>
     </el-dialog>
-
 
     <!-- 用户导入对话框 -->
     <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
@@ -135,11 +134,13 @@
 </template>
 
 <script setup name="User">
+import { ref, reactive, toRefs, getCurrentInstance, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addPost, delPost, getTag, listTag, updateTag} from "@/api/article/tag";
-import {addRegion, deleteRegion, getRegionById, listRegion, updateRegion} from "../../../api/system/region";
-import {addIndustry, getIndustryById, pageIndustry, updateIndustry} from "../../../api/system/industry";
+import { addPost, delPost, getTag, listTag, updateTag } from "@/api/article/tag";
+import { addRegion, deleteRegion, getRegionById, listRegion, updateRegion } from "@/api/system/region";
+import { addIndustry, getIndustryById, pageIndustry, updateIndustry, deleteIndustry } from "@/api/system/industry";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -160,22 +161,16 @@ const deptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
-/*** 用户导入参数 */
+
 const upload = reactive({
-  // 是否显示弹出层（用户导入）
   open: false,
-  // 弹出层标题（用户导入）
   title: "",
-  // 是否禁用上传
   isUploading: false,
-  // 是否更新已经存在的用户数据
   updateSupport: 0,
-  // 设置上传的请求头部
   headers: { Authorization: "Bearer " + getToken() },
-  // 上传的地址
   url: import.meta.env.VITE_APP_BASE_API + "/system/user/importData"
 });
-// 列显隐信息
+
 const columns = ref([
   { key: 0, label: `用户编号`, visible: true },
   { key: 1, label: `用户名称`, visible: true },
@@ -200,31 +195,30 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    tagName: [
-      { required: true, message: "标签名称不能为空", trigger: "blur" },
-      { min: 1, max: 30, message: "标签名称长度必须介于 1 和 30 之间", trigger: "blur" }
+    industryName: [
+      { required: true, message: "行业名称不能为空", trigger: "blur" },
+      { min: 1, max: 30, message: "行业名称长度必须介于 1 和 30 之间", trigger: "blur" }
     ]
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 通过条件过滤节点  */
 const filterNode = (value, data) => {
   if (!value) return true;
   return data.label.indexOf(value) !== -1;
 };
-/** 根据名称筛选部门树 */
+
 watch(deptName, val => {
   proxy.$refs["deptTreeRef"].filter(val);
 });
-/** 查询部门下拉树结构 */
+
 function getDeptTree() {
   deptTreeSelect().then(response => {
     deptOptions.value = response.data;
   });
-};
-/** 查询用户列表 */
+}
+
 function getList() {
   loading.value = true;
   pageIndustry(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
@@ -232,42 +226,42 @@ function getList() {
     userList.value = res.records;
     total.value = res.total;
   });
-};
-/** 节点单击事件 */
+}
+
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
   handleQuery();
-};
-/** 搜索按钮操作 */
+}
+
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
-};
-/** 重置按钮操作 */
+}
+
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   queryParams.value.deptId = undefined;
   proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
-};
-/** 删除按钮操作 */
-function handleDelete(row) {
+}
 
-  proxy.$modal.confirm('是否确认删除标签编号为"' + row.industryId + '"的数据项？').then(function () {
-    return deleteIndustry(row.industryId);
+function handleDelete(row) {
+  const industryIds = row.industryId || ids.value;
+  proxy.$modal.confirm('是否确认删除行业编号为"' + industryIds + '"的数据项？').then(function () {
+    return deleteIndustry(industryIds);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => {});
-};
-/** 导出按钮操作 */
+}
+
 function handleExport() {
   proxy.download("/industries/export", {
     ...queryParams.value,
-  },`industries_${new Date().getTime()}.xlsx`);
-};
-/** 用户状态修改  */
+  }, `industries_${new Date().getTime()}.xlsx`);
+}
+
 function handleStatusChange(row) {
   let text = row.status === "0" ? "启用" : "停用";
   proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
@@ -277,8 +271,8 @@ function handleStatusChange(row) {
   }).catch(function () {
     row.status = row.status === "0" ? "1" : "0";
   });
-};
-/** 更多操作 */
+}
+
 function handleCommand(command, row) {
   switch (command) {
     case "handleResetPwd":
@@ -290,13 +284,13 @@ function handleCommand(command, row) {
     default:
       break;
   }
-};
-/** 跳转角色分配 */
+}
+
 function handleAuthRole(row) {
   const userId = row.userId;
   router.push("/system/user-auth/role/" + userId);
-};
-/** 重置密码按钮操作 */
+}
+
 function handleResetPwd(row) {
   proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
     confirmButtonText: "确定",
@@ -309,76 +303,68 @@ function handleResetPwd(row) {
       proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
     });
   }).catch(() => {});
-};
-/** 选择条数  */
+}
+
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.userId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
-};
-/** 导入按钮操作 */
+}
+
 function handleImport() {
   upload.title = "用户导入";
   upload.open = true;
-};
-/** 下载模板操作 */
+}
+
 function importTemplate() {
   proxy.download("system/user/importTemplate", {
   }, `user_template_${new Date().getTime()}.xlsx`);
-};
-/**文件上传中处理 */
+}
+
 const handleFileUploadProgress = (event, file, fileList) => {
   upload.isUploading = true;
-};
-/** 文件上传成功处理 */
+}
+
 const handleFileSuccess = (response, file, fileList) => {
   upload.open = false;
   upload.isUploading = false;
   proxy.$refs["uploadRef"].handleRemove(file);
   proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
   getList();
-};
-/** 提交上传文件 */
+}
+
 function submitFileForm() {
   proxy.$refs["uploadRef"].submit();
-};
-/** 重置操作表单 */
+}
+
 function reset() {
   form.value = {
     industryId: undefined,
     industryName: undefined,
   };
   proxy.resetForm("userRef");
-};
-/** 取消按钮 */
+}
+
 function cancel() {
   open.value = false;
   reset();
-};
-/** 新增按钮操作 */
+}
+
 function handleAdd() {
   reset();
-  getUser().then(response => {
-    postOptions.value = response.posts;
-    roleOptions.value = response.roles;
-    open.value = true;
-    title.value = "添加行业";
-    form.value.password = initPassword.value;
-  });
-};
-/** 修改按钮操作 */
+  open.value = true;
+  title.value = "添加行业";
+}
+
 function handleUpdate(row) {
   reset();
-
   getIndustryById(row.industryId).then(response => {
     form.value = response;
-
     open.value = true;
-    title.value = "修改标签";
-    form.password = "";
+    title.value = "修改行业";
   });
-};
-/** 提交按钮 */
+}
+
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
@@ -397,7 +383,7 @@ function submitForm() {
       }
     }
   });
-};
+}
 
 getDeptTree();
 getList();

@@ -50,7 +50,7 @@ public class RegionController {
     @GetMapping("/page")
     @ApiOperation(value = "分页查询地域")
     public Page<Region> getRegionsPage(
-            @ApiParam(value = "当前页", required = false) @RequestParam(value = "page", defaultValue = "1") int page,
+            @ApiParam(value = "当前页", required = false) @RequestParam(value = "pageNum", defaultValue = "1") int page,
             @ApiParam(value = "每页记录数", required = false) @RequestParam(value = "size", defaultValue = "10") int size) {
         return regionService.getRegionPage(page, size);
     }

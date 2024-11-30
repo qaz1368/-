@@ -46,8 +46,13 @@ public class IndustryServiceImpl extends ServiceImpl<IndustryMapper, Industry> i
 
     @Override
     public IPage<Industry> getIndustriesPage(int page, int size) {
-        Page<Industry> pageRequest = new Page<>(page, size);
-        return page(pageRequest);  // 使用 MyBatis-Plus 提供的分页查询方法
+        int offset = (page - 1) * size;
+        List<Industry> industries = industryMapper.selectPage(offset, size);
+        int total = industryMapper.count();
+        Page<Industry> pageResult = new Page<>(page, size);
+        pageResult.setRecords(industries);
+        pageResult.setTotal(total);
+        return pageResult;
     }
 
     @Override

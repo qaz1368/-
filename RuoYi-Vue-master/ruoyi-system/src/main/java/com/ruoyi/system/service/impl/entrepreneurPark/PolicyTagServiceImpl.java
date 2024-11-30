@@ -12,6 +12,9 @@ import com.ruoyi.system.service.entrepreneurPark.PolicyTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PolicyTagServiceImpl extends ServiceImpl<PolicyTagMapper, PolicyTag> implements PolicyTagService {
 
@@ -29,6 +32,17 @@ public class PolicyTagServiceImpl extends ServiceImpl<PolicyTagMapper, PolicyTag
             queryWrapper.like("tag_name", tagName);
         }
 
-        return policyTagMapper.selectPage(pageRequest, queryWrapper);
+        List<PolicyTag> records = policyTagMapper.selectPage(pageRequest, queryWrapper).getRecords();
+
+        // 定义起始位置和每页大小
+        int start = (page - 1) * size; // 起始位置
+
+        List<PolicyTag> policyCategoryList = records.stream()
+                .skip(start)
+                .limit(size)
+                .collect(Collectors.toList());
+        pageRequest.setRecords(policyCategoryList);
+        pageRequest.setTotal(records.size());
+        return pageRequest;
     }
 }

@@ -30,7 +30,7 @@ public class PolicyArticleController {
     @ApiOperation("获取扶持政策文章列表（分页）")
     @GetMapping("/list")
     public Page<PolicyArticleVO> getPolicyArticles(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(value = "pageNum",defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @ApiParam(value = "分类名称") @RequestParam(required = false) String category,
             @ApiParam(value = "标签名称") @RequestParam(required = false) String primaryTag

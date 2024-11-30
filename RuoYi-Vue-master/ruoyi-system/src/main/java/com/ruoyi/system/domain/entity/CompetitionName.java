@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import lombok.Data;
 public class CompetitionName {
 
     @ApiModelProperty("比赛ID")
-    @TableId("competition_id")  // 映射到 'competition_id' 字段，作为主键
+    @TableId(value = "competition_id", type = IdType.AUTO)  // 映射到 'competition_id' 字段，作为主键，并设置为主键自增
     @Excel(name = "比赛ID", type = Excel.Type.EXPORT)
     private Integer competitionId;
 

@@ -57,7 +57,7 @@ public class AwardDetailController {
     @ApiOperation("分页查询获奖情况Integer typeId")
     @GetMapping("/getAwardDetailsPage")
     public Page<AwardDetailVO> getAwardDetailsPage(
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageNum", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @ApiParam(value = "年份") @RequestParam(required = false) Integer year,
             @ApiParam(value = "比赛类型") @RequestParam(required = false) Integer typeId) {
@@ -67,7 +67,7 @@ public class AwardDetailController {
     @ApiOperation("分页查询获奖情况String type")
     @GetMapping("/getAwardDetailsPage1")
     public Page<AwardDetailVO> getAwardDetailsPage1(
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageNum", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @ApiParam(value = "年份") @RequestParam(required = false) Integer year,
             @ApiParam(value = "比赛类型") @RequestParam(required = false) String type) {

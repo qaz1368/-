@@ -103,7 +103,7 @@
         {{scope.$index+1}}
       </template>
     </el-table-column>
-    <el-table-column label="创业园" align="center" key="incubator" prop="incubator" v-if="columns[1].visible" width="120" />
+    <el-table-column label="创业园" align="center" key="incubator" prop="incubator" v-if="columns[1].visible" width="120" :show-overflow-tooltip="true"/>
     <el-table-column label="企业名称" align="center" key="companyName" prop="companyName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
     <el-table-column label="所属行业" align="center" key="industry" prop="industry" v-if="columns[2].visible" :show-overflow-tooltip="true" />
     <el-table-column label="地域" align="center" key="region" prop="region" v-if="columns[3].visible" :show-overflow-tooltip="true" />
@@ -113,18 +113,18 @@
     <el-table-column label="法定代表人" align="center" key="legalPerson" prop="legalPerson" v-if="columns[4].visible" width="120" />
     <el-table-column label="成立日期" align="center" key="establishmentDate" prop="establishmentDate" v-if="columns[5].visible" width="160" />
     <el-table-column label="企业状态" align="center" key="companyStatus" prop="companyStatus" v-if="columns[5].visible" width="160" />
-    <el-table-column label="年营业额" align="center" key="annualRevenue" prop="annualRevenue" v-if="columns[1].visible" width="120" />
+    <el-table-column label="年营业额(万)" align="center" key="annualRevenue" prop="annualRevenue" v-if="columns[1].visible" width="120" />
     <el-table-column label="获得补助时间" align="center" key="subsidyReceivedDate" prop="subsidyReceivedDate" v-if="columns[5].visible" width="160" />
-    <el-table-column label="获得补助金额" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[5].visible" width="160" />
+    <el-table-column label="获得补助金额(万)" align="center" key="subsidyAmount" prop="subsidyAmount" v-if="columns[5].visible" width="160" />
 
     <!-- 新增字段 -->
     <el-table-column label="带动就业人数" align="center" key="employmentImpact" prop="employmentImpact" v-if="columns[1].visible" width="120" />
     <el-table-column label="签订劳动合同人数" align="center" key="signedContracts" prop="signedContracts" v-if="columns[1].visible" width="120" />
     <el-table-column label="缴纳社会保险人数" align="center" key="socialSecurityContributors" prop="socialSecurityContributors" v-if="columns[1].visible" width="120" />
-    <el-table-column label="年纳税金额" align="center" key="annualTax" prop="annualTax" v-if="columns[1].visible" width="120" />
-    <el-table-column label="注册资本" align="center" key="registeredCapital" prop="registeredCapital" v-if="columns[1].visible" width="120" />
+    <el-table-column label="年纳税金额(万)" align="center" key="annualTax" prop="annualTax" v-if="columns[1].visible" width="120" />
+    <el-table-column label="注册资本(万)" align="center" key="registeredCapital" prop="registeredCapital" v-if="columns[1].visible" width="120" />
     <el-table-column label="带动扶贫人数" align="center" key="povertyAlleviation" prop="povertyAlleviation" v-if="columns[1].visible" width="120" />
-    <el-table-column label="贷款金额" align="center" key="loanAmount" prop="loanAmount" v-if="columns[1].visible" width="120" />
+    <el-table-column label="贷款金额(万)" align="center" key="loanAmount" prop="loanAmount" v-if="columns[1].visible" width="120" />
     <el-table-column label="是否享受政府补贴" align="center" key="governmentSubsidy" prop="governmentSubsidy" v-if="columns[1].visible" width="120">
       <template #default="scope">
         {{ formatBoolean(scope.row.governmentSubsidy) }}
@@ -140,12 +140,12 @@
         {{ formatBoolean(scope.row.entrepreneurshipGuidance) }}
       </template>
     </el-table-column>
-    <el-table-column label="获奖补助金额" align="center" key="awards" prop="awards" v-if="columns[1].visible" width="120" />
+    <el-table-column label="获奖补助金额(万)" align="center" key="awards" prop="awards" v-if="columns[1].visible" width="120" />
     <el-table-column label="获奖情况" align="center" key="awardsReceived" prop="awardsReceived" v-if="columns[1].visible" width="160" :show-overflow-tooltip="true"  />
-    <el-table-column label="备注" align="center" key="remarks" prop="remarks" v-if="columns[1].visible" width="120" />
-    <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[1].visible" width="160" />
-    <el-table-column label="最后更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[0].visible" width="160" />
-    <el-table-column label="企业负责人" align="center" key="managerName" prop="managerName" v-if="columns[1].visible" width="120" />
+    <el-table-column label="备注" align="center" key="remarks" prop="remarks" v-if="columns[1].visible" width="120" :show-overflow-tooltip="true"/>
+    <el-table-column label="记录创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[1].visible" width="160" :show-overflow-tooltip="true"/>
+    <el-table-column label="最后更新时间" align="center" key="updatedAt" prop="updatedAt" v-if="columns[0].visible" width="160" :show-overflow-tooltip="true"/>
+    <el-table-column label="企业负责人" align="center" key="managerName" prop="managerName" v-if="columns[1].visible" width="120" :show-overflow-tooltip="true"/>
 
     <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
       <template #default="scope">
@@ -273,7 +273,7 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="获得补助金额" prop="subsidyAmount">
+        <el-form-item label="获得补助金额(万)" prop="subsidyAmount">
           <el-input v-model="form.subsidyAmount" placeholder="请输入获得补助金额" type="number" />
         </el-form-item>
       </el-col>
@@ -297,12 +297,12 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="年营业额" prop="annualRevenue">
+        <el-form-item label="年营业额(万)" prop="annualRevenue">
           <el-input v-model="form.annualRevenue" placeholder="请输入年营业额" type="number" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="年纳税金额" prop="annualTax">
+        <el-form-item label="年纳税金额(万)" prop="annualTax">
           <el-input v-model="form.annualTax" placeholder="请输入年纳税金额" type="number" />
         </el-form-item>
       </el-col>
@@ -321,7 +321,7 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="贷款金额" prop="loanAmount">
+        <el-form-item label="贷款金额(万)" prop="loanAmount">
           <el-input v-model="form.loanAmount" placeholder="请输入贷款金额" type="number" />
         </el-form-item>
       </el-col>

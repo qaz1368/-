@@ -29,15 +29,14 @@ public class EnterpriseController {
     @ApiOperation("获取企业列表（分页）")
     @GetMapping("/list")
     public Page<EnterpriseVO> list(
-            @ApiParam(value = "当前页", defaultValue = "1") @RequestParam(defaultValue = "1") int page,
+            @ApiParam(value = "当前页", defaultValue = "1") @RequestParam(value = "pageNum",defaultValue = "1") int page,
             @ApiParam(value = "每页条数", defaultValue = "10") @RequestParam(defaultValue = "10") int size,
             @ApiParam(value = "地域（模糊查询）") @RequestParam(required = false) String region,
             @ApiParam(value = "所属行业（模糊查询）") @RequestParam(required = false) String industry,
             @ApiParam(value = "企业状态（初创、成长、成熟、关闭）") @RequestParam(required = false) String companyStatus
     ) {
 
-        Page<Enterprise> pageRequest = new Page<>(page, size);
-        return enterpriseService.getEnterprisePage(pageRequest, region, industry, companyStatus);
+        return enterpriseService.getEnterprisePage(page,size, region, industry, companyStatus);
     }
 
     @ApiOperation("新增企业信息")

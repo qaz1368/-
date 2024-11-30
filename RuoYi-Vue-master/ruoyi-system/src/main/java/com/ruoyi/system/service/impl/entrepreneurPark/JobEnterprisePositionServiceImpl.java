@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterprisePositionMapper, JobEnterprisePosition> implements JobEnterprisePositionService {
@@ -41,7 +42,13 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
 
 
         Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, queryWrapper);
-        List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords();
+
+        int start = (pageNum - 1) * pageSize; // 起始位置
+
+        List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords().stream()
+                .skip(start)
+                .limit(pageSize)
+                .collect(Collectors.toList());
 
         List<JobEnterprisePositionVO> JobEnterprisePositionVOS = new ArrayList<>();
         for (JobEnterprisePosition jobEnterprisePosition : jobEnterprisePositions) {
@@ -71,8 +78,10 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
             JobEnterprisePositionVOS.add(jobEnterprisePositionVO);
         }
 
+        Long count = lambdaQuery().select().count();
         Page<JobEnterprisePositionVO> pageResponse = Page.of(pageNum, pageSize);
         pageResponse.setRecords(JobEnterprisePositionVOS);
+        pageResponse.setTotal(count);
         return pageResponse;
 
     }
@@ -82,7 +91,13 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
         QueryWrapper<JobEnterprisePosition> queryWrapper = new QueryWrapper<>();
 
         Page<JobEnterprisePosition> resultPage = jobEnterprisePositionMapper.selectPage(page, queryWrapper);
-        List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords();
+
+        int start = (pageNum - 1) * pageSize; // 起始位置
+
+        List<JobEnterprisePosition> jobEnterprisePositions = resultPage.getRecords().stream()
+                .skip(start)
+                .limit(pageSize)
+                .collect(Collectors.toList());
 
         List<JobEnterprisePositionVO> JobEnterprisePositionVOS = new ArrayList<>();
         for (JobEnterprisePosition jobEnterprisePosition : jobEnterprisePositions) {
@@ -115,9 +130,10 @@ public class JobEnterprisePositionServiceImpl extends ServiceImpl<JobEnterpriseP
 
             JobEnterprisePositionVOS.add(jobEnterprisePositionVO);
         }
-
+        Long count = lambdaQuery().select().count();
         Page<JobEnterprisePositionVO> pageResponse = Page.of(pageNum, pageSize);
         pageResponse.setRecords(JobEnterprisePositionVOS);
+        pageResponse.setTotal(count);
         return pageResponse;
 
     }

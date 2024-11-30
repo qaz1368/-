@@ -1,10 +1,13 @@
 package com.ruoyi.system.service.impl.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.domain.DTO.StudentEntrepreneurshipParkDTO;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.Industry;
+import com.ruoyi.system.domain.entity.Region;
 import com.ruoyi.system.domain.entity.StudentEntrepreneurshipPark;
 import com.ruoyi.system.mapper.entrepreneurPark.IndustryMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.StudentEntrepreneurshipParkMapper;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentEntrepreneurshipParkServiceImpl extends ServiceImpl<StudentEntrepreneurshipParkMapper, StudentEntrepreneurshipPark>
@@ -69,5 +73,24 @@ public class StudentEntrepreneurshipParkServiceImpl extends ServiceImpl<StudentE
     @Override
     public boolean deleteBatch(List<Integer> parkIds) {
         return removeByIds(parkIds);
+    }
+
+    @Override
+    public IPage<StudentEntrepreneurshipPark> studentEntrepreneurshipParkPage(int page, int size) {
+        // Page构造方法：当前页, 每页显示记录数
+        Page<StudentEntrepreneurshipPark> studentEntrepreneurshipParkPage = new Page<>(page, size);
+
+        List<StudentEntrepreneurshipPark> records = parkMapper.selectPage(studentEntrepreneurshipParkPage, null).getRecords();
+
+        // 定义起始位置和每页大小
+        int start = (page - 1) * size; // 起始位置
+
+        List<StudentEntrepreneurshipPark> studentEntrepreneurshipParkList = records.stream()
+                .skip(start)
+                .limit(size)
+                .collect(Collectors.toList());
+        studentEntrepreneurshipParkPage.setRecords(studentEntrepreneurshipParkList);
+        studentEntrepreneurshipParkPage.setTotal(records.size());
+        return studentEntrepreneurshipParkPage;
     }
 }

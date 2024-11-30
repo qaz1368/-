@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.entrepreneurPark;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.system.domain.DTO.StudentEntrepreneurshipParkDTO;
 import com.ruoyi.system.domain.entity.StudentEntrepreneurshipPark;
@@ -16,4 +17,6 @@ public interface StudentEntrepreneurshipParkService extends IService<StudentEntr
     boolean deleteStudentPark(Integer parkId);
 
     boolean deleteBatch(List<Integer> parkIds);
+
+    IPage<StudentEntrepreneurshipPark> studentEntrepreneurshipParkPage(int page, int size);
 }

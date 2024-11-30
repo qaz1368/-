@@ -392,6 +392,7 @@ function getDeptTree() {
 };
 /** 查询用户列表 */
 function getList() {
+  console.log("queryParams.pageNum",queryParams.pageNum)
   loading.value = true;
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false;

@@ -51,7 +51,7 @@ public class EnterpriseManagerController {
     @ApiOperation("分页查询企业管理者")
     @GetMapping("/page")
     public IPage<EnterpriseManagersVO> page(
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageNum", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @ApiParam(value = "查询企业") @RequestParam(required = false) String enterprise,
             @ApiParam(value = "查询姓名") @RequestParam(required = false) String name

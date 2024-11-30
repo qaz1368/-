@@ -175,8 +175,10 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
             awardDetailVOS.add(awardDetailVO);
         }
 
+        Long count = lambdaQuery().select().count();
         Page<AwardDetailVO> pageResponse = Page.of(page, size);
         pageResponse.setRecords(awardDetailVOS);
+        pageResponse.setTotal(count);
         return pageResponse;
 
     }
@@ -232,9 +234,10 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
             BeanUtils.copyProperties(awardDetail, awardDetailVO);
             awardDetailVOS.add(awardDetailVO);
         }
-
+        Long count = lambdaQuery().select().count();
         Page<AwardDetailVO> pageResponse = Page.of(page, size);
         pageResponse.setRecords(awardDetailVOS);
+        pageResponse.setTotal(count);
         return pageResponse;
 
     }
