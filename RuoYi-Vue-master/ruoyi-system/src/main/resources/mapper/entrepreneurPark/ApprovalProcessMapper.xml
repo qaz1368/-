@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.entrepreneurPark.ApprovalProcessMapper">
+    <select id="selectPage" resultType="com.ruoyi.system.domain.entity.ApprovalProcess">
+        SELECT * FROM approval_process
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM approval_process
+    </select>
+
+
+</mapper>

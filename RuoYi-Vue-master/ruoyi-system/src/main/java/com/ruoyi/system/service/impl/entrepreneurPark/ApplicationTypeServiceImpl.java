@@ -39,11 +39,17 @@ public class ApplicationTypeServiceImpl extends ServiceImpl<ApplicationTypeMappe
 
     @Override
     public IPage<ApplicationType> getApplicationTypePage(int page, int size, String applicationName) {
-        Page<ApplicationType> pageRequest = new Page<>(page, size);
-        QueryWrapper<ApplicationType> queryWrapper = new QueryWrapper<>();
-        if(applicationName != null){
-            queryWrapper.like("application_name", applicationName);
-        }
-        return page(pageRequest, queryWrapper);
+        // 计算分页的起始位置
+        int offset = (page - 1) * size;
+
+        // 查询数据
+        List<ApplicationType> list = applicationTypeMapper.selectPage(offset, size, applicationName);
+
+        // 创建 Page 对象
+        Page<ApplicationType> pageResult = new Page<>(page, size);
+        pageResult.setRecords(list);
+
+        // 返回结果
+        return pageResult;
     }
 }

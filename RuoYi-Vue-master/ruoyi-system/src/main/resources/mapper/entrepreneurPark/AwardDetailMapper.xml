@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.entrepreneurPark.AwardDetailMapper">
+    <select id="selectPage" resultType="com.ruoyi.system.domain.entity.AwardDetail">
+        SELECT * FROM award_details
+        <where>
+            <if test="year != null">
+                AND year = #{year}
+            </if>
+            <if test="typeId != null and typeId != 0">
+                AND type_id = #{typeId}
+            </if>
+        </where>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM award_details
+        <where>
+            <if test="year != null">
+                AND year = #{year}
+            </if>
+            <if test="typeId != null and typeId != 0">
+                AND type_id = #{typeId}
+            </if>
+        </where>
+    </select>
+</mapper>

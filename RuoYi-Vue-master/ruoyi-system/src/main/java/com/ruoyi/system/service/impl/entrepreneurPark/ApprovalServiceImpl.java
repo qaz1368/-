@@ -48,9 +48,20 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval> i
 
     @Override
     public Page<ApprovalVO> getApprovalPage(int pageNum, int pageSize) {
-        // 分页查询审批记录
-        Page<Approval> page = new Page<>(pageNum, pageSize);
-        Page<Approval> approvalPage = approvalMapper.selectPage(page, null);
+        // 计算分页的起始位置
+        int offset = (pageNum - 1) * pageSize;
+
+        // 查询数据
+        List<Approval> list = approvalMapper.selectPage(offset, pageSize);
+
+        // 查询总记录数
+        int total = approvalMapper.count();
+
+        // 创建 Page 对象
+        Page<Approval> approvalPage = new Page<>(pageNum, pageSize);
+        approvalPage.setRecords(list);
+        approvalPage.setTotal(total);
+
 
         // 将查询结果转换为 ApprovalVO 列表
         List<ApprovalVO> approvalVOList = approvalPage.getRecords().stream().map(approval -> {
@@ -118,11 +129,19 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval> i
                 return new Page<>();
             }
 
-            // 构建查询条件
-            QueryWrapper<Approval> queryWrapper1 = new QueryWrapper<>();
-            queryWrapper1.in("process_id", processIds);
+        // 计算分页的起始位置
+        int offset = (pageNum - 1) * pageSize;
 
-            Page<Approval> approvalPage =approvalMapper.selectPage(page, queryWrapper1);
+        // 查询数据
+        List<Approval> list = approvalMapper.selectPageByProcessIds(offset, pageSize, processIds);
+
+        // 查询总记录数
+        int total = approvalMapper.countByProcessIds(processIds);
+
+        // 创建 Page 对象
+        Page<Approval> approvalPage = new Page<>(pageNum, pageSize);
+        approvalPage.setRecords(list);
+        approvalPage.setTotal(total);
 
         // 将查询结果转换为 ApprovalVO 列表
         List<ApprovalVO> approvalVOList = approvalPage.getRecords().stream().map(approval -> {

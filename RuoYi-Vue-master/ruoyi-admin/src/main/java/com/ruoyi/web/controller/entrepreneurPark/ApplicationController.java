@@ -43,7 +43,7 @@ public class ApplicationController {
 
     @ApiOperation(value = "获取申请分页数据", notes = "根据页码和每页数据量获取申请分页数据")
     @GetMapping("/list")
-    public Page<Application> getApplicationPage(
+    public List<Application> getApplicationPage(
             @ApiParam(value = "页码", required = true) @RequestParam int pageNum,
             @ApiParam(value = "每页数量", required = true) @RequestParam int pageSize,
             @ApiParam(value = "申请人名") @RequestParam(required = false) String applicantName,
