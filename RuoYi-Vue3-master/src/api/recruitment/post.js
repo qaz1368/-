@@ -24,6 +24,14 @@ export function delPost(positionId) {
         method: 'delete'
     })
 }
+//deleteJobPositions
+export function deleteJobPositions(positionIds) {
+    return request({
+        url: `/api/job-positions/batch`,
+        method: 'delete',
+        data: positionIds
+    })
+}
 
 
 // 新增岗位

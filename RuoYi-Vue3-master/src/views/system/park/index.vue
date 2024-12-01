@@ -23,7 +23,7 @@
                 plain
                 icon="Delete"
                 :disabled="multiple"
-                @click="handleDelete"
+                @click="handleDeleteList"
                 v-hasPermi="['system:user:remove']"
             >删除</el-button>
           </el-col>
@@ -240,9 +240,10 @@
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
 import {addPark, delPark, getParkById, listPark, updatePark} from "@/api/system/park";
-import {onMounted} from "vue";
+import {onMounted, ref} from "vue";
 import {getRegionOptions} from "../../../api/system/region";
-import {getIndustryOptions} from "../../../api/system/industry";
+import {deleteIndustryList, getIndustryOptions} from "../../../api/system/industry";
+import {deleteBatch} from "../../../api/system/park";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -372,6 +373,22 @@ function resetQuery() {
   proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
 };
+/** 批量删除按钮操作 */
+function handleDeleteList() {
+  const selectedRows = getSelectedRows(); // 获取选中的行数据
+  if (!selectedRows || selectedRows.length === 0) {
+    proxy.$modal.msgError("请选择要删除的数据项");
+    return;
+  }
+
+  const parkIds = selectedRows.map(row => row.parkId);
+  proxy.$modal.confirm(`是否确认删除标签编号为"${parkIds}"的数据项？`).then(function () {
+    return deleteBatch(parkIds);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+};
 /** 删除按钮操作 */
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除用户编号为"' + row.parkId + '"的数据项？').then(function () {
@@ -430,11 +447,19 @@ function handleResetPwd(row) {
     });
   }).catch(() => {});
 };
+const multipleTable = ref(null);
+const multipleSelection = ref([]);
 /** 选择条数  */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.userId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
+  multipleSelection.value = selection; // 移除多余的点
+}
+
+// 获取选中的行数据
+const getSelectedRows = () => {
+  return multipleSelection.value;
 };
 /** 导入按钮操作 */
 function handleImport() {
