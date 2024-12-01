@@ -83,29 +83,31 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="地域名称" prop="regionName">
-              <el-input v-model="form.regionName" placeholder="请输入地域名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="地域类型" prop="regionType">
-              <el-input v-model="form.regionType" placeholder="请输入地域类型" maxlength="30" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="地域级别" prop="level">
-              <el-input v-model="form.level" placeholder="请输入地域级别" maxlength="30" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+      <div class="form-container">
+        <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="地域名称" prop="regionName">
+                <el-input v-model="form.regionName" placeholder="请输入地域名称" maxlength="30" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="地域类型" prop="regionType">
+                <el-input v-model="form.regionType" placeholder="请输入地域类型" maxlength="30" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="地域级别" prop="level">
+                <el-input v-model="form.level" placeholder="请输入地域级别" maxlength="30" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>

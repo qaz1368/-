@@ -2,6 +2,7 @@ package com.ruoyi.system.service.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.system.domain.DTO.EnterpriseManagersDTO;
 import com.ruoyi.system.domain.entity.EnterpriseManagers;
 import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
 
@@ -18,4 +19,8 @@ public interface EnterpriseManagerService extends IService<EnterpriseManagers> {
     boolean deleteBatch(List<Integer> managerIds);    // 批量删除
 
     IPage<EnterpriseManagersVO> getManagersPage(int page,int  size,String enterpriseNam,String name);  // 分页查询管理者列表
+
+    boolean addManager(EnterpriseManagersDTO enterpriseManagersDTO);
+
+    boolean updateManagers(EnterpriseManagersDTO enterpriseManagersDTO);
 }

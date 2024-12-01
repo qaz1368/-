@@ -137,7 +137,7 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="联系方式" prop="contactInfo">
-          <el-input v-model="form.contactInfo" placeholder="请输入姓名" maxlength="30" />
+          <el-input v-model="form.contactInfo" placeholder="请输入联系方式" maxlength="30" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -173,9 +173,16 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="学历" prop="educationLevel">
-          <el-input v-model="form.educationLevel" placeholder="请输入学历" maxlength="50" />
+          <el-select v-model="form.educationLevel" placeholder="请选择学历">
+            <el-option label="本科" value="Undergraduate"></el-option>
+            <el-option label="硕士" value="Master"></el-option>
+            <el-option label="博士" value="Doctoral"></el-option>
+            <el-option label="副教授" value="Associate"></el-option>
+            <el-option label="其他" value="Other"></el-option>
+          </el-select>
         </el-form-item>
       </el-col>
+
     </el-row>
     <el-row>
       <el-col :span="12">
@@ -195,11 +202,7 @@
           <el-input v-model="form.position" placeholder="请输入毕业院校" maxlength="50" />
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <el-form-item label="公司ID" prop="companyId">
-          <el-input v-model="form.companyId" placeholder="请输入公司ID" maxlength="50" />
-        </el-form-item>
-      </el-col>
+
     </el-row>
     <el-row>
       <el-col :span="24">

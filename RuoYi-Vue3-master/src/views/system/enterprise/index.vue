@@ -162,7 +162,7 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body>
   <el-form :model="form"  ref="userRef" label-width="120px">
     <el-row>
       <el-col :span="12">
@@ -170,8 +170,6 @@
           <el-input v-model="form.companyName" placeholder="请输入企业名称" maxlength="30" />
         </el-form-item>
       </el-col>
-    </el-row>
-    <el-row>
       <el-col :span="12">
         <el-form-item label="所属行业" prop="industry">
           <el-select v-model="form.industry" placeholder="请选择行业">
@@ -184,18 +182,20 @@
           </el-select>
         </el-form-item>
       </el-col>
+    </el-row>
+    <el-row>
       <el-col :span="12">
         <el-form-item label="注册地址" prop="registeredAddress">
           <el-input v-model="form.registeredAddress" placeholder="请输入注册地址" maxlength="50" />
         </el-form-item>
       </el-col>
-    </el-row>
-    <el-row>
       <el-col :span="12">
         <el-form-item label="坐标" prop="coordinate">
           <el-input v-model="form.coordinate" placeholder="请输入坐标" style="width: 100%;" />
         </el-form-item>
       </el-col>
+    </el-row>
+    <el-row>
     </el-row>
     <el-row>
       <el-col :span="12">
@@ -212,14 +212,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item label="企业标签" prop="registeredAddress">
-          <el-select v-model="form.industry" placeholder="请选择行业">
-            <el-option
-                v-for="option in form.industryOptions"
-                :key="option"
-                :label="option"
-                :value="option"
-            />
-          </el-select>
+          <el-input v-model="form.enterpriseLabel" placeholder="请输入企业标签" style="width: 100%;" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -276,12 +269,12 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="签订劳动合同人数" prop="signedContracts">
+        <el-form-item label="签约人数" prop="signedContracts">
           <el-input v-model="form.signedContracts" placeholder="请输入签订劳动合同人数" type="number" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="缴纳社会保险人数" prop="socialSecurityContributors">
+        <el-form-item label="社保人数" prop="socialSecurityContributors">
           <el-input v-model="form.socialSecurityContributors" placeholder="请输入缴纳社会保险人数" type="number" />
         </el-form-item>
       </el-col>
@@ -317,7 +310,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="是否享受政府补贴" prop="governmentSubsidy">
+        <el-form-item label="是否享受政府补贴" prop="governmentSubsidy" class="no-wrap-label" >
           <el-select v-model="form.governmentSubsidy" placeholder="请选择">
             <el-option label="是" value="true"></el-option>
             <el-option label="否" value="false"></el-option>
@@ -327,29 +320,23 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="是否缴纳社会保障" prop="socialSecurity">
+        <el-form-item label="是否缴纳社会保障" prop="socialSecurity"  class="no-wrap-label" >
           <el-select v-model="form.socialSecurity" placeholder="请选择">
             <el-option label="是" value="true"></el-option>
             <el-option label="否" value="false"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
-    </el-row>
-    <el-row>
       <el-col :span="12">
-        <el-form-item label="是否需要创业辅导" prop="entrepreneurshipGuidance">
+        <el-form-item label="是否需要创业辅导" prop="entrepreneurshipGuidance"  class="no-wrap-label" >
           <el-select v-model="form.entrepreneurshipGuidance" placeholder="请选择">
             <el-option label="是" value="true"></el-option>
             <el-option label="否" value="false"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
-      <el-col :span="12">
-        <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" placeholder="请输入备注" />
-        </el-form-item>
-      </el-col>
     </el-row>
+
     <el-row>
       <el-col :span="12">
         <el-form-item label="创业园" prop="incubator">
@@ -373,6 +360,14 @@
                 :value="option"
             />
           </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+
+      <el-col :span="24">
+        <el-form-item label="备注" prop="remarks">
+          <el-input v-model="form.remarks" rows="6" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -873,5 +868,23 @@ onMounted(() => {
 .el-table {
   margin: 0;
   padding: 0;
+}
+
+.no-wrap-label :deep(.el-form-item__label) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: Adjust the label width for the specific field if needed */
+.no-wrap-label {
+  --el-form-label-width: 140px !important;
+}
+
+/* Ensure dialog has proper width on mobile */
+@media screen and (max-width: 768px) {
+  :deep(.el-dialog) {
+    width: 95% !important;
+  }
 }
 </style>
