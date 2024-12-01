@@ -438,13 +438,19 @@ function handleQuery() {
   getList();
 };
 /** 重置按钮操作 */
+/** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
-  queryParams.value.deptId = undefined;
-  proxy.$refs.tree.setCurrentKey(null);
-  handleQuery();
-};
+  queryParams.value = {
+    pageNum: 1,
+    pageSize: 10,
+    name: undefined,
+    enterprise: undefined
+  };
+  // 移除了 proxy.$refs.tree.setCurrentKey(null); 这行代码
+  getList();
+}
 /** 删除按钮操作 */
 function handleDelete(row) {
 

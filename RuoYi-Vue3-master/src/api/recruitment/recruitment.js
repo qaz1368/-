@@ -25,6 +25,14 @@ export function delRecruitment(enterpriseJobId) {
         method: 'delete'
     })
 }
+//deleteJobEnterprisePositions
+export function deleteJobEnterprisePositions(enterpriseJobIds) {
+    return request({
+        url: `/api/job-enterprise-positions/batch`,
+        method: 'delete',
+        data: enterpriseJobIds
+    })
+}
 
 //新增招聘信息
 export function addRecruitment(data) {

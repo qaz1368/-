@@ -17,6 +17,16 @@ export function delPark(parkId) {
   });
 }
 
+//deleteBatch
+export function deleteBatch(parkIds) {
+    return request({
+        url: `/industries/deleteBatch`,
+        method: 'delete',
+        data: parkIds
+    })
+}
+
+
 
 //新增创业园列表
 export function addPark(data) {

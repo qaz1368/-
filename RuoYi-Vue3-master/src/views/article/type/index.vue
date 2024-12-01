@@ -280,8 +280,8 @@ function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   queryParams.value.categoryName = undefined;
-  proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
+  getList()
 };
 /** 批量删除按钮操作 */
 function handleDeleteList() {

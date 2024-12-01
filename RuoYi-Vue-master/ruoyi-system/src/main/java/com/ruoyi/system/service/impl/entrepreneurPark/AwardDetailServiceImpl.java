@@ -189,9 +189,14 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         if (type != null) {
             QueryWrapper<CompetitionType> queryWrapper1 = new QueryWrapper<>();
             queryWrapper1.eq("level", type);
-            CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper1);
-            if (competitionType != null) {
+            List<CompetitionType> competitionTypes = competitionTypeMapper.selectList(queryWrapper1);
+
+            if (!competitionTypes.isEmpty()) {
+                CompetitionType competitionType = competitionTypes.get(0);
                 typeId = competitionType.getId();
+            } else {
+                // 处理没有找到记录的情况
+                typeId = 0;
             }
         }
 
@@ -239,8 +244,9 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         pageResponse.setRecords(awardDetailVOS);
         pageResponse.setTotal(count);
         return pageResponse;
-
     }
+
+
 
     @Override
     public List<AwardDetailVO> getAwardDetailsId(Integer enterpriseId) {

@@ -3,58 +3,55 @@
     <div class="enterprise-form-wrapper">
       <h2>企业申请表</h2>
       <form @submit.prevent="submitForm" class="enterprise-form">
-        <div class="form-group-row">
+        <div class="form-row">
           <div class="form-group">
             <label for="name">姓名</label>
-            <input type="text" id="name" v-model="formData.applicantName" required class="narrow-input">
+            <input style="width: 10vw" type="text" id="name" v-model="formData.applicantName" required>
           </div>
+
           <div class="form-group">
             <label for="phone">电话</label>
-            <input type="tel" id="phone" v-model="formData.applicantPhone" required class="narrow-input">
+            <input style="width: 10vw" type="tel" id="phone" v-model="formData.applicantPhone" required>
           </div>
+
           <div class="form-group">
             <label for="email">邮箱</label>
-            <input type="email" id="email" v-model="formData.applicantEmail" required class="narrow-input">
+            <input type="email" style="width: 10vw" id="email" v-model="formData.applicantEmail" required>
           </div>
         </div>
 
-        <div class="form-group">
-          <label>申请类型</label>
-          <select id="applicationType" v-model="formData.applicationType" required>
-            <option value="">请选择</option>
-            <option v-for="option in applicationTypeOptions" :key="option.value" :value="option.value">
-              {{ option.label }}
-            </option>
-          </select>
+        <div class="form-row" style="margin-top: 2vh">
+          <div class="form-group">
+            <label for="applicationType">申请类型</label>
+            <select id="applicationType" style="width: 10vw" v-model="formData.applicationType" required>
+              <option value="">请选择</option>
+              <option v-for="option in applicationTypeOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="industryName">行业类型</label>
+            <select id="industryName" style="width: 10vw" v-model="formData.industryName" required>
+              <option value="">请选择</option>
+              <option v-for="option in industryOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>行业类型</label>
-          <select id="industryName" v-model="formData.industryName" required>
-            <option value="">请选择</option>
-            <option v-for="option in industryOptions" :key="option.value" :value="option.value">
-              {{ option.label }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>企业介绍</label>
-          <textarea id="enterpriseDescription" v-model="formData.enterpriseDescription" rows="8" required></textarea>
+        <div class="form-group description-group" style="margin-top: 3vh">
+          <label for="enterpriseDescription">企业介绍</label>
+          <textarea id="enterpriseDescription" style="margin-top: 2vh" v-model="formData.enterpriseDescription" rows="14" required></textarea>
         </div>
 
         <button type="submit" class="submit-button">提交申请</button>
       </form>
-
-      <!-- 显示提交结果 -->
-      <div v-if="formStatus === 'success'" class="success-message">提交成功！</div>
-      <div v-if="formStatus === 'error'" class="error-message">提交失败，请稍后再试。</div>
     </div>
   </div>
 </template>
-
-
-
 
 <script>
 import axios from 'axios';
@@ -71,8 +68,7 @@ export default {
         enterpriseDescription: ''
       },
       industryOptions: [],
-      applicationTypeOptions: [],
-      formStatus: '' // 新增状态变量
+      applicationTypeOptions: []
     };
   },
   methods: {
@@ -110,17 +106,17 @@ export default {
       try {
         const response = await axios.post('http://localhost:8091/api/application/add', data);
         if (response.data) {
-          this.formStatus = 'success'; // 设置成功状态
+          alert('申请已提交！');
           // 清空表单
           Object.keys(this.formData).forEach(key => {
             this.formData[key] = '';
           });
         } else {
-          this.formStatus = 'error'; // 设置失败状态
+          alert('提交失败，请稍后再试。');
         }
       } catch (error) {
-        this.formStatus = 'error'; // 设置失败状态
         console.error('Error submitting form:', error);
+        alert('提交失败，请稍后再试。');
       }
     }
   },
@@ -131,15 +127,13 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .enterprise-form-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 98vh;
   background-color: #f0f4f8;
-  padding: 2rem;
 }
 
 .enterprise-form-wrapper {
@@ -148,46 +142,53 @@ export default {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 800px; /* 修改为更大的值 */
+  max-width: 800px;
+  height: 80vh;
 }
 
 h2 {
   color: #333;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: bold;
 }
 
 .enterprise-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
 }
 
-.form-group-row {
+.form-row {
   display: flex;
-  gap: 1.5rem;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  flex: 1; /* 使每个 form-group 占据相等的空间 */
+  align-items: center;
+}
+
+.description-group {
+  width: 100%;
 }
 
 label {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   color: #555;
   font-weight: bold;
 }
 
 input, select, textarea {
-  width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: border-color 0.3s ease;
 }
 
@@ -197,12 +198,17 @@ input:focus, select:focus, textarea:focus {
 }
 
 textarea {
+  width: 100%;
   resize: vertical;
 }
 
+.description-group textarea {
+  min-height: 160px;
+  font-size: 1.1rem;
+}
+
 .submit-button {
-  width: 100%;
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: #4CAF50;
   color: white;
   border: none;
@@ -210,35 +216,22 @@ textarea {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .submit-button:hover {
   background-color: #45a049;
 }
 
-.success-message {
-  color: green;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.error-message {
-  color: red;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-@media (max-width: 600px) {
-  .enterprise-form-wrapper {
-    padding: 1.5rem;
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .form-group-row {
-    flex-direction: column; /* 在小屏幕上堆叠显示 */
+  .form-group {
+    width: 100%;
   }
-}
-
-.narrow-input {
-  width: 100%; /* 使输入框占满整个 form-group 的宽度 */
 }
 </style>

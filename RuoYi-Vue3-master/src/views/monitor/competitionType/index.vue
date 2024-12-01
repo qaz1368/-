@@ -261,8 +261,8 @@ function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   queryParams.value.deptId = undefined;
-  proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
+  getList()
 };
 /** 批量删除按钮操作 */
 function handleDeleteList() {
@@ -271,7 +271,6 @@ function handleDeleteList() {
     proxy.$modal.msgError("请选择要删除的数据项");
     return;
   }
-  console.log(row.id)
   const ids = selectedRows.map(row => row.id);
   proxy.$modal.confirm(`是否确认删除标签编号为"${ids}"的数据项？`).then(function () {
     return delCompetitionTypeList(ids);

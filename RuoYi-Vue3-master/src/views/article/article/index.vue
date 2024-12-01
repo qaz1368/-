@@ -1,84 +1,84 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20">
-      <!--用户数据-->
-      <el-col :span="24">
-        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="分类" prop="category">
-            <el-select
-                v-model="queryParams.category"
-                placeholder="请输入分类名称"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="option in form.categoryOptions"
-                  :key="option"
-                  :label="option"
-                  :value="option"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="标签" prop="primaryTag">
-            <el-select
-                v-model="queryParams.primaryTag"
-                placeholder="请输入标签名称"
-                clearable
-                style="width: 240px"
-            >
-              <el-option
-                  v-for="option in form.primaryTagOptions"
-                  :key="option"
-                  :label="option"
-                  :value="option"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-          </el-form-item>
-        </el-form>
+    <div v-if="!showAddForm">
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+            <el-form-item label="分类" prop="category">
+              <el-select
+                  v-model="queryParams.category"
+                  placeholder="请输入分类名称"
+                  clearable
+                  style="width: 240px"
+              >
+                <el-option
+                    v-for="option in form.categoryOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="标签" prop="primaryTag">
+              <el-select
+                  v-model="queryParams.primaryTag"
+                  placeholder="请输入标签名称"
+                  clearable
+                  style="width: 240px"
+              >
+                <el-option
+                    v-for="option in form.primaryTagOptions"
+                    :key="option"
+                    :label="option"
+                    :value="option"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
 
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button
-                type="primary"
-                plain
-                icon="Plus"
-                @click="handleAdd"
-                v-hasPermi="['system:user:add']"
-            >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="danger"
-                plain
-                icon="Delete"
-                :disabled="multiple"
-                @click="handleDeleteList"
-                v-hasPermi="['system:user:remove']"
-            >删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="warning"
-                plain
-                icon="Download"
-                @click="handleExport"
-                v-hasPermi="['system:user:export']"
-            >导出</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-        </el-row>
+          <el-row :gutter="10" class="mb8">
+            <el-col :span="1.5">
+              <el-button
+                  type="primary"
+                  plain
+                  icon="Plus"
+                  @click="handleAddNew"
+                  v-hasPermi="['system:article:add']"
+              >新增</el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  type="danger"
+                  plain
+                  icon="Delete"
+                  :disabled="multiple"
+                  @click="handleDeleteList"
+                  v-hasPermi="['system:article:remove']"
+              >删除</el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  type="warning"
+                  plain
+                  icon="Download"
+                  @click="handleExport"
+                  v-hasPermi="['system:article:export']"
+              >导出</el-button>
+            </el-col>
+            <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+          </el-row>
 
-        <el-table v-loading="loading" :data="articleList" @selection-change="handleSelectionChange" class="full-width-table">
+          <el-table v-loading="loading" :data="articleList" @selection-change="handleSelectionChange" class="full-width-table">
             <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" v-if="columns[0].visible">
-            <template #default="scope">
-              {{scope.$index+1}}
-            </template>
-          </el-table-column>
+            <el-table-column label="序号" align="center" v-if="columns[0].visible">
+              <template #default="scope">
+                {{scope.$index+1}}
+              </template>
+            </el-table-column>
             <el-table-column label="分类" align="center" key="category" prop="category"  :show-overflow-tooltip="true" />
             <el-table-column label="标签" align="center" key="primaryTag" prop="primaryTag"  :show-overflow-tooltip="true" />
             <el-table-column label="文章标题" align="center" key="title" prop="title"  :show-overflow-tooltip="true" />
@@ -88,13 +88,12 @@
                 <span>{{ scope.row.publishDate }}</span>
               </template>
             </el-table-column>
-             <el-table-column label="截止时间" align="center" key="publishDate" prop="publishDate" width="120">
+            <el-table-column label="截止时间" align="center" key="publishDate" prop="publishDate" width="120">
               <template #default="scope">
                 <span>{{ scope.row.deadlineDate }}</span>
               </template>
             </el-table-column>
             <el-table-column label="文章状态" align="center" key="status" prop="status">
-
             </el-table-column>
             <el-table-column label="创建时间" align="center" prop="createdAt"  width="160">
               <template #default="scope">
@@ -116,27 +115,73 @@
                 </el-tooltip>
               </template>
             </el-table-column>
-      </el-table>
+          </el-table>
 
-        <pagination
-            v-show="total > 0"
-            :total="total"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            @pagination="getList"
-        />
-      </el-col>
-    </el-row>
+          <pagination
+              v-show="total > 0"
+              :total="total"
+              v-model:page="queryParams.pageNum"
+              v-model:limit="queryParams.pageSize"
+              @pagination="getList"
+          />
+        </el-col>
+      </el-row>
+    </div>
+
+    <div v-else>
+      <h2>新增文章</h2>
+      <el-form :model="articleForm" :rules="articleFormRules" ref="articleFormRef" label-width="100px">
+        <el-form-item label="分类" prop="category">
+          <el-select v-model="form.category" placeholder="请选择分类">
+            <el-option
+                v-for="option in form.categoryOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标签" prop="primaryTag">
+          <el-select v-model="form.primaryTag" placeholder="请选择标签">
+            <el-option
+                v-for="option in form.primaryTagOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="文章标题" prop="title">
+          <el-input v-model="form.title" placeholder="请输入文章标题" />
+        </el-form-item>
+        <el-form-item label="文章内容" prop="content">
+          <el-input v-model="form.content" type="textarea" rows="10" placeholder="请输入文章内容" />
+        </el-form-item>
+        <el-form-item label="发布日期" prop="publishDate">
+          <el-date-picker v-model="form.publishDate" type="date" placeholder="选择发布日期" />
+        </el-form-item>
+        <el-form-item label="截止时间" prop="deadlineDate">
+          <el-date-picker v-model="form.deadlineDate" type="date" placeholder="选择截止时间" />
+        </el-form-item>
+        <el-form-item label="文章状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择文章状态">
+            <el-option label="草稿" value="草稿" />
+            <el-option label="已发布" value="已发布" />
+            <el-option label="已归档" value="已归档" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitArticleForm">新增</el-button>
+          <el-button @click="handleBackToList">返回</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="文章ID" prop="articleId">
-              <el-input v-model="form.articleId" placeholder="请输入文章ID" disabled />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item label="分类" prop="category">
               <el-select v-model="form.category" placeholder="请选择分类">
@@ -146,6 +191,15 @@
                     :label="option"
                     :value="option"
                 />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="文章状态" prop="status">
+              <el-select v-model="form.status" placeholder="请选择文章状态">
+                <el-option label="草稿" value="草稿" />
+                <el-option label="已发布" value="已发布" />
+                <el-option label="已归档" value="已归档" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -172,7 +226,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="文章内容" prop="content">
-              <el-input v-model="form.content" type="textarea" placeholder="请输入文章内容" />
+              <el-input rows="10"   v-model="form.content" type="textarea" placeholder="请输入文章内容" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -187,15 +241,7 @@
               <el-date-picker v-model="form.deadlineDate" type="date" placeholder="选择截止时间" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="文章状态" prop="status">
-              <el-select v-model="form.status" placeholder="请选择文章状态">
-                <el-option label="草稿" value="draft" />
-                <el-option label="已发布" value="published" />
-                <el-option label="已归档" value="archived" />
-              </el-select>
-            </el-form-item>
-          </el-col>
+
         </el-row>
       </el-form>
       <template #footer>
@@ -245,7 +291,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addArticle, delArticle, getArticle, listArticle} from "@/api/article/article";
+import {addArticle, delArticle, getArticle, listArticle, updatePolicyArticle} from "@/api/article/article";
 import {onMounted, ref} from "vue";
 import {getPrimaryTagOptions} from "../../../api/article/tag";
 import {getCategoryOptions} from "../../../api/article/type";
@@ -271,6 +317,8 @@ const deptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
+const showAddForm = ref(false);
+
 /*** 用户导入参数 */
 const upload = reactive({
   // 是否显示弹出层（用户导入）
@@ -299,14 +347,14 @@ const columns = ref([
 
 const data = reactive({
   form: {
-    articleId: null,
-    category: null,
-    primaryTag: null,
-    title: null,
-    content: null,
-    publishDate: null,
-    deadlineDate: null,
-    status: null,
+    articleId: undefined,
+    category: undefined,
+    primaryTag: undefined,
+    title: undefined,
+    content: undefined,
+    publishDate: undefined,
+    deadlineDate: undefined,
+    status: "草稿",
     categoryOptions: [],
     primaryTagOptions: []
   },
@@ -327,8 +375,25 @@ const data = reactive({
     publishDate: [{ required: true, message: "发布日期不能为空", trigger: "change" }],
     deadlineDate: [{ required: true, message: "截止时间不能为空", trigger: "change" }],
     status: [{ required: true, message: "文章状态不能为空", trigger: "change" }]
-}
-
+  },
+  articleForm: {
+    category: null,
+    primaryTag: null,
+    title: null,
+    content: null,
+    publishDate: null,
+    deadlineDate: null,
+    status: null
+  },
+  articleFormRules: {
+    category: [{ required: true, message: "分类不能为空", trigger: "blur" }],
+    primaryTag: [{ required: true, message: "主要标签不能为空", trigger: "blur" }],
+    title: [{ required: true, message: "文章标题不能为空", trigger: "blur" }],
+    content: [{ required: true, message: "文章内容不能为空", trigger: "blur" }],
+    publishDate: [{ required: true, message: "发布日期不能为空", trigger: "change" }],
+    deadlineDate: [{ required: true, message: "截止时间不能为空", trigger: "change" }],
+    status: [{ required: true, message: "文章状态不能为空", trigger: "change" }]
+  }
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -372,8 +437,8 @@ function resetQuery() {
   dateRange.value = [];
   proxy.resetForm("queryRef");
   queryParams.value.deptId = undefined;
-  proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
+  getList()
 };
 /** 批量删除按钮操作 */
 function handleDeleteList() {
@@ -526,29 +591,54 @@ function handleAdd() {
     form.value.password = initPassword.value;
   });
 };
+
+/** 新增按钮操作 */
+/** 新增按钮操作 */
+function handleAddNew() {
+  showAddForm.value = true;
+  form.category = undefined;
+  form.primaryTag = undefined;
+  form.title = undefined;
+  form.content = undefined;
+  form.publishDate = undefined;
+  form.deadlineDate = undefined;
+  form.status = "草稿";
+  console.log("触发了吗")
+  reset()
+}
+
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
 
   if (row && row.articleId) {
     getArticle(row.articleId).then(response => {
-      console.log("response是是是",response)
-      form.value = { ...response, categoryOptions: form.value.categoryOptions,primaryTagOptions: form.value.primaryTagOptions }
-      console.log("form.value", form.value)
-      open.value = true
-      title.value = "修改文章"
+      console.log("response是是是", response)
+      if (response) {
+        form.value = {
+          ...response,
+          categoryOptions: form.value.categoryOptions || [],
+          primaryTagOptions: form.value.primaryTagOptions || []
+        }
+        console.log("form.value", form.value)
+        open.value = true
+        title.value = "修改文章"
+      } else {
+        proxy.$modal.msgError("获取文章数据失败，请重试")
+      }
     }).catch(error => {
       console.error("修改文章时出错：", error)
       proxy.$modal.msgError("修改文章失败，请重试")
     })
   }
-};
+}
+
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
       if (form.value.articleId != undefined) {
-        updateUser(form.value).then(response => {
+        updatePolicyArticle(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
@@ -585,6 +675,29 @@ function getPrimaryTagOption() {
     console.error(error)
   })
 }
+
+//返回到表格
+function handleBackToList(){
+  showAddForm.value = false;
+}
+//新增文章
+function submitArticleForm(){
+
+  showAddForm.value = false;
+  addArticle(form.value).then(response => {
+    proxy.$modal.msgSuccess("新增成功");
+    open.value = false;
+    getList();
+  });
+  form.category = undefined;
+  form.primaryTag = undefined;
+  form.title = undefined;
+  form.content = undefined;
+  form.publishDate = undefined;
+  form.deadlineDate = undefined;
+  form.status = "草稿";
+}
+
 
 onMounted(() => {
   getDeptTree()

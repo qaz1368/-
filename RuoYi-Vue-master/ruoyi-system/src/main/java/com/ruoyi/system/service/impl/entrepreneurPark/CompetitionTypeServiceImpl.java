@@ -7,12 +7,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.system.domain.DTO.CompetitionTypeDTO;
 import com.ruoyi.system.domain.entity.CompetitionName;
 import com.ruoyi.system.domain.entity.CompetitionType;
+import com.ruoyi.system.domain.entity.Region;
 import com.ruoyi.system.mapper.entrepreneurPark.CompetitionTypeMapper;
 import com.ruoyi.system.service.entrepreneurPark.CompetitionTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompetitionTypeServiceImpl extends ServiceImpl<CompetitionTypeMapper, CompetitionType> implements CompetitionTypeService {
@@ -44,17 +46,23 @@ public class CompetitionTypeServiceImpl extends ServiceImpl<CompetitionTypeMappe
 
     @Override
     public IPage<CompetitionType> getCompetitionTypesPage(int page, int size,String level) {
-        // 计算分页起始位置
-        int start = (page - 1) * size;
+        // Page构造方法：当前页, 每页显示记录数
+        Page<CompetitionType> competitionTypePage = new Page<>(page, size);
+        QueryWrapper<CompetitionType> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(level != null, "level", level);
 
-        // 调用 MyBatis 的分页查询方法
-        List<CompetitionType> competitionTypes = competitionTypeMapper.selectCompetitionTypesByPage(start, size, level);
+        List<CompetitionType> records = competitionTypeMapper.selectPage(competitionTypePage, queryWrapper).getRecords();
         Long count = lambdaQuery().select().count();
-        // 手动封装成 IPage 对象
-        IPage<CompetitionType> pageResult = new Page<>(page, size);
-        pageResult.setRecords(competitionTypes);
-        pageResult.setTotal(count);
-        return pageResult;
+        // 定义起始位置和每页大小
+        int start = (page - 1) * size; // 起始位置
+
+        List<CompetitionType> competitionTypeList = records.stream()
+                .skip(start)
+                .limit(size)
+                .collect(Collectors.toList());
+        competitionTypePage.setRecords(competitionTypeList);
+        competitionTypePage.setTotal(count);
+        return competitionTypePage;
 
     }
 }

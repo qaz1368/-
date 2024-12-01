@@ -98,7 +98,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="流程步骤顺序" prop="stepOrder">
+            <el-form-item label="流程顺序" prop="stepOrder">
               <el-input v-model="form.stepOrder" placeholder="请输入流程顺序" maxlength="50" />
             </el-form-item>
           </el-col>
@@ -496,25 +496,50 @@ function handleUpdate(row) {
   }
 };
 /** 提交按钮 */
-function submitForm() {
+const submitForm = () => {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
       if (form.value.processId != undefined) {
-        updateApprovalProcess(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
+        updateApprovalProcess(form.value)
+            .then(response => {
+              proxy.$modal.msgSuccess("修改成功");
+              open.value = false;
+              getList();
+            })
+            .catch(error => {
+              // 只在控制台记录错误
+              console.warn("修改审批流程时出错:", error);
+              // 显示友好的错误提示
+              proxy.$modal.msgError("操作失败，请稍后再试。");
+            });
       } else {
-        addApprovalProcess(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
+        addApprovalProcess(form.value)
+            .then(response => {
+              console.log("response ", response);
+              proxy.$modal.msgSuccess("新增成功");
+              open.value = false;
+              getList();
+            })
+            .catch(error => {
+              // 在控制台记录详细错误
+              console.warn("新增审批流程时出错:", error);
+
+              // 检查是否为数字格式错误，但只在控制台显示详细信息
+              if (error.message && error.message.includes('Cannot deserialize value of type `int` from String')) {
+                console.warn("数字格式错误：", error.message);
+                proxy.$modal.msgError("请输入有效的数字格式");
+              } else {
+                // 对于其他错误，显示通用错误消息
+                proxy.$modal.msgError("操作失败，请稍后再试。");
+              }
+            });
       }
     }
   });
-};
+}
+
+
+
 
 function getApplicationTypeOptions1() {
   getApplicationTypeOptions().then(res => {
