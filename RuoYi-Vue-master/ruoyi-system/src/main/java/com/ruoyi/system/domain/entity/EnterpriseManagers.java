@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,7 +17,7 @@ import java.util.Date;
 public class EnterpriseManagers {
 
     @ApiModelProperty("管理者ID")
-    @TableId("manager_id")  // 映射数据库字段
+    @TableId(value = "manager_id", type = IdType.AUTO)  // 映射数据库字段并设置自增
     @Excel(name = "管理者ID", type = Excel.Type.EXPORT)
     private Integer managerId;
 

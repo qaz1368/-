@@ -198,8 +198,15 @@
     </el-row>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="毕业院校" prop="position">
-          <el-input v-model="form.position" placeholder="请输入毕业院校" maxlength="50" />
+        <el-form-item label="公司名称" prop="company">
+          <el-select v-model="form.company" placeholder="请选择公司名称">
+            <el-option
+                v-for="option in form.enterpriseOptions"
+                :key="option"
+                :label="option"
+                :value="option"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
 
@@ -367,8 +374,9 @@ const data = reactive({
     politicalStatus: [{ required: false, message: "政治面貌可以为空", trigger: "change" }],
     almaMater: [{ required: false, message: "毕业院校可以为空", trigger: "blur" }, { max: 50, message: "毕业院校长度不能超过 50 个字符", trigger: "blur" }],
     createTime: [{ required: false, message: "创建时间不可更改", trigger: "blur" }],
-    remark: [{ required: false, message: "备注可以为空", trigger: "blur" }]
-}
+    remark: [{ required: false, message: "备注可以为空", trigger: "blur" }],
+    company: [{ required: true, message: "公司名称不能为空", trigger: "change" }] // 新增的公司名称验证规则
+  }
 
 });
 
