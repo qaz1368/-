@@ -407,6 +407,22 @@ function handleDeleteList() {
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => {});
 };
+/** 批量删除按钮操作 */
+function handleDeleteList() {
+  const selectedRows = getSelectedRows(); // 获取选中的行数据
+  if (!selectedRows || selectedRows.length === 0) {
+    proxy.$modal.msgError("请选择要删除的数据项");
+    return;
+  }
+
+  const enterpriseJobIds = selectedRows.map(row => row.enterpriseJobId);
+  proxy.$modal.confirm(`是否确认删除标签编号为"${enterpriseJobIds}"的数据项？`).then(function () {
+    return deleteJobEnterprisePositions(enterpriseJobIds);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+};
 /** 删除按钮操作 */
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除招聘信息为"' + row.enterpriseJobId + '"的数据项？').then(function () {
