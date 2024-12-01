@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.system.domain.DTO.EnterpriseManagersDTO;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.EnterpriseManagers;
 import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
@@ -14,7 +15,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +100,39 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
         resultPage.setCurrent(managersPageList.getCurrent());
 
         return resultPage;
+    }
+
+    @Override
+    public boolean addManager(EnterpriseManagersDTO enterpriseManagersDTO) {
+        EnterpriseManagers enterpriseManagers = new EnterpriseManagers();
+        BeanUtils.copyProperties(enterpriseManagersDTO,enterpriseManagers);
+        enterpriseManagers.setCreatedAt(new Date());
+        enterpriseManagers.setUpdatedAt(new Date());
+        QueryWrapper<Enterprise> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("company_name", enterpriseManagersDTO.getCompany());
+        Enterprise enterpriseEntity = enterpriseMapper.selectOne(queryWrapper1);
+        if (enterpriseEntity != null) {
+            enterpriseManagers.setCompanyId(enterpriseEntity.getCompanyId());
+            return save(enterpriseManagers);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean updateManagers(EnterpriseManagersDTO enterpriseManagersDTO) {
+        EnterpriseManagers enterpriseManagers = new EnterpriseManagers();
+        BeanUtils.copyProperties(enterpriseManagersDTO,enterpriseManagers);
+        enterpriseManagers.setUpdatedAt(new Date());
+        QueryWrapper<Enterprise> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("company_name", enterpriseManagersDTO.getCompany());
+        Enterprise enterpriseEntity = enterpriseMapper.selectOne(queryWrapper1);
+        if (enterpriseEntity != null) {
+            enterpriseManagers.setCompanyId(enterpriseEntity.getCompanyId());
+            return updateById(enterpriseManagers);
+        }
+
+        return false;
     }
 
 }

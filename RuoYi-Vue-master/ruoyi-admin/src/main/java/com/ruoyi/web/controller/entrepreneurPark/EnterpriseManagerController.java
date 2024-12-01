@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.DTO.EnterpriseManagersDTO;
 import com.ruoyi.system.domain.entity.CompetitionType;
 import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.EnterpriseManagers;
@@ -26,14 +27,14 @@ public class EnterpriseManagerController {
 
     @ApiOperation("新增企业管理者")
     @PostMapping("/add")
-    public boolean add(@RequestBody EnterpriseManagers manager) {
-        return managerService.saveManager(manager);
+    public boolean add(@RequestBody EnterpriseManagersDTO enterpriseManagersDTO) {
+        return managerService.addManager(enterpriseManagersDTO);
     }
 
     @ApiOperation("更新企业管理者信息")
     @PutMapping("/update")
-    public boolean update(@RequestBody EnterpriseManagers manager) {
-        return managerService.updateManager(manager);
+    public boolean update(@RequestBody EnterpriseManagersDTO enterpriseManagersDTO) {
+        return managerService.updateManagers(enterpriseManagersDTO);
     }
 
     @ApiOperation("删除企业管理者")
