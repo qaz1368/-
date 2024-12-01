@@ -19,13 +19,22 @@ export function addCompetitionType(data) {
   })
 }
 
-// 删除奖项类型列表
+// 删除比赛类型
 export function delCompetitionType(competitionId) {
   return request({
     url: `/competition-types/delete/${competitionId}`, // 使用模板字符串来插入 awardId
     method: 'delete'
   });
 }
+//批量删除比赛类型
+export function delCompetitionTypeList(ids) {
+  return request({
+    url: `/competition-types/deleteBatch`,
+    method: 'delete',
+    data: ids
+  })
+}
+
 
 
 //查询数据库全部的比赛类型

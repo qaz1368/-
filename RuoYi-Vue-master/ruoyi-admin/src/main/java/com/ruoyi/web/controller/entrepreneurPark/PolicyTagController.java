@@ -64,8 +64,8 @@ public class PolicyTagController {
     @ApiOperation("批量删除政策标签")
     @DeleteMapping("/batch")
     public boolean deletePolicyTags(
-            @ApiParam(value = "标签ID列表", required = true) @RequestBody List<Integer> ids) {
-        return policyTagService.removeByIds(ids);
+            @ApiParam(value = "标签ID列表", required = true) @RequestBody List<Integer> tagIds) {
+        return policyTagService.removeByIds(tagIds);
     }
 
     /**

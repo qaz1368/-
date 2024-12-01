@@ -24,6 +24,14 @@ export function deleteApprovalProcess(processId) {
   })
 }
 
+//processIds
+export function deleteApprovalProcessList(processIds) {
+  return request({
+    url: `/api/approval-process/delete-batch`,
+    method: 'delete',
+    data: processIds
+  })
+}
 
 // 新增审批流程
 export function addApprovalProcess(data) {

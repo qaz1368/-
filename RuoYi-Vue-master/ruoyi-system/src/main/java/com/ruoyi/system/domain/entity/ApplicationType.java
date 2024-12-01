@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @ApiModel("申请类型实体类")
 @Data
 @TableName("application_type")  // 映射数据库表 'application_type'
@@ -31,10 +33,10 @@ public class ApplicationType {
     @ApiModelProperty("创建时间")
     @TableField("created_at")  // 映射到 'created_at' 字段
     @Excel(name = "创建时间", type = Excel.Type.EXPORT)
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @ApiModelProperty("更新时间")
     @TableField("updated_at")  // 映射到 'updated_at' 字段
     @Excel(name = "更新时间", type = Excel.Type.EXPORT)
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 }

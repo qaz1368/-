@@ -18,6 +18,16 @@ export function deleteRegion(regionId) {
   })
 }
 
+//根据regionId删除地域信息
+export function deleteRegionList(regionIds) {
+  return request({
+    url: `/regions/batchDelete`,
+    method: 'delete',
+    data: regionIds
+  })
+}
+
+
 
 // 新增地域信息
 export function addRegion(data) {

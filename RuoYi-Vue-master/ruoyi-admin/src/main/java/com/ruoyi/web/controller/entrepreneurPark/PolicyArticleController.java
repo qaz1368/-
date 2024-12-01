@@ -68,8 +68,8 @@ public class PolicyArticleController {
     @ApiOperation("批量删除扶持政策文章")
     @DeleteMapping("/batch")
     public boolean deletePolicyArticles(
-            @ApiParam(value = "文章ID列表", required = true) @RequestBody List<Integer> ids) {
-        return policyArticleService.removeByIds(ids);
+            @ApiParam(value = "文章ID列表", required = true) @RequestBody List<Integer> articleIds) {
+        return policyArticleService.removeByIds(articleIds);
     }
 
     @ApiOperation("excel导出")

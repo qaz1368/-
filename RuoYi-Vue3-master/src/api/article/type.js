@@ -18,6 +18,15 @@ export function delType(categoryId) {
   });
 }
 
+//categoryIds
+export function delTypeList(categoryIds) {
+  return request({
+    url: `/policy-categories/batch`,
+    method: 'delete',
+    data: categoryIds
+  })
+}
+
 //添加文章
 export function addType(data) {
   return request({

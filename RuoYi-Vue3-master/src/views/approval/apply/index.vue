@@ -13,34 +13,6 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-                type="primary"
-                plain
-                icon="Plus"
-                @click="handleAdd"
-                v-hasPermi="['system:user:add']"
-            >新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="danger"
-                plain
-                icon="Delete"
-                :disabled="multiple"
-                @click="handleDelete"
-                v-hasPermi="['system:user:remove']"
-            >删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="info"
-                plain
-                icon="Upload"
-                @click="handleImport"
-                v-hasPermi="['system:user:import']"
-            >导入</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
                 type="warning"
                 plain
                 icon="Download"
@@ -60,11 +32,9 @@
           </el-table-column>
           <el-table-column label="申请类型" align="center" key="applicationType" prop="applicationType" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="申请人姓名" align="center" key="applicantName" prop="applicantName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="流程ID" align="center" key="processId" prop="processId" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="流程顺序" align="center" key="sequence" prop="sequence" v-if="columns[3].visible" :show-overflow-tooltip="true" />
           <el-table-column label="审批状态" align="center" key="approvalStatus" prop="approvalStatus" v-if="columns[4].visible" width="120" />
-          <el-table-column label="审批部门" align="center" key="department" prop="department" v-if="columns[4].visible" width="120" />
-          <el-table-column label="标签创建时间" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
+          <el-table-column label="审批日期" align="center" key="createdAt" prop="createdAt" v-if="columns[2].visible" :show-overflow-tooltip="true" >
             <template #default="scope">
               <span>{{ parseTime(scope.row.approvalDate) }}</span>
             </template>
@@ -283,7 +253,10 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    sequence: [{ required: true, message: '请输入流程顺序', trigger: 'blur' }],
+    sequence: [
+      { required: true, message: '请输入流程顺序', trigger: 'blur' },
+      { pattern: /^\d+$/, message: '流程顺序只能输入数字', trigger: 'blur' }
+    ],
     approvalStatus: [{ required: true, message: '请选择审批状态', trigger: 'change' }],
     comments: [{ required: true, message: '请输入审批备注', trigger: 'blur' }]
   },

@@ -27,6 +27,15 @@ export function deleteApplicationType(applicationTypeId) {
   })
 }
 
+//删除申请类型
+export function deleteApplicationTypeList(applicationTypeIds) {
+  return request({
+    url: `/application-type/deleteBatch`,
+    method: 'delete',
+    data: applicationTypeIds
+  })
+}
+
 // 通过ID获取申请类型信息
 export function getApplicationTypeById(applicationTypeId) {
   return request({

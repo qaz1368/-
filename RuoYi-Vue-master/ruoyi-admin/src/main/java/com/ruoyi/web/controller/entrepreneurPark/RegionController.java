@@ -2,8 +2,6 @@ package com.ruoyi.web.controller.entrepreneurPark;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.system.domain.entity.Application;
-import com.ruoyi.system.domain.entity.Enterprise;
 import com.ruoyi.system.domain.entity.Region;
 import com.ruoyi.system.service.entrepreneurPark.RegionService;
 import io.swagger.annotations.Api;
@@ -44,6 +42,10 @@ public class RegionController {
     @DeleteMapping("/batchDelete")
     @ApiOperation(value = "批量删除地域")
     public boolean batchDeleteRegions(@RequestBody List<Integer> regionIds) {
+
+        if (regionIds == null || regionIds.isEmpty()) {
+            return false;
+        }
         return regionService.deleteBatch(regionIds);
     }
 

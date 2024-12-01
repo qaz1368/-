@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import lombok.Data;
 public class Industry {
 
     @ApiModelProperty("行业ID")
-    @TableId("industry_id")  // 映射到 industry_id 字段，作为主键
+    @TableId(value = "industry_id", type = IdType.AUTO)
     @Excel(name = "行业ID", type = Excel.Type.EXPORT)
     private Integer industryId;
 

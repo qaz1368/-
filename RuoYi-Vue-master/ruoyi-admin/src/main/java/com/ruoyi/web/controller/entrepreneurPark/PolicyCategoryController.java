@@ -63,8 +63,8 @@ public class PolicyCategoryController {
     @ApiOperation("批量删除政策分类")
     @DeleteMapping("/batch")
     public boolean deletePolicyCategories(
-            @ApiParam(value = "分类ID列表", required = true) @RequestBody List<Integer> ids) {
-        return policyCategoryService.removeByIds(ids);
+            @ApiParam(value = "分类ID列表", required = true) @RequestBody List<Integer> categoryIds) {
+        return policyCategoryService.removeByIds(categoryIds);
     }
 
     /**

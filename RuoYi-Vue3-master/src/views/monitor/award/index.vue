@@ -49,18 +49,9 @@
                 plain
                 icon="Delete"
                 :disabled="multiple"
-                @click="handleDelete"
+                @click="handleDeleteList"
                 v-hasPermi="['system:user:remove']"
             >删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="info"
-                plain
-                icon="Upload"
-                @click="handleImport"
-                v-hasPermi="['system:user:import']"
-            >导入</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -230,9 +221,11 @@ import { useRouter } from 'vue-router'
 import { getToken } from "@/utils/auth"
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
 import {getEnterpriseOptions} from "../../../api/system/enterprise";
-import {addAward, delAward, getAwardByAwardId, listAward, updateAward} from "../../../api/monitor/award";
+import {addAward, delAward, deleteBatch, getAwardByAwardId, listAward, updateAward} from "../../../api/monitor/award";
 import {listCompetitionNameAll} from "../../../api/monitor/competitionName";
 import {getCompetitionType} from "../../../api/monitor/competitionType";
+import {deleteIndustryList} from "../../../api/system/industry";
+import {deletePolicyArticles} from "../../../api/article/article";
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -277,7 +270,7 @@ const columns = ref([
 
 const data = reactive({
   form: {
-    awardId: '',
+    awardId: undefined,
     year: '',
     level: '',
     type: '',
@@ -294,7 +287,7 @@ const data = reactive({
     pageSize: 10,
     userName: undefined,
     year: undefined,
-    type: undefined,
+    type: '',
     deptId: undefined
   },
   rules: {
@@ -396,6 +389,22 @@ function resetQuery() {
   handleQuery()
 }
 
+/** 批量删除按钮操作 */
+function handleDeleteList() {
+  const selectedRows = getSelectedRows(); // 获取选中的行数据
+  if (!selectedRows || selectedRows.length === 0) {
+    proxy.$modal.msgError("请选择要删除的数据项");
+    return;
+  }
+
+  const awardIds = selectedRows.map(row => row.awardId);
+  proxy.$modal.confirm(`是否确认删除标签编号为"${awardIds}"的数据项？`).then(function () {
+    return deleteBatch(awardIds);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+};
 // 删除按钮操作
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除奖项id为"' + row.awardId + '"的数据项？').then(function () {
@@ -454,13 +463,20 @@ function handleResetPwd(row) {
   }).catch(() => {})
 }
 
-// 选择条数
+const multipleTable = ref(null);
+const multipleSelection = ref([]);
+/** 选择条数  */
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.userId)
-  single.value = selection.length != 1
-  multiple.value = !selection.length
+  ids.value = selection.map(item => item.userId);
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
+  multipleSelection.value = selection; // 移除多余的点
 }
 
+// 获取选中的行数据
+const getSelectedRows = () => {
+  return multipleSelection.value;
+};
 // 导入按钮操作
 function handleImport() {
   upload.title = "用户导入"

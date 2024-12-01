@@ -25,6 +25,14 @@ export function delCompetitionName(competitionId) {
     method: 'delete'
   });
 }
+//批量删除比赛类型
+export function delCompetitionNameList(competitionIds) {
+  return request({
+    url: `/competition-names/deleteBatch`,
+    method: 'delete',
+    data: competitionIds
+  })
+}
 
 //根据award查询奖项信息
 export function getAwardByCompetition_id(competitionId) {

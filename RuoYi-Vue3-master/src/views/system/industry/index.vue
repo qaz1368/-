@@ -23,18 +23,9 @@
                 plain
                 icon="Delete"
                 :disabled="multiple"
-                @click="handleDelete"
+                @click="handleDeleteList"
                 v-hasPermi="['system:user:remove']"
             >删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="info"
-                plain
-                icon="Upload"
-                @click="handleImport"
-                v-hasPermi="['system:user:import']"
-            >导入</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -141,6 +132,8 @@ import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser,
 import { addPost, delPost, getTag, listTag, updateTag } from "@/api/article/tag";
 import { addRegion, deleteRegion, getRegionById, listRegion, updateRegion } from "@/api/system/region";
 import { addIndustry, getIndustryById, pageIndustry, updateIndustry, deleteIndustry } from "@/api/system/industry";
+import {deleteRegionList} from "../../../api/system/region";
+import {deleteIndustryList} from "../../../api/system/industry";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -246,6 +239,22 @@ function resetQuery() {
   handleQuery();
 }
 
+/** 批量删除按钮操作 */
+function handleDeleteList() {
+  const selectedRows = getSelectedRows(); // 获取选中的行数据
+  if (!selectedRows || selectedRows.length === 0) {
+    proxy.$modal.msgError("请选择要删除的数据项");
+    return;
+  }
+
+  const industryIds = selectedRows.map(row => row.industryId);
+  proxy.$modal.confirm(`是否确认删除标签编号为"${industryIds}"的数据项？`).then(function () {
+    return deleteIndustryList(industryIds);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+};
 function handleDelete(row) {
   const industryIds = row.industryId || ids.value;
   proxy.$modal.confirm('是否确认删除行业编号为"' + industryIds + '"的数据项？').then(function () {
@@ -305,12 +314,20 @@ function handleResetPwd(row) {
   }).catch(() => {});
 }
 
+const multipleTable = ref(null);
+const multipleSelection = ref([]);
+/** 选择条数  */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.userId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
+  multipleSelection.value = selection; // 移除多余的点
 }
 
+// 获取选中的行数据
+const getSelectedRows = () => {
+  return multipleSelection.value;
+};
 function handleImport() {
   upload.title = "用户导入";
   upload.open = true;

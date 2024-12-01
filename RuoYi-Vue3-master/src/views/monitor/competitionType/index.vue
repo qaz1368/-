@@ -35,18 +35,9 @@
                 plain
                 icon="Delete"
                 :disabled="multiple"
-                @click="handleDelete"
+                @click="handleDeleteList"
                 v-hasPermi="['system:user:remove']"
             >删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-                type="info"
-                plain
-                icon="Upload"
-                @click="handleImport"
-                v-hasPermi="['system:user:import']"
-            >导入</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button
@@ -163,6 +154,9 @@ import {
   getCompetitionTypeById,
   listCompetitionType, updateCompetitionType
 } from "@/api/monitor/competitionType";
+import {ref} from "vue";
+import {deleteIndustryList} from "../../../api/system/industry";
+import {delCompetitionTypeList} from "../../../api/monitor/competitionType";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -210,7 +204,10 @@ const columns = ref([
 ]);
 
 const data = reactive({
-  form: {},
+  form: {
+    id: undefined,
+    typeId: undefined,
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -220,10 +217,6 @@ const data = reactive({
     deptId: undefined
   },
   rules: {
-    userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
-    email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
   }
 });
 
@@ -270,6 +263,22 @@ function resetQuery() {
   queryParams.value.deptId = undefined;
   proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
+};
+/** 批量删除按钮操作 */
+function handleDeleteList() {
+  const selectedRows = getSelectedRows(); // 获取选中的行数据
+  if (!selectedRows || selectedRows.length === 0) {
+    proxy.$modal.msgError("请选择要删除的数据项");
+    return;
+  }
+  console.log(row.id)
+  const ids = selectedRows.map(row => row.id);
+  proxy.$modal.confirm(`是否确认删除标签编号为"${ids}"的数据项？`).then(function () {
+    return delCompetitionTypeList(ids);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
 };
 /** 删除按钮操作 */
 function handleDelete(row) {
@@ -330,11 +339,19 @@ function handleResetPwd(row) {
     });
   }).catch(() => {});
 };
+const multipleTable = ref(null);
+const multipleSelection = ref([]);
 /** 选择条数  */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.userId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
+  multipleSelection.value = selection; // 移除多余的点
+}
+
+// 获取选中的行数据
+const getSelectedRows = () => {
+  return multipleSelection.value;
 };
 /** 导入按钮操作 */
 function handleImport() {
@@ -365,6 +382,7 @@ function submitFileForm() {
 /** 重置操作表单 */
 function reset() {
   form.value = {
+    id: undefined,
     level:undefined
   };
   proxy.resetForm("userRef");
@@ -389,6 +407,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
   getCompetitionTypeById(row.id).then(response => {
+    console.log("response", response)
     form.value = response;
     open.value = true;
     title.value = "修改用户";

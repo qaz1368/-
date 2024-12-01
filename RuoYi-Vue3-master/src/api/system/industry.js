@@ -17,7 +17,14 @@ export function deleteIndustry(industryId) {
     method: 'delete'
   })
 }
-
+//根据regionId删除地域信息
+export function deleteIndustryList(industryIds) {
+  return request({
+    url: `/industries/deleteBatch`,
+    method: 'delete',
+    data: industryIds
+  })
+}
 
 // 新增行业
 export function addIndustry(data) {

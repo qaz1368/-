@@ -34,6 +34,15 @@ export function delArticle(articleId) {
   });
 }
 
+//categoryIds
+export function deletePolicyArticles(articleIds) {
+  return request({
+    url: `/policy-articles/batch`,
+    method: 'delete',
+    data: articleIds
+  })
+}
+
 //修改奖项名称信息
 export function updatePolicyArticle(data) {
   return request({

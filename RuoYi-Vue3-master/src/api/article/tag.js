@@ -17,7 +17,14 @@ export function delPost(tagId) {
     method: 'delete'
   })
 }
-
+//categoryIds
+export function deletePolicyTags(tagIds) {
+  return request({
+    url: `/policy-tags/batch`,
+    method: 'delete',
+    data: tagIds
+  })
+}
 
 // 新增标签信息
 export function addPost(data) {

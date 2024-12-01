@@ -26,7 +26,14 @@ export function delAward(awardId) {
     method: 'delete'
   });
 }
-
+// 删除奖项列表
+export function deleteBatch(awardIds) {
+  return request({
+    url: `/award-details/deleteBatch`, // 使用模板字符串来插入 awardId
+    method: 'delete',
+    data: awardIds
+  });
+}
 // 修改奖项
 export function updateAward(data) {
   return request({

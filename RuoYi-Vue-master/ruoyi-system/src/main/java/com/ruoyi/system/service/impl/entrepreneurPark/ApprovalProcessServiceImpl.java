@@ -40,6 +40,8 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
     private SysRoleMapper sysRoleMapper;
     @Autowired
     private SysRoleDeptMapper sysRoleDeptMapper;
+    @Autowired
+    private ApprovalProcessService approvalProcessService;
 
     @Override
     public Page<ApprovalProcessVO> getApprovalProcessPage(int pageNum, int pageSize) {
@@ -90,6 +92,31 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
 
     @Override
     public boolean addApprovalProcess(ApprovalProcessDTO approvalProcessDTO) {
+        // 创建查询条件
+        QueryWrapper<ApplicationType> queryWrapperApplication = new QueryWrapper<>();
+        queryWrapperApplication.eq("application_name", approvalProcessDTO.getApplicationType());
+
+        // 查询申请类型
+        ApplicationType applicationType1 = applicationTypeService.getOne(queryWrapperApplication);
+
+        if (applicationType1 != null) {
+
+            // 创建查询条件，获取相同申请类型的所有流程顺序
+            QueryWrapper<ApprovalProcess> processQueryWrapper = new QueryWrapper<>();
+            processQueryWrapper.eq("application_type_id", applicationType1.getApplicationTypeId());
+
+            // 查询所有流程
+            List<ApprovalProcess> existingProcesses = approvalProcessService.list(processQueryWrapper);
+
+            // 检查当前的 stepOrder 是否已经存在
+            boolean stepOrderExists = existingProcesses.stream()
+                    .anyMatch(process -> process.getStepOrder().equals(approvalProcessDTO.getStepOrder()));
+
+            if (stepOrderExists) {
+                return false; // 已经存在相同的 stepOrder
+            }
+        }
+
         if (approvalProcessDTO != null) {
             ApprovalProcess approvalProcess = new ApprovalProcess();
             BeanUtils.copyProperties(approvalProcessDTO, approvalProcess);
@@ -131,6 +158,30 @@ public class ApprovalProcessServiceImpl extends ServiceImpl<ApprovalProcessMappe
 
     @Override
     public boolean updateApprovalProcess(ApprovalProcessDTO approvalProcessDTO) {
+        // 创建查询条件
+        QueryWrapper<ApplicationType> queryWrapperApplication = new QueryWrapper<>();
+        queryWrapperApplication.eq("application_name", approvalProcessDTO.getApplicationType());
+
+        // 查询申请类型
+        ApplicationType applicationType1 = applicationTypeService.getOne(queryWrapperApplication);
+
+        if (applicationType1 != null) {
+
+            // 创建查询条件，获取相同申请类型的所有流程顺序
+            QueryWrapper<ApprovalProcess> processQueryWrapper = new QueryWrapper<>();
+            processQueryWrapper.eq("application_type_id", applicationType1.getApplicationTypeId());
+
+            // 查询所有流程
+            List<ApprovalProcess> existingProcesses = approvalProcessService.list(processQueryWrapper);
+
+            // 检查当前的 stepOrder 是否已经存在
+            boolean stepOrderExists = existingProcesses.stream()
+                    .anyMatch(process -> process.getStepOrder().equals(approvalProcessDTO.getStepOrder()));
+
+            if (stepOrderExists) {
+                return false; // 已经存在相同的 stepOrder
+            }
+        }
         if (approvalProcessDTO != null) {
             ApprovalProcess approvalProcess = new ApprovalProcess();
             BeanUtils.copyProperties(approvalProcessDTO, approvalProcess);

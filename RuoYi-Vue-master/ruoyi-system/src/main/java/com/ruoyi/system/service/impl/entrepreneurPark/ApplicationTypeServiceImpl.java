@@ -9,6 +9,9 @@ import com.ruoyi.system.mapper.entrepreneurPark.ApplicationTypeMapper;
 import com.ruoyi.system.service.entrepreneurPark.ApplicationTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -19,11 +22,15 @@ public class ApplicationTypeServiceImpl extends ServiceImpl<ApplicationTypeMappe
 
     @Override
     public boolean saveApplicationType(ApplicationType applicationType) {
+        applicationType.setApplicationTypeId(null);
+        applicationType.setCreatedAt(LocalDateTime.now());
+        applicationType.setUpdatedAt(LocalDateTime.now());
         return save(applicationType);  // MyBatis-Plus 提供的保存方法
     }
 
     @Override
     public boolean updateApplicationType(ApplicationType applicationType) {
+        applicationType.setUpdatedAt(LocalDateTime.now());
         return updateById(applicationType);  // MyBatis-Plus 提供的更新方法
     }
 

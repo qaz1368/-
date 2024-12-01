@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询申请信息列表
 export function listApplication(query) {
   return request({
-    url: '/api/application/list',
+    url: '/api/application/list1',
     method: 'get',
     params: query
   })
