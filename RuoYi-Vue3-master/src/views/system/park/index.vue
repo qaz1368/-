@@ -96,11 +96,11 @@
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+    <el-dialog :title="title" v-model="open" width="750px" append-to-body>
       <el-form :model="form" :rules="rules" ref="parkRef" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="创业园名称" prop="parkName">
+            <el-form-item label="名称" prop="parkName">
               <el-input v-model="form.parkName" placeholder="请输入创业园名称" maxlength="22" />
             </el-form-item>
           </el-col>
@@ -124,38 +124,38 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="团队成员数量" prop="companyMembers">
+            <el-form-item label="成员数量" prop="companyMembers">
               <el-input v-model.number="form.companyMembers" placeholder="请输入团队成员数量" type="number" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="创业毕业生数量" prop="graduateCount">
+            <el-form-item label="毕业生数量" prop="graduateCount" class="no-wrap-label">
               <el-input v-model="form.graduateCount" placeholder="请输入创业毕业生数量" maxlength="100" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="创业项目数量" prop="projectCount">
+            <el-form-item label="项目数量" prop="projectCount" class="no-wrap-label">
               <el-input v-model.number="form.projectCount" placeholder="请输入创业项目数量" type="number" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="培训学员数量" prop="traineeCount">
+            <el-form-item label="学员数量" prop="traineeCount" class="no-wrap-label">
               <el-input v-model="form.traineeCount" placeholder="请输入培训学员数量" maxlength="100" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="带动就业人数数量" prop="employmentCount">
+          <el-col :span="12" >
+            <el-form-item label="带动就业" prop="employmentCount" class="no-wrap-label">
               <el-input v-model.number="form.employmentCount" placeholder="请输入带动就业人数数量" type="number" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="资金支持金额" prop="financialSupport">
+            <el-form-item label="支持金额" prop="financialSupport" class="no-wrap-label">
               <el-input v-model.number="form.financialSupport" placeholder="请输入资金支持金额" type="number" />
             </el-form-item>
           </el-col>
@@ -179,7 +179,7 @@
         </el-row>
         <el-row>
         <el-col :span="12">
-          <el-form-item label="政府补贴金额" prop="governmentSubsidy">
+          <el-form-item label="补贴金额" prop="governmentSubsidy" class="no-wrap-label">
             <el-input v-model.number="form.governmentSubsidy" placeholder="请输入政府补贴金额" type="number" />
           </el-form-item>
         </el-col>
@@ -593,5 +593,72 @@ onMounted(() => {
 .el-table {
   margin: 0;
   padding: 0;
+}
+
+
+.no-wrap-label :deep(.el-form-item__label) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: Adjust the label width for the specific field if needed */
+.no-wrap-label {
+  --el-form-label-width: 140px !important;
+}
+
+/* Ensure dialog has proper width on mobile */
+@media screen and (max-width: 768px) {
+  :deep(.el-dialog) {
+    width: 95% !important;
+  }
+}
+
+.no-wrap-label .el-form-item__label {
+  white-space: nowrap;
+}
+
+.park-form {
+  /* 设置整体表单样式 */
+  font-size: 14px;
+}
+
+.park-form :deep(.el-form-item__label) {
+  /* 增加标签基础宽度 */
+  min-width: 120px !important;
+  font-size: 14px;
+}
+
+/* 为特定的长标签设置样式 */
+.custom-label :deep(.el-form-item__label) {
+  width: auto !important;
+  min-width: 120px;
+  padding-right: 12px;
+  white-space: nowrap;
+}
+
+/* 调整表单项间距 */
+.el-row {
+  margin-bottom: 8px;
+}
+
+/* 确保输入框有足够空间 */
+.el-form-item :deep(.el-input) {
+  width: calc(100% - 8px);
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+  .park-form :deep(.el-form-item__label) {
+    font-size: 13px;
+  }
+
+  .custom-label :deep(.el-form-item__label) {
+    min-width: 100px;
+  }
+
+  :deep(.el-dialog) {
+    width: 95% !important;
+  }
 }
 </style>

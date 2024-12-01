@@ -132,8 +132,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="补助金额(万)" prop="subsidyAmount">
-              <el-input v-model="form.subsidyAmount" placeholder="请输入补助金额" />
+            <el-form-item label="补助金额" prop="subsidyAmount">
+              <el-input v-model="form.subsidyAmount" placeholder="请输入补助金额(万)" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -166,7 +166,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="补助或奖项的描述" prop="description">
-              <el-input v-model="form.description" placeholder="请输入补助或奖项的描述" type="textarea" />
+              <el-input v-model="form.description" rows="7" placeholder="请输入补助或奖项的描述" type="textarea" />
             </el-form-item>
           </el-col>
         </el-row>

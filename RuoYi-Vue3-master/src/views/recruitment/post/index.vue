@@ -307,21 +307,7 @@ function handleDeleteList() {
   }).catch(() => {});
 };
 /** 批量删除按钮操作 */
-function handleDeleteList() {
-  const selectedRows = getSelectedRows(); // 获取选中的行数据
-  if (!selectedRows || selectedRows.length === 0) {
-    proxy.$modal.msgError("请选择要删除的数据项");
-    return;
-  }
 
-  const positionIds = selectedRows.map(row => row.positionId);
-  proxy.$modal.confirm(`是否确认删除标签编号为"${positionIds}"的数据项？`).then(function () {
-    return deleteJobPositions(positionIds);
-  }).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
-};
 /** 删除按钮操作 */
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除岗位编号为"' + row.positionId + '"的数据项？').then(function () {
