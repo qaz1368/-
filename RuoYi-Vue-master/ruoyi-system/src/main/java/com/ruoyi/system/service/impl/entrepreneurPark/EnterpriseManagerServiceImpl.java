@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.vo.EnterpriseManagersVO;
 import com.ruoyi.system.mapper.entrepreneurPark.EnterpriseManagerMapper;
 import com.ruoyi.system.mapper.entrepreneurPark.EnterpriseMapper;
 import com.ruoyi.system.service.entrepreneurPark.EnterpriseManagerService;
+import com.ruoyi.system.service.entrepreneurPark.EnterpriseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
 
     @Autowired
     private EnterpriseMapper enterpriseMapper;
+    @Autowired
+    private EnterpriseService enterpriseService;
 
     @Override
     public boolean saveManager(EnterpriseManagers manager) {
@@ -137,6 +140,19 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
         }
 
         return false;
+    }
+
+    @Override
+    public EnterpriseManagers getByIdManagerId(Integer managerId) {
+        EnterpriseManagers enterpriseManagers=managerMapper.selectByManageId(managerId);
+
+        Integer companyId = enterpriseManagers.getCompanyId();
+        Enterprise enterprise = enterpriseService.getById(companyId);
+
+        enterpriseManagers.setCompany(enterprise.getCompanyName());
+
+
+        return enterpriseManagers;
     }
 
 }

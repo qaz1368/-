@@ -69,7 +69,9 @@ public class EnterpriseManagerController {
     @ApiOperation("根据manager_id查询企业管理者信息")
     @GetMapping("/getManager/{managerId}")
     public EnterpriseManagers getManager(@PathVariable Integer managerId) {
-        return managerService.getById(managerId);
+
+
+        return managerService.getByIdManagerId(managerId);
     }
 
     /**

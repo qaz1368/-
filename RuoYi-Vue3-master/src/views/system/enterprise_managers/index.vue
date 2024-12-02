@@ -168,7 +168,7 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="专业" prop="major">
-          <el-input v-model="form.major" placeholder="请输入毕业院校" maxlength="50" />
+          <el-input v-model="form.major" placeholder="请输入专业" maxlength="50" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -209,7 +209,11 @@
           </el-select>
         </el-form-item>
       </el-col>
-
+      <el-col :span="12">
+        <el-form-item label="职位" prop="position">
+          <el-input v-model="form.position" placeholder="请输入职位" maxlength="50" />
+        </el-form-item>
+      </el-col>
     </el-row>
     <el-row>
       <el-col :span="24">
