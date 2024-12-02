@@ -63,7 +63,7 @@
           </el-table-column>
           <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-button link type="primary" icon="View" @click="openViewDialog(scope.row)" v-hasPermi="['system:user:view']">查看</el-button>
+              <el-button  v-if="!isAdmin" link type="primary" icon="View" @click="openViewDialog(scope.row)"   v-hasPermi="['approval:application:list']">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -209,6 +209,7 @@ import { parseTime, addDateRange } from '@/utils/ruoyi'
 import { listApplication, addApplication, passApplication, rejectApplication } from '@/api/application/application'
 import {getIndustryOptions} from "@/api/system/industry";
 import {getApplicationTypeOptions} from "@/api/approval/applyProcess";
+import {getUserMessage} from "@/api/system/user";
 
 // 获取应用实例
 const { proxy } = getCurrentInstance()
@@ -315,6 +316,19 @@ function getList() {
     loading.value = false;
   });
 }
+
+const role = reactive({
+  userMsg: '' // 定义一个响应式对象来存储用户消息
+});
+
+//查询当前登录用户
+function getUser() {
+  getUserMessage().then(response => {
+    role.userMsg = response.msg;
+  });
+}
+// 计算属性判断是否为管理员
+const isAdmin = computed(() => role.userMsg === 'admin');
 
 // 取消按钮
 function cancel() {
@@ -490,6 +504,8 @@ function GetIndustryOptions() {
   });
 }
 
+
+
 // 创建响应式对象
 const stateType = reactive({
   typeOptions: [],
@@ -513,6 +529,7 @@ onMounted(() => {
   GetIndustryOptions()
   //查询申请类型
   GetApplicationTypeOptions()
+  getUser()
 })
 </script>
 

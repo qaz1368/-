@@ -3,6 +3,8 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -245,10 +247,24 @@ public class SysUserController extends BaseController
     }
 
     /**
+     * 获得当前登录用户
+     */
+    @GetMapping("/get/profile")
+    @ApiOperation("获得当前登录用户")
+    public AjaxResult profile()
+    {
+        String createAccount = SecurityUtils.getUsername();
+        return success(createAccount);
+    }
+
+
+
+    /**
      * 获取部门树列表
      */
-    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @PreAuthorize("@ss.hasRole('department')")
     @GetMapping("/deptTree")
+
     public AjaxResult deptTree(SysDept dept)
     {
         return success(deptService.selectDeptTreeList(dept));

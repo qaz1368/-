@@ -183,10 +183,10 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Override
     public void checkRoleAllowed(SysRole role)
     {
-        if (StringUtils.isNotNull(role.getRoleId()) && role.isAdmin())
-        {
-            throw new ServiceException("不允许操作超级管理员角色");
-        }
+//        if (StringUtils.isNotNull(role.getRoleId()) && role.isAdmin())
+//        {
+//            throw new ServiceException("不允许操作超级管理员角色");
+//        }
     }
 
     /**

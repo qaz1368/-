@@ -763,37 +763,58 @@ function handleAdd() {
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  reset();
-  console.log("row", row)
   if (row && row.companyId) {
     getEnterprise(row.companyId).then(response => {
-      form.value = { ...response, industryOptions: form.value.industryOptions, regionOptions: form.value.regionOptions,
+      // 转换布尔值为中文
+      const transformedResponse = {
+        ...response,
+        governmentSubsidy: response.governmentSubsidy ? '是' : '否',
+        socialSecurity: response.socialSecurity ? '是' : '否',
+        entrepreneurshipGuidance: response.entrepreneurshipGuidance ? '是' : '否'
+      };
+
+      // 合并 transformedResponse 和现有的 form.value 属性
+      form.value = {
+        ...form.value,
+        ...transformedResponse,
+        industryOptions: form.value.industryOptions,
+        regionOptions: form.value.regionOptions,
         legalPersonOptions: form.value.legalPersonOptions,
         incubatorOptions: form.value.incubatorOptions,
-        managerNameOptions: form.value.managerNameOptions}
-      console.log("form.value", form.value)
-      form.value = response.data;
-      open.value = true
-      title.value = "修改企业"
-    }).catch(error => {
-      console.error("修改企业时出错：", error)
-      proxy.$modal.msgError("修改企业失败，请重试")
-    })
-  }
+        managerNameOptions: form.value.managerNameOptions
+      };
 
+      console.log("form.managerName", form.managerName);
+      open.value = true;
+      title.value = "修改企业";
+    }).catch(error => {
+      console.error("修改企业时出错：", error);
+      proxy.$modal.msgError("修改企业失败，请重试");
+    });
+  }
 };
+
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.companyId != undefined) {
-        updateEnterprise(form.value).then(response => {
+      // 创建一个副本并进行转换
+      const formData = {
+        ...form.value,
+        governmentSubsidy: form.value.governmentSubsidy === '是' ? true : false,
+        socialSecurity: form.value.socialSecurity === '是' ? true : false,
+        entrepreneurshipGuidance: form.value.entrepreneurshipGuidance === '是' ? true : false
+      };
+
+      if (formData.companyId != undefined) {
+        console.log("触发了吗")
+        updateEnterprise(formData).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addEnterprise(form.value).then(response => {
+        addEnterprise(formData).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -802,6 +823,7 @@ function submitForm() {
     }
   });
 };
+
 function getIndustryOption() {
   getIndustryOptions().then(res => {
 
@@ -814,8 +836,10 @@ function getIndustryOption() {
 }
 
 function getRegionOption() {
+  console.log("触发了吗")
   getRegionOptions().then(res => {
     const regionNames = res.map(item => item.regionName)
+    console.log("regionNames",regionNames)
     form.value.regionOptions = regionNames
     console.log("form.value.regionOptions", form.value.regionOptions)
   }).catch(error => {

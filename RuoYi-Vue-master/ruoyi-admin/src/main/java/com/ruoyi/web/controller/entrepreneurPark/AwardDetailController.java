@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -31,24 +32,28 @@ public class AwardDetailController {
 
     @ApiOperation("新增获奖情况")
     @PostMapping("/add")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean add(@RequestBody AwardDetailDTO awardDetailDTO) {
         return awardDetailService.saveAwardDetail(awardDetailDTO);
     }
 
     @ApiOperation("更新获奖情况")
     @PutMapping("/update")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean update(@RequestBody AwardDetailDTO awardDetailDTO) {
         return awardDetailService.updateAwardDetail(awardDetailDTO);
     }
 
     @ApiOperation("删除获奖情况")
     @DeleteMapping("/delete/{awardId}")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean delete(@PathVariable Integer awardId) {
         return awardDetailService.deleteAwardDetail(awardId);
     }
 
     @ApiOperation("批量删除获奖情况")
     @DeleteMapping("/deleteBatch")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean deleteBatch(@RequestBody List<Integer> awardIds) {
         return awardDetailService.deleteBatch(awardIds);
     }
@@ -56,6 +61,7 @@ public class AwardDetailController {
 
     @ApiOperation("分页查询获奖情况Integer typeId")
     @GetMapping("/getAwardDetailsPage")
+    @PreAuthorize("@ss.hasRole('department')")
     public Page<AwardDetailVO> getAwardDetailsPage(
             @RequestParam(value = "pageNum", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -66,6 +72,7 @@ public class AwardDetailController {
 
     @ApiOperation("分页查询获奖情况String type")
     @GetMapping("/getAwardDetailsPage1")
+    @PreAuthorize("@ss.hasRole('department')")
     public Page<AwardDetailVO> getAwardDetailsPage1(
             @RequestParam(value = "pageNum", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -76,6 +83,7 @@ public class AwardDetailController {
 
     @ApiOperation("获取对应级别近4年获奖情况")
     @GetMapping("/getAwardDetailstypeId")
+    @PreAuthorize("@ss.hasRole('department')")
     public AwardYearVO getAwardDetailstypeId(
             @ApiParam(value = "比赛类型") @RequestParam(required = false) Integer typeId
     ) {
@@ -84,6 +92,7 @@ public class AwardDetailController {
 
     @ApiOperation("获取id对应获奖情况")
     @GetMapping("/getAwardDetailsId/{awardId}")
+    @PreAuthorize("@ss.hasRole('department')")
     public AwardDetailVO getAwardDetailsId(
             @ApiParam(value = "获奖情况ID", required = true) @PathVariable Integer awardId) {
 
@@ -95,6 +104,7 @@ public class AwardDetailController {
      */
     @ApiOperation("根据AwardId获取获奖情况")
     @GetMapping("/getAwardDetail/{awardId}")
+    @PreAuthorize("@ss.hasRole('department')")
     public AjaxResult getAwardDetail(@PathVariable Integer awardId) {
 
         try {
@@ -106,6 +116,7 @@ public class AwardDetailController {
 
     @ApiOperation("获取获奖总数")
     @GetMapping("/getTotalAwardCount")
+    @PreAuthorize("@ss.hasRole('department')")
     public AjaxResult getTotalAwardCount() {
         try {
             long totalAwardCount = awardDetailService.getTotalAwardCount();
@@ -117,6 +128,7 @@ public class AwardDetailController {
 
     @ApiOperation("获取获奖总补贴")
     @GetMapping("/getTotalSubsidyAmount")
+    @PreAuthorize("@ss.hasRole('department')")
     public AjaxResult getTotalSubsidyAmount() {
         try {
             BigDecimal totalSubsidyAmount = awardDetailService.getTotalSubsidyAmount();
@@ -128,6 +140,7 @@ public class AwardDetailController {
 
     @ApiOperation("获取获奖类型对应的补贴金额")
     @GetMapping("/getAwardTypeSummary")
+    @PreAuthorize("@ss.hasRole('department')")
     public AjaxResult getAwardTypeSummary() {
         try {
             List<AwardTypeVO> awardTypeSummary = awardDetailService.getAwardTypeSummary();
@@ -140,6 +153,7 @@ public class AwardDetailController {
 
     @ApiOperation("excel导出")
     @PostMapping("/export")
+    @PreAuthorize("@ss.hasRole('department')")
     public void export(HttpServletResponse response) {
         // 查询表里全部数据
         List<AwardDetail> list = awardDetailService.lambdaQuery().select().list();

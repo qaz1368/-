@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,24 +26,28 @@ public class ApplicationTypeController {
 
     @ApiOperation("新增申请类型")
     @PostMapping("/add")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean addApplicationType(@RequestBody ApplicationType applicationType) {
         return applicationTypeService.saveApplicationType(applicationType);
     }
 
     @ApiOperation("更新申请类型")
     @PutMapping("/update")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean updateApplicationType(@RequestBody ApplicationType applicationType) {
         return applicationTypeService.updateApplicationType(applicationType);
     }
 
     @ApiOperation("删除申请类型")
     @DeleteMapping("/delete/{applicationTypeId}")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean deleteApplicationType(@PathVariable Integer applicationTypeId) {
         return applicationTypeService.deleteApplicationType(applicationTypeId);
     }
 
     @ApiOperation("批量删除申请类型")
     @DeleteMapping("/deleteBatch")
+    @PreAuthorize("@ss.hasRole('department')")
     public boolean deleteBatch(@RequestBody List<Integer> applicationTypeIds) {
         return applicationTypeService.deleteBatch(applicationTypeIds);
     }
@@ -59,6 +64,7 @@ public class ApplicationTypeController {
 
     @ApiOperation("通过ID获取申请类型信息")
     @GetMapping("/get/{applicationTypeId}")
+    @PreAuthorize("@ss.hasRole('department')")
     public ApplicationType getApplicationTypeById(@PathVariable("applicationTypeId") Integer applicationTypeId) {
         return applicationTypeService.getById(applicationTypeId);
     }
@@ -68,6 +74,7 @@ public class ApplicationTypeController {
      */
     @ApiOperation("查询数据库全部申请类型")
     @GetMapping("/getApplicationTypeOptions")
+    @PreAuthorize("@ss.hasRole('department')")
     public List<ApplicationType> getApplicationTypeOptions() {
         return applicationTypeService.list();
     }

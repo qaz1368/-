@@ -133,3 +133,12 @@ export function deptTreeSelect() {
     method: 'get'
   })
 }
+
+
+//获得当前登录用户id
+export function getUserMessage() {
+  return request({
+    url: '/system/user/get/profile',
+    method: 'get'
+  })
+}

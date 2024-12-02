@@ -143,16 +143,26 @@ public class EnterpriseManagerServiceImpl extends ServiceImpl<EnterpriseManagerM
     }
 
     @Override
-    public EnterpriseManagers getByIdManagerId(Integer managerId) {
-        EnterpriseManagers enterpriseManagers=managerMapper.selectByManageId(managerId);
+    public EnterpriseManagersVO getByIdManagerId(Integer managerId) {
+        // 获取企业管理人员实体对象
+        EnterpriseManagers enterpriseManagers = managerMapper.selectByManageId(managerId);
 
+        // 获取公司ID
         Integer companyId = enterpriseManagers.getCompanyId();
+
+        // 根据公司ID获取公司实体对象
         Enterprise enterprise = enterpriseService.getById(companyId);
 
-        enterpriseManagers.setCompany(enterprise.getCompanyName());
+        // 创建企业管理人员视图对象
+        EnterpriseManagersVO enterpriseManagersVO = new EnterpriseManagersVO();
 
+        // 使用 BeanUtils 复制属性
+        BeanUtils.copyProperties(enterpriseManagers, enterpriseManagersVO);
 
-        return enterpriseManagers;
+        // 设置公司名称
+        enterpriseManagersVO.setCompany(enterprise.getCompanyName());
+
+        return enterpriseManagersVO;
     }
 
 }

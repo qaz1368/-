@@ -79,10 +79,10 @@
   <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
     <template #default="scope">
       <el-tooltip content="修改" placement="top">
-        <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:policyCategory:edit']"></el-button>
+        <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"></el-button>
       </el-tooltip>
       <el-tooltip content="删除" placement="top">
-        <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:policyCategory:remove']"></el-button>
+        <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" ></el-button>
       </el-tooltip>
     </template>
   </el-table-column>
@@ -167,10 +167,9 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {addType, delType, getType, listType, updateType} from "@/api/article/type";
-import {delTypeList, getCategoryOptions} from "../../../api/article/type";
+import {addType, delType, getType, listType, updateType,delTypeList, getCategoryOptions} from "@/api/article/type";
 import {ref} from "vue";
-import {deletePolicyArticles} from "../../../api/article/article";
+
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();

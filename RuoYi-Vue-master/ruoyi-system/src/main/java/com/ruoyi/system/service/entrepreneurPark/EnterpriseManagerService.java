@@ -24,5 +24,5 @@ public interface EnterpriseManagerService extends IService<EnterpriseManagers> {
 
     boolean updateManagers(EnterpriseManagersDTO enterpriseManagersDTO);
 
-    EnterpriseManagers getByIdManagerId(Integer managerId);
+    EnterpriseManagersVO getByIdManagerId(Integer managerId);
 }

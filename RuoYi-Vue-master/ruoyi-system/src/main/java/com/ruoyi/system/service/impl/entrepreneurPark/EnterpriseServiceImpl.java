@@ -226,9 +226,9 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
         enterprise.setUpdatedAt(LocalDateTime.now());
         QueryWrapper<Enterprise> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("company_name",enterprise.getCompanyName());
-        if (count(queryWrapper)>0){
-            throw new RuntimeException("企业已存在");
-        }
+//        if (count(queryWrapper)>0){
+//            throw new RuntimeException("企业已存在");
+//    }
         QueryWrapper<Industry> industryQueryWrapper = new QueryWrapper<>();
         industryQueryWrapper.eq("industry_name",enterpriseDTO.getIndustry());
         Industry industry = industryMapper.selectOne(industryQueryWrapper);
@@ -262,7 +262,7 @@ public class EnterpriseServiceImpl extends ServiceImpl<EnterpriseMapper, Enterpr
         enterprise.setManagerId(enterpriseManagers.getManagerId());
 
         QueryWrapper<EnterpriseManagers> enterpriseManagersQueryWrapper1 = new QueryWrapper<>();
-        enterpriseManagersQueryWrapper1.eq("legal_person",enterpriseDTO.getLegalPerson());
+        enterpriseManagersQueryWrapper1.eq("name",enterpriseDTO.getLegalPerson());
         EnterpriseManagers enterpriseManagers1 = enterpriseManagersMapper.selectOne(enterpriseManagersQueryWrapper1);
         if (enterpriseManagers1==null){
             throw new RuntimeException("企业管理者不存在");

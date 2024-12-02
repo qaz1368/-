@@ -97,7 +97,4 @@ public class EnterpriseManagers {
     @Excel(name = "更新时间", type = Excel.Type.EXPORT)
     private Date updatedAt;
 
-    @ApiModelProperty("公司名称")
-    @Excel(name = "公司名称", type = Excel.Type.EXPORT)
-    private String company;
 }

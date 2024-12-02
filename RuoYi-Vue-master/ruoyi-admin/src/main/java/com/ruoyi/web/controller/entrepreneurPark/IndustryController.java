@@ -40,6 +40,7 @@ public class IndustryController {
 
     @ApiOperation("删除行业")
     @DeleteMapping("/delete/{industryId}")
+    @PreAuthorize("@ss.hasPermi('system:industry:remove')")
     public boolean deleteIndustry(@PathVariable Integer industryId) {
         return industryService.deleteIndustry(industryId);
     }

@@ -127,66 +127,27 @@
     </el-dialog>
 
 
-    <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
-      <el-upload
-          ref="uploadRef"
-          :limit="1"
-          accept=".xlsx, .xls"
-          :headers="upload.headers"
-          :action="upload.url + '?updateSupport=' + upload.updateSupport"
-          :disabled="upload.isUploading"
-          :on-progress="handleFileUploadProgress"
-          :on-success="handleFileSuccess"
-          :auto-upload="false"
-          drag
-      >
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <template #tip>
-          <div class="el-upload__tip text-center">
-            <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
-            </div>
-            <span>仅允许导入xls、xlsx格式文件。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
-          </div>
-        </template>
-      </el-upload>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitFileForm">确 定</el-button>
-          <el-button @click="upload.open = false">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+
   </div>
 </template>
 
 <script setup name="User">
 import { getToken } from "@/utils/auth";
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
-import {
+import {  getUser, deptTreeSelect } from "@/api/system/user";
 
-  listApply,
-  addApply,
-  updateApply,
-  delApply, getApply
-} from "../../../api/approval/apply";
 import {
   addApprovalProcess, deleteApprovalProcess, deleteApprovalProcessList, getApplicationTypeOptions,
   getApprovalProcessById,
   getApprovalProcessPage, optionselect1, selectDeptList,
   updateApprovalProcess
 } from "../../../api/approval/applyProcess";
-import {getAwardByAwardId} from "../../../api/monitor/award";
-import {getEnterpriseOptions} from "../../../api/system/enterprise";
+
 import {onMounted, ref} from "vue";
-import {deleteIndustryList} from "../../../api/system/industry";
+
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
+
 
 const userList = ref([]);
 const open = ref(false);
@@ -268,21 +229,8 @@ const approvalStatusOptions = [
 ];
 const { queryParams, form, rules } = toRefs(data);
 
-/** 通过条件过滤节点  */
-const filterNode = (value, data) => {
-  if (!value) return true;
-  return data.label.indexOf(value) !== -1;
-};
-/** 根据名称筛选部门树 */
-watch(deptName, val => {
-  proxy.$refs["deptTreeRef"].filter(val);
-});
-/** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then(response => {
-    deptOptions.value = response.data;
-  });
-};
+
+
 /** 查询用户列表 */
 // 定义审批状态的映射对象
 const approvalStatusMap = {
@@ -307,11 +255,7 @@ function getList() {
     total.value = res.total;
   });
 }
-/** 节点单击事件 */
-function handleNodeClick(data) {
-  queryParams.value.deptId = data.id;
-  handleQuery();
-};
+
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
@@ -357,90 +301,20 @@ function handleExport() {
     ...queryParams.value,
   },`approval-process_${new Date().getTime()}.xlsx`);
 };
-/** 用户状态修改  */
-function handleStatusChange(row) {
-  let text = row.status === "0" ? "启用" : "停用";
-  proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
-    return changeUserStatus(row.userId, row.status);
-  }).then(() => {
-    proxy.$modal.msgSuccess(text + "成功");
-  }).catch(function () {
-    row.status = row.status === "0" ? "1" : "0";
-  });
-};
-/** 更多操作 */
-function handleCommand(command, row) {
-  switch (command) {
-    case "handleResetPwd":
-      handleResetPwd(row);
-      break;
-    case "handleAuthRole":
-      handleAuthRole(row);
-      break;
-    default:
-      break;
-  }
-};
-/** 跳转角色分配 */
-function handleAuthRole(row) {
-  const userId = row.userId;
-  router.push("/system/user-auth/role/" + userId);
-};
-/** 重置密码按钮操作 */
-function handleResetPwd(row) {
-  proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    closeOnClickModal: false,
-    inputPattern: /^.{5,20}$/,
-    inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
-  }).then(({ value }) => {
-    resetUserPwd(row.userId, value).then(response => {
-      proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
-    });
-  }).catch(() => {});
-};
+
+
+
+
 const multipleTable = ref(null);
 const multipleSelection = ref([]);
-/** 选择条数  */
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.userId);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
-  multipleSelection.value = selection; // 移除多余的点
-}
+
 
 // 获取选中的行数据
 const getSelectedRows = () => {
   return multipleSelection.value;
 };
 
-/** 导入按钮操作 */
-function handleImport() {
-  upload.title = "用户导入";
-  upload.open = true;
-};
-/** 下载模板操作 */
-function importTemplate() {
-  proxy.download("system/user/importTemplate", {
-  }, `user_template_${new Date().getTime()}.xlsx`);
-};
-/**文件上传中处理 */
-const handleFileUploadProgress = (event, file, fileList) => {
-  upload.isUploading = true;
-};
-/** 文件上传成功处理 */
-const handleFileSuccess = (response, file, fileList) => {
-  upload.open = false;
-  upload.isUploading = false;
-  proxy.$refs["uploadRef"].handleRemove(file);
-  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
-  getList();
-};
-/** 提交上传文件 */
-function submitFileForm() {
-  proxy.$refs["uploadRef"].submit();
-};
+
 /** 重置操作表单 */
 function reset() {
   form.value = {
@@ -571,11 +445,12 @@ function optionselect() {
 }
 
 onMounted(() => {
-  getDeptTree()
+
   getList()
-  selectDeptList1()
+
   optionselect()
   getApplicationTypeOptions1()
+  selectDeptList1()
 })
 </script>
 

@@ -215,13 +215,7 @@
         </el-form-item>
       </el-col>
     </el-row>
-    <el-row>
-      <el-col :span="24">
-        <el-form-item label="备注">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
+
   </el-form>
   <template #footer>
     <div class="dialog-footer">
@@ -373,7 +367,7 @@ const data = reactive({
     managerId: [{ required: false, message: "管理者ID不可更改", trigger: "blur" }],
     name: [{ required: true, message: "姓名不能为空", trigger: "blur" }, { min: 2, max: 30, message: "姓名长度必须介于 2 和 30 之间", trigger: "blur" }],
     gender: [{ required: true, message: "性别不能为空", trigger: "change" }],
-    idCard: [{ required: true, message: "身份证号不能为空", trigger: "blur" }, { pattern: /^\d{18}$/, message: "请输入有效的身份证号", trigger: "blur" }],
+    idCard: [{ required: true, message: "身份证号不能为空", trigger: "blur" }],
     birthplace: [{ required: false, message: "生源地可以为空", trigger: "blur" }, { max: 50, message: "生源地长度不能超过 50 个字符", trigger: "blur" }],
     politicalStatus: [{ required: false, message: "政治面貌可以为空", trigger: "change" }],
     almaMater: [{ required: false, message: "毕业院校可以为空", trigger: "blur" }, { max: 50, message: "毕业院校长度不能超过 50 个字符", trigger: "blur" }],
@@ -599,7 +593,7 @@ function handleAdd() {
 };
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  reset();
+    // reset();
 
   getEnterprise_managers( row.managerId).then(response => {
      form.value = response;
