@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @TableName("policy_article")
@@ -31,10 +32,10 @@ public class PolicyArticleDTO {
     private String content;
 
     @ApiModelProperty("发布日期")
-    private LocalDate publishDate;
+    private Date publishDate;
 
     @ApiModelProperty("截止时间")
-    private LocalDate deadlineDate;
+    private Date deadlineDate;
 
     @ApiModelProperty("文章状态")
     private String status;

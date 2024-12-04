@@ -230,11 +230,17 @@ const data = reactive({
     tagName: [
       { required: true, message: "标签名称不能为空", trigger: "blur" },
       { min: 1, max: 30, message: "标签名称长度必须介于 1 和 30 之间", trigger: "blur" }
+    ],
+    level: [
+      { required: true, message: "地域级别不能为空", trigger: "blur" },
+      { validator: validateLevel, trigger: "blur" }
     ]
   }
+
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
 
 /** 通过条件过滤节点  */
 const filterNode = (value, data) => {
@@ -294,7 +300,16 @@ function handleDeleteList() {
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => {});
 };
-
+function validateLevel(rule, value, callback)
+{
+  if (!value) {
+    callback(new Error("地域级别不能为空"));
+  } else if (!/^\d+$/.test(value)) {
+    callback(new Error("地域级别必须是数字"));
+  } else {
+    callback();
+  }
+};
 
 /** 删除按钮操作 */
 function handleDelete(row) {

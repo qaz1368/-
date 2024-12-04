@@ -17,7 +17,11 @@ import com.ruoyi.system.service.entrepreneurPark.PolicyArticleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,10 +40,18 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
     @Autowired
     private PolicyArticleMapper policyArticleMapper;
 
+
+
     @Override
-    public boolean addPolicyArticle(PolicyArticleDTO policyArticleDTO) {
+    public boolean updatePolicyArticle(PolicyArticleDTO policyArticleDTO, MultipartFile file) {
+        // 获取 articleId 并查询文章
+        Integer articleId = policyArticleDTO.getArticleId();
+        PolicyArticle policyArticle = getById(articleId);
+        if (policyArticle == null) {
+            throw new RuntimeException("Article not found with id: " + articleId);
+        }
+
         // 创建 PolicyArticle 实体对象
-        PolicyArticle policyArticle = new PolicyArticle();
         BeanUtils.copyProperties(policyArticleDTO, policyArticle);
 
         // 查询 category_id
@@ -55,11 +67,12 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
             policyCategory1.setCategoryName(policyArticleDTO.getCategory());
             policyCategory1.setCreatedAt(LocalDateTime.now());
             policyCategory1.setUpdatedAt(LocalDateTime.now());
-            int insertResult =policyCategoryMapper.insert(policyCategory1);
+            int insertResult = policyCategoryMapper.insert(policyCategory1);
             if (insertResult <= 0) {
                 throw new RuntimeException("分类插入失败");
-            }else
+            } else {
                 policyArticle.setCategoryId(policyCategory1.getCategoryId());
+            }
         }
 
         // 查询 primary_tag_id
@@ -77,67 +90,52 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
             int insertResult = policyTagMapper.insert(policyTag1);
             if (insertResult <= 0) {
                 throw new RuntimeException("标签插入失败");
-            }else
+            } else {
                 policyArticle.setPrimaryTagId(policyTag1.getTagId());
+            }
+        }
+        System.out.println("触发了吗1");
+        // 处理视频文件
+        if (file != null) {
+            System.out.println("触发了吗2");
+            // 定义文件保存路径 - 使用File.separator确保跨平台兼容性
+            String uploadDir = "videos";
+            File directory = new File(uploadDir);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // 删除原视频文件
+            String oldVideoPath = policyArticle.getVideoUrl();
+            if (oldVideoPath != null) {
+                File oldVideoFile = new File(oldVideoPath);
+                if (oldVideoFile.exists()) {
+                    boolean isDeleted = oldVideoFile.delete();
+                    if (!isDeleted) {
+                        throw new RuntimeException("Failed to delete old video file: " + oldVideoFile.getAbsolutePath());
+                    }
+                }
+            }
+
+            // 保存新视频文件
+            String newFilePath = uploadDir + File.separator + file.getOriginalFilename();
+            try {
+                FileCopyUtils.copy(file.getBytes(), new File(newFilePath));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save new video file: " + newFilePath, e);
+            }
+
+            // 更新 PolicyArticle 对象的 videoUrl
+            policyArticle.setVideoUrl(newFilePath);
         }
 
-        // 设置创建时间和更新时间
-        policyArticle.setCreatedAt(LocalDateTime.now());
-        policyArticle.setUpdatedAt(LocalDateTime.now());
-
-        // 保存到数据库
-        return save(policyArticle);
-    }
-
-    @Override
-    public boolean updatePolicyArticle(PolicyArticleDTO policyArticleDTO) {
-         // 创建 PolicyArticle 实体对象
-        PolicyArticle policyArticle = new PolicyArticle();
-        BeanUtils.copyProperties(policyArticleDTO, policyArticle);
-
-        // 查询 category_id
-        PolicyCategory policyCategory = policyCategoryMapper.selectOne(
-                new QueryWrapper<PolicyCategory>()
-                        .eq("category_name", policyArticleDTO.getCategory())
-        );
-        if (policyCategory != null) {
-            policyArticle.setCategoryId(policyCategory.getCategoryId());
-        } else {
-            // 处理 category 不存在的情况
-            PolicyCategory policyCategory1 = new PolicyCategory();
-            policyCategory1.setCategoryName(policyArticleDTO.getCategory());
-            policyCategory1.setCreatedAt(LocalDateTime.now());
-            policyCategory1.setUpdatedAt(LocalDateTime.now());
-            int insertResult =policyCategoryMapper.insert(policyCategory1);
-            if (insertResult <= 0) {
-                throw new RuntimeException("分类插入失败");
-            }else
-                policyArticle.setCategoryId(policyCategory1.getCategoryId());
-        }
-
-        // 查询 primary_tag_id
-        PolicyTag policyTag = policyTagMapper.selectOne(
-                new QueryWrapper<PolicyTag>()
-                        .eq("tag_name", policyArticleDTO.getPrimaryTag())
-        );
-        if (policyTag != null) {
-            policyArticle.setPrimaryTagId(policyTag.getTagId());
-        } else {
-            PolicyTag policyTag1 = new PolicyTag();
-            policyTag1.setTagName(policyArticleDTO.getPrimaryTag());
-            policyTag1.setCreatedAt(LocalDateTime.now());
-            policyTag1.setUpdatedAt(LocalDateTime.now());
-            int insertResult = policyTagMapper.insert(policyTag1);
-            if (insertResult <= 0) {
-                throw new RuntimeException("标签插入失败");
-            }else
-                policyArticle.setPrimaryTagId(policyTag1.getTagId());
-        }
         // 设置更新时间
         policyArticle.setUpdatedAt(LocalDateTime.now());
 
+        // 保存到数据库
         return updateById(policyArticle);
     }
+
 
     @Override
     public PolicyArticleVO getPolicyArticleById(Integer id) {
@@ -228,6 +226,153 @@ public class PolicyArticleServiceImpl extends ServiceImpl<PolicyArticleMapper, P
         resultVOPage.setTotal(count);
         return resultVOPage;
     }
+
+    //添加新视频
+    @Override
+    public boolean addPolicyArticle(PolicyArticleDTO policyArticleDTO, MultipartFile file) throws IOException {
+        // 定义文件保存路径 - 使用File.separator确保跨平台兼容性
+        String uploadDir = "videos"; // 移除开头的/，使用相对路径
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filePath = null;
+        if (file != null) {
+            // 构建文件保存路径 - 使用File.separator确保正确的路径分隔
+            filePath = uploadDir + File.separator + file.getOriginalFilename();
+            // 保存文件
+            FileCopyUtils.copy(file.getBytes(), new File(filePath));
+        }
+
+        // 其余代码保持不变...
+        PolicyArticle policyArticle = new PolicyArticle();
+        BeanUtils.copyProperties(policyArticleDTO, policyArticle);
+
+        // 查询 category_id
+        PolicyCategory policyCategory = policyCategoryMapper.selectOne(
+                new QueryWrapper<PolicyCategory>()
+                        .eq("category_name", policyArticleDTO.getCategory())
+        );
+        if (policyCategory != null) {
+            policyArticle.setCategoryId(policyCategory.getCategoryId());
+        } else {
+            // 处理 category 不存在的情况
+            PolicyCategory policyCategory1 = new PolicyCategory();
+            policyCategory1.setCategoryName(policyArticleDTO.getCategory());
+            policyCategory1.setCreatedAt(LocalDateTime.now());
+            policyCategory1.setUpdatedAt(LocalDateTime.now());
+            int insertResult = policyCategoryMapper.insert(policyCategory1);
+            if (insertResult <= 0) {
+                throw new RuntimeException("分类插入失败");
+            } else {
+                policyArticle.setCategoryId(policyCategory1.getCategoryId());
+            }
+        }
+
+        // 查询 primary_tag_id
+        PolicyTag policyTag = policyTagMapper.selectOne(
+                new QueryWrapper<PolicyTag>()
+                        .eq("tag_name", policyArticleDTO.getPrimaryTag())
+        );
+        if (policyTag != null) {
+            policyArticle.setPrimaryTagId(policyTag.getTagId());
+        } else {
+            PolicyTag policyTag1 = new PolicyTag();
+            policyTag1.setTagName(policyArticleDTO.getPrimaryTag());
+            policyTag1.setCreatedAt(LocalDateTime.now());
+            policyTag1.setUpdatedAt(LocalDateTime.now());
+            int insertResult = policyTagMapper.insert(policyTag1);
+            if (insertResult <= 0) {
+                throw new RuntimeException("标签插入失败");
+            } else {
+                policyArticle.setPrimaryTagId(policyTag1.getTagId());
+            }
+        }
+
+        // 设置创建时间和更新时间
+        policyArticle.setCreatedAt(LocalDateTime.now());
+        policyArticle.setUpdatedAt(LocalDateTime.now());
+        policyArticle.setVideoUrl(filePath); // 设置文件路径
+
+        // 保存到数据库
+        return save(policyArticle);
+    }
+
+    //删除视频
+    @Override
+    public boolean removeArticleById(Integer id) {
+        // 根据id查询文章
+        PolicyArticle policyArticle = getById(id);
+
+        // 定义上传目录的绝对路径
+
+        // 如果存在视频文件，删除文件
+        if (policyArticle != null && policyArticle.getVideoUrl() != null) {
+            String videoUrl = policyArticle.getVideoUrl();
+            File videoFile = new File( videoUrl); // 构建绝对路径
+            if (videoFile.exists()) {
+                boolean isDeleted = videoFile.delete();
+                if (!isDeleted) {
+                    // 处理删除文件失败的情况
+                    throw new RuntimeException("Failed to delete video file: " + videoFile.getAbsolutePath());
+                }
+            }
+        }
+
+        // 最后删除该数据
+        return removeById(id);
+    }
+
+    /**
+     * 修改视频
+     * @param
+     * @param file
+     * @return
+     */
+    @Override
+    public boolean updateVideo(PolicyArticleDTO policyArticleDTO, MultipartFile file) throws IOException {
+        Integer articleId = policyArticleDTO.getArticleId();
+        // 根据id查询文章
+        PolicyArticle policyArticle = getById(articleId);
+        if (policyArticle == null) {
+            throw new RuntimeException("Article not found with id: " + articleId);
+        }
+
+        // 定义文件保存路径 - 使用File.separator确保跨平台兼容性
+        String uploadDir = "videos";
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // 删除原视频文件
+        String oldVideoPath = policyArticle.getVideoUrl();
+        if (oldVideoPath != null) {
+            File oldVideoFile = new File(oldVideoPath);
+            if (oldVideoFile.exists()) {
+                boolean isDeleted = oldVideoFile.delete();
+                if (!isDeleted) {
+                    throw new RuntimeException("Failed to delete old video file: " + oldVideoFile.getAbsolutePath());
+                }
+            }
+        }
+
+        // 保存新视频文件
+        String newFilePath = null;
+        if (file != null) {
+            newFilePath = uploadDir + File.separator + file.getOriginalFilename();
+            FileCopyUtils.copy(file.getBytes(), new File(newFilePath));
+        }
+
+        // 更新 PolicyArticle 对象的 videoUrl
+        policyArticle.setVideoUrl(newFilePath);
+        policyArticle.setUpdatedAt(LocalDateTime.now()); // 更新更新时间
+
+        // 保存到数据库
+        return updateById(policyArticle);
+    }
+
 
 
 }

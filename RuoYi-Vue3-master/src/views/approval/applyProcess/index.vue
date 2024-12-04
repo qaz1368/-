@@ -218,7 +218,11 @@ const data = reactive({
   rules: {
     sequence: [{ required: true, message: '请输入流程顺序', trigger: 'blur' }],
     approvalStatus: [{ required: true, message: '请选择审批状态', trigger: 'change' }],
-    comments: [{ required: true, message: '请输入审批备注', trigger: 'blur' }]
+    comments: [{ required: true, message: '请输入审批备注', trigger: 'blur' }],
+    stepOrder: [
+      { required: true, message: '请输入流程顺序', trigger: 'blur' },
+      { validator: validateStepOrder, trigger: 'blur' }
+    ]
   },
 
 });
@@ -228,7 +232,22 @@ const approvalStatusOptions = [
   { value: 2, label: '待定' }
 ];
 const { queryParams, form, rules } = toRefs(data);
-
+function validateStepOrder(rule, value, callback) {
+  if (value === '' || value === null) {
+    callback(new Error('请输入流程顺序'));
+  } else {
+    const num = Number(value);
+    if (isNaN(num)) {
+      callback(new Error('流程顺序必须是数字'));
+    } else if (!Number.isInteger(num)) {
+      callback(new Error('流程顺序必须是整数'));
+    } else if (num < 1) {
+      callback(new Error('流程顺序必须大于0'));
+    } else {
+      callback();
+    }
+  }
+}
 
 
 /** 查询用户列表 */

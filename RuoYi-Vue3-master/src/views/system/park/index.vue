@@ -286,15 +286,48 @@ const data = reactive({
     industry: undefined,
     status: undefined
   },
-    rules: {
+  rules: {
     parkName: [{ required: true, message: "创业园名称不能为空", trigger: "blur" }],
     industry: [{ required: true, message: "所属行业不能为空", trigger: "blur" }],
     address: [{ required: true, message: "入驻地址不能为空", trigger: "blur" }],
-    companyMembers: [{ required: true, message: "团队成员数量不能为空", trigger: "blur" }],
-    financialSupport: [{ required: true, message: "资金支持金额不能为空", trigger: "blur" }],
-    investmentAmount: [{ required: true, message: "投入经费不能为空", trigger: "blur" }],
-    totalArea: [{ required: true, message: "整体面积不能为空", trigger: "blur" }]
+    companyMembers: [
+      { required: true, message: "团队成员数量不能为空", trigger: "blur" },
+      { type: 'number', message: "团队成员数量必须为数字", trigger: "blur" }
+    ],
+    graduateCount: [
+      { required: true, message: "创业毕业生数量不能为空", trigger: "blur" },
+      { type: 'number', message: "创业毕业生数量必须为数字", trigger: "blur" }
+    ],
+    projectCount: [
+      { required: true, message: "创业项目数量不能为空", trigger: "blur" },
+      { type: 'number', message: "创业项目数量必须为数字", trigger: "blur" }
+    ],
+    traineeCount: [
+      { required: true, message: "培训学员数量不能为空", trigger: "blur" },
+      { type: 'number', message: "培训学员数量必须为数字", trigger: "blur" }
+    ],
+    employmentCount: [
+      { required: true, message: "带动就业人数数量不能为空", trigger: "blur" },
+      { type: 'number', message: "带动就业人数数量必须为数字", trigger: "blur" }
+    ],
+    financialSupport: [
+      { required: true, message: "资金支持金额不能为空", trigger: "blur" },
+      { type: 'number', message: "资金支持金额必须为数字", trigger: "blur" }
+    ],
+    investmentAmount: [
+      { required: true, message: "投入经费不能为空", trigger: "blur" },
+      { type: 'number', message: "投入经费必须为数字", trigger: "blur" }
+    ],
+    totalArea: [
+      { required: true, message: "整体面积不能为空", trigger: "blur" },
+      { type: 'number', message: "整体面积必须为数字", trigger: "blur" }
+    ],
+    governmentSubsidy: [
+      { required: true, message: "政府补贴金额不能为空", trigger: "blur" },
+      { type: 'number', message: "政府补贴金额必须为数字", trigger: "blur" }
+    ]
   }
+
 });
 
 const { queryParams, form, rules } = toRefs(data);

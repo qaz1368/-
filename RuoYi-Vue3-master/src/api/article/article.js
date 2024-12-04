@@ -15,7 +15,10 @@ export function addArticle(data) {
   return request({
     url: '/policy-articles/add',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
 }
 
@@ -44,10 +47,30 @@ export function deletePolicyArticles(articleIds) {
 }
 
 //修改奖项名称信息
+
 export function updatePolicyArticle(data) {
   return request({
     url: '/policy-articles/updatePolicyArticle',
     method: 'put',
-    data: data
+    data: data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    // 添加以下配置以确保正确处理 FormData
+    transformRequest: [function (data) {
+      return data;
+    }]
   })
+}
+
+//更新文章
+// 更新文章视频的 API 函数
+export function updateArticle(data) {
+  return request({
+    url: '/policy-articles/updateVideo',
+    method: 'post',
+    data: data,
+    // 重要：当使用 FormData 时，不要手动设置 Content-Type
+    // axios 会自动设置正确的 Content-Type 和 boundary
+  });
 }

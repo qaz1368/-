@@ -45,14 +45,18 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         AwardDetail awardDetail = new AwardDetail();
         BeanUtils.copyProperties(awardDetailDTO, awardDetail);
         awardDetail.setCreatedAt(new Date());
-         // 创建查询条件
+
+        // 创建查询条件
         QueryWrapper<CompetitionType> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("level", awardDetailDTO.getType());
         // 查询类型
-        CompetitionType competitionType = competitionTypeMapper.selectOne(queryWrapper);
-        if (competitionType != null) {
+        List<CompetitionType> competitionTypes = competitionTypeMapper.selectList(queryWrapper);
+
+        if (competitionTypes != null && !competitionTypes.isEmpty()) {
+            CompetitionType competitionType = competitionTypes.get(0); // 选择第一条记录
             awardDetail.setTypeId(competitionType.getId());
         }
+
         QueryWrapper<CompetitionName> queryWrapper1 = new QueryWrapper<>();
         queryWrapper1.eq("competition_name", awardDetailDTO.getCompetition());
         // 查询比赛名
@@ -60,6 +64,7 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
         if (competitionName != null) {
             awardDetail.setCompetitionId(competitionName.getCompetitionId());
         }
+
         QueryWrapper<Enterprise> queryWrapper2 = new QueryWrapper<>();
         queryWrapper2.eq("company_name", awardDetailDTO.getEnterprise());
         // 查询企业名
@@ -70,6 +75,7 @@ public class AwardDetailServiceImpl extends ServiceImpl<AwardDetailMapper, Award
 
         return save(awardDetail);
     }
+
 
     @Override
     public boolean updateAwardDetail(AwardDetailDTO awardDetailDTO) {

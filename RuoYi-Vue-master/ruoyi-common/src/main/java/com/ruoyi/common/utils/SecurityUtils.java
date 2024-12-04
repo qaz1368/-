@@ -59,6 +59,7 @@ public class SecurityUtils
         try
         {
             return getLoginUser().getUsername();
+
         }
         catch (Exception e)
         {

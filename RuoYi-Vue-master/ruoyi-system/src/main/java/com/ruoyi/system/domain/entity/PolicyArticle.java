@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @TableName("policy_article")
@@ -45,12 +46,12 @@ public class PolicyArticle {
     @TableField("publish_date")
     @ApiModelProperty("发布日期")
     @Excel(name = "发布日期", type = Excel.Type.EXPORT)
-    private LocalDate publishDate;
+    private Date publishDate;
 
     @TableField("deadline_date")
     @ApiModelProperty("截止时间")
     @Excel(name = "截止时间", type = Excel.Type.EXPORT)
-    private LocalDate deadlineDate;
+    private Date deadlineDate;
 
     @TableField("status")
     @ApiModelProperty("文章状态")
@@ -66,4 +67,9 @@ public class PolicyArticle {
     @ApiModelProperty("更新时间")
     @Excel(name = "更新时间", type = Excel.Type.EXPORT)
     private LocalDateTime updatedAt;
+
+    @TableField("video_url")
+    @ApiModelProperty("视频路径")
+    @Excel(name = "视频路径", type = Excel.Type.EXPORT)
+    private String videoUrl;
 }

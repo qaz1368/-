@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.domain.vo.UserInfoVO;
 
 /**
  * 用户 业务层
@@ -203,4 +204,12 @@ public interface ISysUserService
      * @return 结果
      */
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
+
+
+    /**
+     * 根据user_id查询用户信息
+     */
+    public SysUser selectUserByUser_Id(Long userId);
+
+
 }

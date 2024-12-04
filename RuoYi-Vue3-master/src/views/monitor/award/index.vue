@@ -179,39 +179,8 @@
       </template>
     </el-dialog>
 
-    <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
-      <el-upload
-          ref="uploadRef"
-          :limit="1"
-          accept=".xlsx, .xls"
-          :headers="upload.headers"
-          :action="upload.url + '?updateSupport=' + upload.updateSupport"
-          :disabled="upload.isUploading"
-          :on-progress="handleFileUploadProgress"
-          :on-success="handleFileSuccess"
-          :auto-upload="false"
-          drag
-      >
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-        <template #tip>
-          <div class="el-upload__tip text-center">
-            <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
-            </div>
-            <span>仅允许导入xls、xlsx格式文件。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
-          </div>
-        </template>
-      </el-upload>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitFileForm">确 定</el-button>
-          <el-button @click="upload.open = false">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+
+
   </div>
 </template>
 
@@ -290,9 +259,10 @@ const data = reactive({
     type: '',
     deptId: undefined
   },
-  rules: {
+  rules : {
     year: [
-      { required: true, message: '请选择年份', trigger: 'change' }
+      { required: true, message: '请选择年份', trigger: 'change' },
+      { validator: validateYear, trigger: 'change' }
     ],
     level: [
       { required: true, message: '请输入比赛等级', trigger: 'blur' }
@@ -301,7 +271,8 @@ const data = reactive({
       { required: true, message: '请输入比赛类型', trigger: 'blur' }
     ],
     subsidyAmount: [
-      { required: true, message: '请输入补助金额', trigger: 'blur' }
+      { required: true, message: '请输入补助金额', trigger: 'blur' },
+      { validator: validateSubsidyAmount, trigger: 'blur' }
     ],
     description: [
       { required: true, message: '请输入补助或奖项的描述', trigger: 'blur' }
@@ -327,6 +298,28 @@ const filterNode = (value, data) => {
 watch(deptName, val => {
   proxy.$refs["deptTreeRef"].filter(val)
 })
+
+// 自定义验证函数
+function validateYear(rule, value, callback) {
+  if (!value) {
+    callback(new Error('请选择年份'));
+  } else if (!/^\d{4}$/.test(value)) {
+    callback(new Error('年份必须是四位数字'));
+  } else {
+    callback();
+  }
+}
+function validateSubsidyAmount(rule, value, callback) {
+  if (value === '') {
+    callback(new Error('请输入补助金额'));
+  } else if (isNaN(value)) {
+    callback(new Error('补助金额必须是数字'));
+  } else if (parseFloat(value) < 0) {
+    callback(new Error('补助金额不能为负数'));
+  } else {
+    callback();
+  }
+}
 
 // 查询部门下拉树结构
 function getDeptTree() {
@@ -575,6 +568,7 @@ function submitForm() {
         })
       } else {
         addAward(form.value).then(response => {
+
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()
